@@ -56,8 +56,91 @@ def plot_partial(csv_file):
     plt.tight_layout()
     plt.savefig("plots/partial.pdf")
 
+def plot_throughput(csv_file):
+    layers = []
+    num_NNs = []
+    data = {}
+    with open(csv_file) as f:
+        for line in f:
+            vals = line.split(',')
+            op_full = vals[0]
+            layer = op_to_layer(op_full)
+            num_NN = int(vals[1])
+            camera = float(vals[2])
+            transformer = float(vals[3])
+            base = float(vals[4])
+            task = float(vals[5])
+            # Hack to simulate pass-through processor
+            if (base == 0):
+                base = transformer
+            if (task == 0):
+                task = base
+            if num_NN not in data.keys():
+                data[num_NN] = {}
+            data[num_NN][layer] = {}
+            data[num_NN][layer]["camera"] = camera
+            data[num_NN][layer]["transformer"] = transformer
+            data[num_NN][layer]["base"] = base
+            data[num_NN][layer]["task"] = task
+            if layer not in layers:
+                layers.append(layer)
+            if num_NN not in num_NNs:
+                num_NNs.append(num_NN)
 
-def plot_shared(csv_file):
+    for num_NN in num_NNs:
+        base_fps = [data[num_NN][layer]["base"] for layer in layers]
+        xs = range(len(layers))
+        plt.plot(xs, base_fps, label=str(num_NN) + " NNs")
+    plt.xticks(xs, layers, rotation="vertical")
+    plt.tick_params(axis='y', which='major', labelsize=28)
+    plt.tick_params(axis='y', which='minor', labelsize=20)
+    plt.ylabel("Base NN Throughput (FPS)", fontsize=28)
+    plt.ylim(0, 32)
+    plt.legend(loc=0, fontsize=15)
+    plt.tight_layout()
+    plt.savefig("plots/shared/throughput/base.pdf")
+    plt.clf()
+
+    for num_NN in num_NNs:
+        task_fps = [data[num_NN][layer]["task"] for layer in layers]
+        xs = range(len(layers))
+        plt.plot(xs, task_fps, label=str(num_NN) + " NNs")
+    plt.xticks(xs, layers, rotation="vertical")
+    plt.tick_params(axis='y', which='major', labelsize=28)
+    plt.tick_params(axis='y', which='minor', labelsize=20)
+    plt.ylabel("Avg Task NN FPS", fontsize=28)
+    plt.ylim(0, 32)
+    plt.legend(loc=0, fontsize=15)
+    plt.tight_layout()
+    plt.savefig("plots/shared/throughput/task.pdf")
+    plt.clf()
+
+    for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
+        for num_NN in num_NNs:
+            xs = range(len(layers))
+
+            base_fps = [data[num_NN][layer]["base"] for layer in layers]
+            task_fps = [data[num_NN][layer]["task"] for layer in layers]
+            camera_fps = [data[num_NN][layer]["camera"] for layer in layers]
+            transformer_fps = [data[num_NN][layer]["transformer"] for layer in layers]
+            plt.plot(xs, base_fps, label="Base-"+str(num_NN))
+            plt.plot(xs, task_fps, label="Task-"+str(num_NN))
+            plt.plot(xs, camera_fps, label="Camera")
+            plt.plot(xs, transformer_fps, label="Transfomer")
+
+            # Format plot
+            plt.xticks(xs, layers, rotation="vertical")
+            plt.tick_params(axis='y', which='major', labelsize=28)
+            plt.tick_params(axis='y', which='minor', labelsize=20)
+            plt.ylabel("Throughput (FPS)", fontsize=28)
+            plt.ylim(0, 32)
+            plt.legend(loc=0, fontsize=15)
+            plt.title(str(num_NN)+" split NN", fontsize=30)
+            plt.tight_layout()
+            plt.savefig("plots/shared/throughput/throughput-"+str(num_NN)+"-NN.pdf")
+            plt.clf()
+
+def plot_e2e_latency(csv_file):
     layers = []
     num_NNs = []
     data = {}
@@ -83,55 +166,31 @@ def plot_shared(csv_file):
             if num_NN not in num_NNs:
                 num_NNs.append(num_NN)
 
-    for num_NN in num_NNs:
-        base_fps = [data[num_NN][layer]["base"] for layer in layers]
-        xs = range(len(layers))
-        plt.plot(xs, base_fps, label=str(num_NN) + " NNs")
-    plt.xticks(xs, layers, rotation="vertical")
-    plt.tick_params(axis='y', which='major', labelsize=28)
-    plt.tick_params(axis='y', which='minor', labelsize=20)
-    plt.ylabel("Base NN Throughput (FPS)", fontsize=28)
-    plt.legend(loc=0, fontsize=15)
-    plt.tight_layout()
-    plt.savefig("plots/shared-throughput/base.pdf")
-    plt.clf()
+    width = 0.4
+    for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
+        for num_NN in num_NNs:
+            xs = range(len(layers))
 
-    for num_NN in num_NNs:
-        task_fps = [data[num_NN][layer]["task"] for layer in layers]
-        xs = range(len(layers))
-        plt.plot(xs, task_fps, label=str(num_NN) + " NNs")
-    plt.xticks(xs, layers, rotation="vertical")
-    plt.tick_params(axis='y', which='major', labelsize=28)
-    plt.tick_params(axis='y', which='minor', labelsize=20)
-    plt.ylabel("Avg Task NN FPS", fontsize=28)
-    plt.legend(loc=0, fontsize=15)
-    plt.tight_layout()
-    plt.savefig("plots/shared-throughput/task.pdf")
-    plt.clf()
+            base_fps = [data[num_NN][layer]["base"] for layer in layers]
+            task_fps = [data[num_NN][layer]["task"] for layer in layers]
+            camera_fps = [data[num_NN][layer]["camera"] for layer in layers]
+            transformer_fps = [data[num_NN][layer]["transformer"] for layer in layers]
 
-    for num_NN in num_NNs:
-        xs = range(len(layers))
+            plt.bar(xs, camera_fps, width, color = "mediumturquoise", label="Camera")
+            plt.bar(xs, transformer_fps, width, bottom=camera_fps, color = "dodgerblue", label="Transfomer")
+            plt.bar(xs, base_fps, width, bottom=transformer_fps, color = "lightcoral", label="Base-"+str(num_NN))
+            plt.bar(xs, task_fps, width, bottom=base_fps,color = "orchid", label="Task-"+str(num_NN))
 
-        base_fps = [data[num_NN][layer]["base"] for layer in layers]
-        task_fps = [data[num_NN][layer]["task"] for layer in layers]
-        camera_fps = [data[num_NN][layer]["camera"] for layer in layers]
-        transformer_fps = [data[num_NN][layer]["transformer"] for layer in layers]
-        plt.plot(xs, base_fps, label="Base-"+str(num_NN))
-        plt.plot(xs, task_fps, label="Task-"+str(num_NN))
-        plt.plot(xs, camera_fps, label="Camera")
-        plt.plot(xs, transformer_fps, label="Transfomer")
-
-        # Format plot
-        plt.xticks(xs, layers, rotation="vertical")
-        plt.tick_params(axis='y', which='major', labelsize=28)
-        plt.tick_params(axis='y', which='minor', labelsize=20)
-        plt.ylabel("Throughput (FPS)", fontsize=28)
-        plt.legend(loc=0, fontsize=15)
-        plt.title(str(num_NN)+" split NN", fontsize=30)
-        plt.ylim(0, 32)
-        plt.tight_layout()
-        plt.savefig("plots/shared-throughput/"+str(num_NN)+"-NN.pdf")
-        plt.clf()
+            plt.ylim(0,1500)
+            plt.xticks(xs, layers, rotation="vertical")
+            plt.tick_params(axis='y', which='major', labelsize=28)
+            plt.tick_params(axis='y', which='minor', labelsize=20)
+            plt.legend(loc=0, fontsize=15)
+            plt.ylabel("E2E Latency (ms)", fontsize=28)
+            plt.title(str(num_NN) + " NNs", fontsize=30)
+            plt.tight_layout()
+            plt.savefig("plots/shared/latency-"+str(num_NN)+"-NN.pdf")
+            plt.clf()
 
 if __name__ == "__main__":
     cmd = sys.argv[1]
@@ -140,8 +199,10 @@ if __name__ == "__main__":
         plot_simultaneous(csv_file)
     elif cmd == "partial":
         plot_partial(csv_file)
-    elif cmd == "shared":
-        plot_shared(csv_file)
+    elif cmd == "throughput":
+        plot_throughput(csv_file)
+    elif cmd == "latency-e2e":
+        plot_e2e_latency(csv_file)
     else:
-        print "cmd must be in {simultaneous, partial, shared}"
+        print "cmd must be in {simultaneous, partial, throughput, latency-e2e}"
 
