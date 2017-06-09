@@ -167,7 +167,7 @@ def plot_latency_breakdown(processors_file, queue_file):
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
             plt.legend(loc=0, fontsize=15, ncol=2)
-            plt.ylabel("E2E Latency (ms)", fontsize=28)
+            plt.ylabel("Queue + Processor Latency (ms)", fontsize=20)
             plt.title(str(num_NN) + " NNs", fontsize=30)
             plt.tight_layout()
             plt.savefig("plots/shared/latency/breakdown-"+str(num_NN)+"-NN.pdf")
