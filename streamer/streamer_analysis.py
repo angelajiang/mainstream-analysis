@@ -7,58 +7,37 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 
+# CSV file needs to be of format
+# layer1,camera_fps,transformer_fps,base_fps,task_fps
+# layer2,camera_fps,transformer_fps,base_fps,task_fps
+
 def op_to_layer(op_full):
     tensor_name = (op_full.split(":"))[0]
     layer = tensor_name.split("/")[0]
     return layer
 
-def plot_simultaneous(csv_file):
-    xs = []
-    ys = []
-    with open(csv_file) as f:
-        for line in f:
-            vals = line.split(',')
-            num_NNs = int(vals[0])
-            fps = float(vals[1])
-            xs.append(num_NNs)
-            ys.append(fps)
-    width = 0.5
-    plt.bar(xs, ys, width=width, color="lightcoral")
-    plt.xticks(xs, xs, ha='center')
-    plt.tick_params(axis='both', which='major', labelsize=28)
-    plt.tick_params(axis='both', which='minor', labelsize=20)
-    plt.xlabel("Number of simultaneous NNs", fontsize=28)
-    plt.ylabel("Throughput (FPS)", fontsize=28)
-    plt.title("Simultaneous full NNs", fontsize=30)
-    plt.tight_layout()
-    plt.savefig("plots/simultaneous.pdf")
-
-def plot_partial(csv_file):
-    labels = []
-    ys = []
+def get_layers(csv_file):
+    layers = []
     with open(csv_file) as f:
         for line in f:
             vals = line.split(',')
             op_full = vals[0]
             layer = op_to_layer(op_full)
-            fps = float(vals[1])
-            labels.append(layer)
-            ys.append(fps)
-    xs = range(len(ys))
-    width = 0.5
-    plt.bar(xs, ys, width=width, color="lightcoral")
-    ind = np.arange(len(labels))
-    plt.xticks(ind + width / 2, labels, rotation="vertical")
-    plt.tick_params(axis='y', which='major', labelsize=28)
-    plt.tick_params(axis='y', which='minor', labelsize=20)
-    plt.ylabel("Throughput (FPS)", fontsize=28)
-    plt.title("Single partial NN", fontsize=30)
-    plt.tight_layout()
-    plt.savefig("plots/partial.pdf")
+            if layer not in layers:
+                layers.append(layer)
+    return layers
 
-def plot_throughput(csv_file):
-    layers = []
+def get_num_NNs(csv_file):
     num_NNs = []
+    with open(csv_file) as f:
+        for line in f:
+            vals = line.split(',')
+            num_NN = int(vals[1])
+            if num_NN not in num_NNs:
+                num_NNs.append(num_NN)
+    return num_NNs
+
+def get_data(csv_file, experiment_name):
     data = {}
     with open(csv_file) as f:
         for line in f:
@@ -70,22 +49,28 @@ def plot_throughput(csv_file):
             transformer = float(vals[3])
             base = float(vals[4])
             task = float(vals[5])
-            # Hack to simulate pass-through processor
-            if (base == 0):
-                base = transformer
-            if (task == 0):
-                task = base
             if num_NN not in data.keys():
                 data[num_NN] = {}
-            data[num_NN][layer] = {}
+            if layer not in data[num_NN].keys():
+                data[num_NN][layer] = {}
+
+            # Hack to simulate pass-through processor
+            if experiment_name == "throughput":
+                if (base == 0):
+                    base = transformer
+                if (task == 0):
+                    task = base
+
             data[num_NN][layer]["camera"] = camera
             data[num_NN][layer]["transformer"] = transformer
             data[num_NN][layer]["base"] = base
             data[num_NN][layer]["task"] = task
-            if layer not in layers:
-                layers.append(layer)
-            if num_NN not in num_NNs:
-                num_NNs.append(num_NN)
+    return data
+
+def plot_throughput(csv_file):
+    layers = get_layers(csv_file)
+    num_NNs = get_num_NNs(csv_file)
+    data = get_data(csv_file, "throughput")
 
     for num_NN in num_NNs:
         base_fps = [data[num_NN][layer]["base"] for layer in layers]
@@ -141,49 +126,10 @@ def plot_throughput(csv_file):
             plt.clf()
 
 def plot_latency_breakdown(processors_file, queue_file):
-    layers = []
-    num_NNs = []
-    data_processors = {}
-    data_queue = {}
-    with open(processors_file) as f:
-        for line in f:
-            vals = line.split(',')
-            op_full = vals[0]
-            layer = op_to_layer(op_full)
-            num_NN = int(vals[1])
-            camera = float(vals[2])
-            transformer = float(vals[3])
-            base = float(vals[4])
-            task = float(vals[5])
-            if num_NN not in data_processors.keys():
-                data_processors[num_NN] = {}
-            data_processors[num_NN][layer] = {}
-            data_processors[num_NN][layer]["camera"] = camera
-            data_processors[num_NN][layer]["transformer"] = transformer
-            data_processors[num_NN][layer]["base"] = base
-            data_processors[num_NN][layer]["task"] = task
-            if layer not in layers:
-                layers.append(layer)
-            if num_NN not in num_NNs:
-                num_NNs.append(num_NN)
-
-    with open(queue_file) as f:
-        for line in f:
-            vals = line.split(',')
-            op_full = vals[0]
-            layer = op_to_layer(op_full)
-            num_NN = int(vals[1])
-            camera = float(vals[2])
-            transformer = float(vals[3])
-            base = float(vals[4])
-            task = float(vals[5])
-            if num_NN not in data_queue.keys():
-                data_queue[num_NN] = {}
-            data_queue[num_NN][layer] = {}
-            data_queue[num_NN][layer]["camera"] = camera
-            data_queue[num_NN][layer]["transformer"] = transformer
-            data_queue[num_NN][layer]["base"] = base
-            data_queue[num_NN][layer]["task"] = task
+    layers = get_layers(processors_file)
+    num_NNs = get_num_NNs(processors_file)
+    data_processors = get_data(processors_file, "latency-e2e")
+    data_queue = get_data(queue_file, "latency-breakdown")
 
     width = 0.4
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
@@ -228,30 +174,9 @@ def plot_latency_breakdown(processors_file, queue_file):
             plt.clf()
 
 def plot_e2e_latency(csv_file):
-    layers = []
-    num_NNs = []
-    data = {}
-    with open(csv_file) as f:
-        for line in f:
-            vals = line.split(',')
-            op_full = vals[0]
-            layer = op_to_layer(op_full)
-            num_NN = int(vals[1])
-            camera = float(vals[2])
-            transformer = float(vals[3])
-            base = float(vals[4])
-            task = float(vals[5])
-            if num_NN not in data.keys():
-                data[num_NN] = {}
-            data[num_NN][layer] = {}
-            data[num_NN][layer]["camera"] = camera
-            data[num_NN][layer]["transformer"] = transformer
-            data[num_NN][layer]["base"] = base
-            data[num_NN][layer]["task"] = task
-            if layer not in layers:
-                layers.append(layer)
-            if num_NN not in num_NNs:
-                num_NNs.append(num_NN)
+    layers = get_layers(csv_file)
+    num_NNs = get_num_NNs(csv_file)
+    data = get_data(csv_file, "latency-e2e")
 
     width = 0.4
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
@@ -263,10 +188,10 @@ def plot_e2e_latency(csv_file):
             camera_fps = [data[num_NN][layer]["camera"] for layer in layers]
             transformer_fps = [data[num_NN][layer]["transformer"] for layer in layers]
 
-            plt.bar(xs, camera_fps, width, color = "mediumturquoise", label="Camera")
+            plt.bar(xs, camera_fps, width, color = "seagreen", label="Camera")
             plt.bar(xs, transformer_fps, width, bottom=camera_fps, color = "dodgerblue", label="Transfomer")
-            plt.bar(xs, base_fps, width, bottom=transformer_fps, color = "lightcoral", label="Base-"+str(num_NN))
-            plt.bar(xs, task_fps, width, bottom=base_fps,color = "orchid", label="Task-"+str(num_NN))
+            plt.bar(xs, base_fps, width, bottom=transformer_fps, color = "darkorchid", label="Base-"+str(num_NN))
+            plt.bar(xs, task_fps, width, bottom=base_fps,color = "palevioletred", label="Task-"+str(num_NN))
 
             plt.ylim(0,1500)
             plt.xticks(xs, layers, rotation="vertical")
@@ -282,11 +207,7 @@ def plot_e2e_latency(csv_file):
 if __name__ == "__main__":
     cmd = sys.argv[1]
     csv_file = sys.argv[2]
-    if cmd == "simultaneous":
-        plot_simultaneous(csv_file)
-    elif cmd == "partial":
-        plot_partial(csv_file)
-    elif cmd == "throughput":
+    if cmd == "throughput":
         plot_throughput(csv_file)
     elif cmd == "latency-e2e":
         plot_e2e_latency(csv_file)
@@ -294,5 +215,5 @@ if __name__ == "__main__":
         queue_file = sys.argv[3]
         plot_latency_breakdown(csv_file, queue_file)
     else:
-        print "cmd must be in {simultaneous, partial, throughput, latency-e2e, latency-breakdown}"
+        print "cmd must be in {throughput, latency-e2e, latency-breakdown}"
 
