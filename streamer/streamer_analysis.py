@@ -188,10 +188,10 @@ def plot_e2e_latency(csv_file):
             camera_fps = [data[num_NN][layer]["camera"] for layer in layers]
             transformer_fps = [data[num_NN][layer]["transformer"] for layer in layers]
 
+            plt.bar(xs, task_fps, width, color = "palevioletred", label="Task-"+str(num_NN))
+            plt.bar(xs, base_fps, width, color = "darkorchid", label="Base-"+str(num_NN))
+            plt.bar(xs, transformer_fps, width, color = "dodgerblue", label="Transfomer")
             plt.bar(xs, camera_fps, width, color = "seagreen", label="Camera")
-            plt.bar(xs, transformer_fps, width, bottom=camera_fps, color = "dodgerblue", label="Transfomer")
-            plt.bar(xs, base_fps, width, bottom=transformer_fps, color = "darkorchid", label="Base-"+str(num_NN))
-            plt.bar(xs, task_fps, width, bottom=base_fps,color = "palevioletred", label="Task-"+str(num_NN))
 
             plt.ylim(0,1500)
             plt.xticks(xs, layers, rotation="vertical")
