@@ -199,7 +199,7 @@ def plot_latency_breakdown(processors_file, queue_file):
             g  = [data_queue[num_NN][layer]["task"] for layer in layers]
             h  = [data_processors[num_NN][layer]["task"] for layer in layers]
 
-            b1 = [a[j] +b[j] for j in range(len(a))]
+            b1 = [a[j] for j in range(len(a))]
             b2 = [a[j] +b[j] for j in range(len(a))]
             b3 = [a[j] +b[j] + c[j] for j in range(len(a))]
             b4 = [a[j] +b[j] + c[j] + d[j] for j in range(len(a))]
