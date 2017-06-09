@@ -140,11 +140,30 @@ def plot_throughput(csv_file):
             plt.savefig("plots/shared/throughput/throughput-"+str(num_NN)+"-NN.pdf")
             plt.clf()
 
-def plot_latency_breakdown(processors_file, queue_file):
+def plot_latency_breakdown(e2e_file, processors_file, queue_file):
     layers = []
     num_NNs = []
+    data_e2e = {}
     data_processors = {}
     data_queue = {}
+    with open(e2e_file) as f:
+        for line in f:
+            vals = line.split(',')
+            op_full = vals[0]
+            layer = op_to_layer(op_full)
+            num_NN = int(vals[1])
+            camera = float(vals[2])
+            transformer = float(vals[3])
+            base = float(vals[4])
+            task = float(vals[5])
+            if num_NN not in data_e2e.keys():
+                data_e2e[num_NN] = {}
+            data_e2e[num_NN][layer] = {}
+            data_e2e[num_NN][layer]["camera"] = camera
+            data_e2e[num_NN][layer]["transformer"] = transformer
+            data_e2e[num_NN][layer]["base"] = base
+            data_e2e[num_NN][layer]["task"] = task
+
     with open(processors_file) as f:
         for line in f:
             vals = line.split(',')
@@ -196,16 +215,24 @@ def plot_latency_breakdown(processors_file, queue_file):
             d = [data_processors[num_NN][layer]["transformer"] for layer in layers]
             e = [data_queue[num_NN][layer]["base"] for layer in layers]
             f = [data_processors[num_NN][layer]["base"] for layer in layers]
-            g  = [data_queue[num_NN][layer]["task"] for layer in layers]
-            h  = [data_processors[num_NN][layer]["task"] for layer in layers]
+            g = [data_queue[num_NN][layer]["task"] for layer in layers]
+            h = [data_processors[num_NN][layer]["task"] for layer in layers]
+            e = [data_e2e[num_NN][layer]["camera"] for layer in layers]
+            f = [data_e2e[num_NN][layer]["transformer"] for layer in layers]
+            g = [data_e2e[num_NN][layer]["task"] for layer in layers]
+            h = [data_e2e[num_NN][layer]["task"] for layer in layers]
 
-            b1 = [a[j] +b[j] for j in range(len(a))]
+            b1 = [a[j] for j in range(len(a))]
             b2 = [a[j] +b[j] for j in range(len(a))]
             b3 = [a[j] +b[j] + c[j] for j in range(len(a))]
             b4 = [a[j] +b[j] + c[j] + d[j] for j in range(len(a))]
             b5 = [a[j] +b[j] + c[j] + d[j] + e[j] for j in range(len(a))]
             b6 = [a[j] +b[j] + c[j] + d[j] + e[j] +f[j] for j in range(len(a))]
             b7 = [a[j] +b[j] + c[j] + d[j] + e[j] +f[j] + g[j] for j in range(len(a))]
+
+            b8 = [e[j] for j in range(len(a))]
+            b9 = [e[j] +f[j] for j in range(len(a))]
+            b10 = [e[j]+f[j] + g[j] for j in range(len(a))]
 
             plt.bar(xs, a, width, color = "lightseagreen", label="Camera-Q")
             plt.bar(xs, b, width, bottom=b1, color = "seagreen", label="Camera-P")
@@ -215,13 +242,17 @@ def plot_latency_breakdown(processors_file, queue_file):
             plt.bar(xs, f, width, bottom=b5, color = "darkorchid", label="Base-P-"+str(num_NN))
             plt.bar(xs, g, width, bottom=b6,color = "lightpink", label="Task-Q-"+str(num_NN))
             plt.bar(xs, h, width, bottom=b7,color = "palevioletred", label="Task-P-"+str(num_NN))
+            plt.bar(xs, e, width, color = "slategrey", label="Camera-E2E-"+str(num_NN))
+            plt.bar(xs, f, width, color = "slategrey", bottom=b8, label="Transformer-E2E-"+str(num_NN))
+            plt.bar(xs, g, width, color = "slategrey", bottom=b9, label="Base-E2E-"+str(num_NN))
+            plt.bar(xs, h, width, color = "slategrey", bottom=b10, label="Task-E2E-"+str(num_NN))
 
             plt.ylim(0,1500)
             plt.xticks(xs, layers, rotation="vertical")
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
             plt.legend(loc=0, fontsize=15, ncol=2)
-            plt.ylabel("E2E Latency (ms)", fontsize=28)
+            plt.ylabel("Latency breakdown (ms)", fontsize=28)
             plt.title(str(num_NN) + " NNs", fontsize=30)
             plt.tight_layout()
             plt.savefig("plots/shared/latency/breakdown-"+str(num_NN)+"-NN.pdf")
@@ -291,8 +322,9 @@ if __name__ == "__main__":
     elif cmd == "latency-e2e":
         plot_e2e_latency(csv_file)
     elif cmd == "latency-breakdown":
-        queue_file = sys.argv[3]
-        plot_latency_breakdown(csv_file, queue_file)
+        processors_file = sys.argv[3]
+        queue_file = sys.argv[4]
+        plot_latency_breakdown(csv_file, processors_file, queue_file)
     else:
         print "cmd must be in {simultaneous, partial, throughput, latency-e2e, latency-breakdown}"
 
