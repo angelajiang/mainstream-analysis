@@ -67,7 +67,7 @@ def get_data(csv_file, experiment_name):
             data[num_NN][layer]["task"] = task
     return data
 
-def plot_throughput(csv_file):
+def plot_throughput(csv_file, plot_dir):
     layers = get_layers(csv_file)
     num_NNs = get_num_NNs(csv_file)
     data = get_data(csv_file, "throughput")
@@ -83,7 +83,7 @@ def plot_throughput(csv_file):
     plt.ylim(0, 32)
     plt.legend(loc=0, fontsize=15)
     plt.tight_layout()
-    plt.savefig("plots/shared/throughput/base.pdf")
+    plt.savefig(plot_dir + "/base.pdf")
     plt.clf()
 
     for num_NN in num_NNs:
@@ -97,7 +97,7 @@ def plot_throughput(csv_file):
     plt.ylim(0, 32)
     plt.legend(loc=0, fontsize=15)
     plt.tight_layout()
-    plt.savefig("plots/shared/throughput/task.pdf")
+    plt.savefig(plot_dir + "/task.pdf")
     plt.clf()
 
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
@@ -122,10 +122,10 @@ def plot_throughput(csv_file):
             plt.legend(loc=0, fontsize=15)
             plt.title(str(num_NN)+" split NN", fontsize=30)
             plt.tight_layout()
-            plt.savefig("plots/shared/throughput/throughput-"+str(num_NN)+"-NN.pdf")
+            plt.savefig(plot_dir + "/throughput-"+str(num_NN)+"-NN.pdf")
             plt.clf()
 
-def plot_latency_breakdown(processors_file, queue_file):
+def plot_latency_breakdown(processors_file, queue_file, plot_dir):
     layers = get_layers(processors_file)
     num_NNs = get_num_NNs(processors_file)
     data_processors = get_data(processors_file, "latency-e2e")
@@ -162,7 +162,7 @@ def plot_latency_breakdown(processors_file, queue_file):
             plt.bar(xs, g, width, bottom=b6,color = "lightpink", label="Task-Q-"+str(num_NN))
             plt.bar(xs, h, width, bottom=b7,color = "palevioletred", label="Task-P-"+str(num_NN))
 
-            plt.ylim(0,1500)
+            plt.ylim(0,2000)
             plt.xticks(xs, layers, rotation="vertical")
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
@@ -170,10 +170,10 @@ def plot_latency_breakdown(processors_file, queue_file):
             plt.ylabel("Queue + Processor Latency (ms)", fontsize=20)
             plt.title(str(num_NN) + " NNs", fontsize=30)
             plt.tight_layout()
-            plt.savefig("plots/shared/latency/breakdown-"+str(num_NN)+"-NN.pdf")
+            plt.savefig(plot_dir +"/breakdown-"+str(num_NN)+"-NN.pdf")
             plt.clf()
 
-def plot_e2e_latency(csv_file):
+def plot_e2e_latency(csv_file, plot_dir):
     layers = get_layers(csv_file)
     num_NNs = get_num_NNs(csv_file)
     data = get_data(csv_file, "latency-e2e")
@@ -193,7 +193,7 @@ def plot_e2e_latency(csv_file):
             plt.bar(xs, transformer_fps, width, color = "dodgerblue", label="Transfomer")
             plt.bar(xs, camera_fps, width, color = "seagreen", label="Camera")
 
-            plt.ylim(0,1500)
+            plt.ylim(0,2000)
             plt.xticks(xs, layers, rotation="vertical")
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
@@ -201,19 +201,20 @@ def plot_e2e_latency(csv_file):
             plt.ylabel("E2E Latency (ms)", fontsize=28)
             plt.title(str(num_NN) + " NNs", fontsize=30)
             plt.tight_layout()
-            plt.savefig("plots/shared/latency/e2e-"+str(num_NN)+"-NN.pdf")
+            plt.savefig(plot_dir + "/e2e-"+str(num_NN)+"-NN.pdf")
             plt.clf()
 
 if __name__ == "__main__":
     cmd = sys.argv[1]
-    csv_file = sys.argv[2]
+    plot_dir = sys.argv[2]
+    csv_file = sys.argv[3]
     if cmd == "throughput":
-        plot_throughput(csv_file)
+        plot_throughput(csv_file, plot_dir)
     elif cmd == "latency-e2e":
-        plot_e2e_latency(csv_file)
+        plot_e2e_latency(csv_file, plot_dir)
     elif cmd == "latency-breakdown":
-        queue_file = sys.argv[3]
-        plot_latency_breakdown(csv_file, queue_file)
+        queue_file = sys.argv[4]
+        plot_latency_breakdown(csv_file, queue_file, plot_dir)
     else:
         print "cmd must be in {throughput, latency-e2e, latency-breakdown}"
 
