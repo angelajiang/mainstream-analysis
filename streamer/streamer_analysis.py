@@ -125,10 +125,43 @@ def plot_throughput(csv_file, plot_dir):
             plt.savefig(plot_dir + "/throughput-"+str(num_NN)+"-NN.pdf")
             plt.clf()
 
+def plot_processor_latency(processors_file, plot_dir):
+    layers = get_layers(processors_file)
+    num_NNs = get_num_NNs(processors_file)
+    data_processors = get_data(processors_file, "latency-processors")
+    width = 0.4
+    for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
+        for num_NN in num_NNs:
+            xs = range(len(layers))
+
+            a = [data_processors[num_NN][layer]["camera"] for layer in layers]
+            b = [data_processors[num_NN][layer]["transformer"] for layer in layers]
+            c = [data_processors[num_NN][layer]["base"] for layer in layers]
+            d  = [data_processors[num_NN][layer]["task"] for layer in layers]
+            b1 = [a[j] for j in range(len(a))]
+            b2 = [a[j] +b[j] for j in range(len(a))]
+            b3 = [a[j] +b[j] + c[j] for j in range(len(a))]
+            plt.bar(xs, a, width, color = "seagreen", label="Camera")
+            plt.bar(xs, b, width, bottom=b1, color = "dodgerblue", label="Transfomer")
+            plt.bar(xs, c, width, bottom=b2, color = "darkorchid", label="Base")
+            plt.bar(xs, d, width, bottom=b3, color = "palevioletred", label="Task")
+
+            plt.ylim(0,4000)
+            plt.xticks(xs, layers, rotation="vertical")
+            plt.tick_params(axis='y', which='major', labelsize=28)
+            plt.tick_params(axis='y', which='minor', labelsize=20)
+            plt.legend(loc=0, fontsize=15, ncol=2)
+            plt.ylabel("Processor Latency (ms)", fontsize=20)
+            plt.title(str(num_NN) + " NNs", fontsize=30)
+            plt.tight_layout()
+            plt.savefig(plot_dir +"/processors-"+str(num_NN)+"-NN.pdf")
+            plt.clf()
+
+
 def plot_latency_breakdown(processors_file, queue_file, plot_dir):
     layers = get_layers(processors_file)
     num_NNs = get_num_NNs(processors_file)
-    data_processors = get_data(processors_file, "latency-e2e")
+    data_processors = get_data(processors_file, "latency-breakdown")
     data_queue = get_data(queue_file, "latency-breakdown")
 
     width = 0.4
@@ -162,7 +195,7 @@ def plot_latency_breakdown(processors_file, queue_file, plot_dir):
             plt.bar(xs, g, width, bottom=b6,color = "lightpink", label="Task-Q-"+str(num_NN))
             plt.bar(xs, h, width, bottom=b7,color = "palevioletred", label="Task-P-"+str(num_NN))
 
-            plt.ylim(0,2000)
+            plt.ylim(0,4000)
             plt.xticks(xs, layers, rotation="vertical")
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
@@ -193,7 +226,7 @@ def plot_e2e_latency(csv_file, plot_dir):
             plt.bar(xs, transformer_fps, width, color = "dodgerblue", label="Transfomer")
             plt.bar(xs, camera_fps, width, color = "seagreen", label="Camera")
 
-            plt.ylim(0,2000)
+            plt.ylim(0,4000)
             plt.xticks(xs, layers, rotation="vertical")
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
@@ -215,6 +248,8 @@ if __name__ == "__main__":
     elif cmd == "latency-breakdown":
         queue_file = sys.argv[4]
         plot_latency_breakdown(csv_file, queue_file, plot_dir)
+    elif cmd == "latency-processors":
+        plot_processor_latency(csv_file, plot_dir)
     else:
         print "cmd must be in {throughput, latency-e2e, latency-breakdown}"
 
