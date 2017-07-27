@@ -1,15 +1,14 @@
 import pprint as pp
 import sys
+sys.path.append('include/')
 import matplotlib
 import numpy as np
+
+import layers_info
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
-
-# CSV file needs to be of format
-# layer1,camera_fps,transformer_fps,base_fps,task_fps
-# layer2,camera_fps,transformer_fps,base_fps,task_fps
 
 def op_to_layer(op_full):
     tensor_name = (op_full.split(":"))[0]
@@ -57,65 +56,65 @@ def get_latency_data(csv_file):
             data[num_NN][layer]["total"] = base + task
     return data
 
-def get_accuracy_data(csv_file):
+def get_accuracy_data(architecture, csv_file):
+    if architecture == "inceptionv3":
+        layer_names = layers_info.InceptionV3_Layer_Names
+    elif architecture == "resnet50":
+        layer_names = layers_info.ResNet50_Layer_Names
+
     data = {}
     with open(csv_file) as f:
         for line in f:
             vals = line.split(',')
-            op_full = vals[1]
-            layer = op_to_layer(op_full)
-            acc = float(vals[2])
+            frozen_index = int(vals[0])
+            acc = float(vals[1])
+            layer = layer_names[frozen_index]
             data[layer] = acc
     return data
 
-def plot_accuracy_vs_speedup(latency_file, accuracy_file, plot_dir):
+def plot_accuracy_vs_speedup(architecture, latency_file, accuracy_file, plot_dir):
     layers = get_layers(latency_file, 0)
-    layers2 = get_layers(accuracy_file, 1)
-
-    assert layers == layers2
 
     num_NNs = get_num_NNs(latency_file)
     latency_data = get_latency_data(latency_file)
-    acc_data = get_accuracy_data(accuracy_file)
-    width = 0.4
+    acc_data = get_accuracy_data(architecture, accuracy_file)
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN in num_NNs:
-            xs = range(len(layers))
 
-            speeds  = [latency_data[num_NN][layer]["total"] for layer in layers]
-            accuracies  = [acc_data[layer] for layer in layers]
+            xs  = [latency_data[num_NN][layer]["total"] for layer in layers]
+            ys  = [acc_data[layer] for layer in layers]
 
-            fig, ax = plt.subplots()
-            ax.scatter(speeds, accuracies)
-            for i, label in enumerate(layers):
-                ax.annotate(label, (speeds[i], accuracies[i]), rotation=270)
-            #ax.set_yscale('log')
-            ax.set_title(str(num_NN) + " NNs", fontsize=30)
-            ax.set_xlabel("Speed (ms)", fontsize=20)
-            ax.set_ylabel("Accuracy", fontsize=20)
-            ax.set_xlim([150, 375])
-            ax.set_ylim([.2, .9])
+            plt.scatter(xs, ys, s=30, color="darkorchid", edgecolor='black', linewidth='0.5')
 
-            [tick.label.set_fontsize(20) for tick in ax.yaxis.get_major_ticks()]
-            [tick.label.set_fontsize(20) for tick in ax.xaxis.get_major_ticks()]
-
-
-            '''
-            plt.xticks(xs, layers, rotation="vertical")
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
-            plt.legend(loc=0, fontsize=15, ncol=2)
-            plt.ylabel("Processor Latency (ms)", fontsize=20)
-            plt.title(str(num_NN) + " NNs", fontsize=30)
-            '''
+            plt.tick_params(axis='x', which='major', labelsize=28)
+            plt.tick_params(axis='x', which='minor', labelsize=20)
+
+            if num_NN  > 3:
+                for label, x, y in zip(layers, xs, ys):
+                    plt.annotate(
+                        label,
+                        fontsize=8,
+                        xy=(x, y),
+                        #arrowprops=dict(arrowstyle = '->', connectionstyle='arc3,rad=0'),
+                        rotation=45)
+
+            plt.xlim(150, 375)
+            plt.ylim(.2, 1)
+
+            plt.xlabel("Latency (ms)", fontsize=20)
+            plt.ylabel("Top-1 Accuracy", fontsize=20)
+            plt.title(str(num_NN) + " apps", fontsize=30)
             plt.tight_layout()
             plt.savefig(plot_dir +"/acc-speed-"+str(num_NN)+"-NN.pdf")
             plt.clf()
 
 
 if __name__ == "__main__":
-    latency_file = sys.argv[1]
-    accuracy_file = sys.argv[2]
-    plot_dir = sys.argv[3]
-    plot_accuracy_vs_speedup(latency_file, accuracy_file, plot_dir)
+    architecture = sys.argv[1]
+    latency_file = sys.argv[2]
+    accuracy_file = sys.argv[3]
+    plot_dir = sys.argv[4]
+    plot_accuracy_vs_speedup(architecture, latency_file, accuracy_file, plot_dir)
 
