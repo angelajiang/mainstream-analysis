@@ -3,6 +3,7 @@ import sys
 sys.path.append('include/')
 import matplotlib
 import numpy as np
+from itertools import cycle
 
 import layers_info
 
@@ -57,9 +58,9 @@ def get_latency_data(csv_file):
     return data
 
 def get_accuracy_data(architecture, csv_file):
-    if architecture == "inceptionv3":
+    if architecture == "iv3":
         layer_names = layers_info.InceptionV3_Layer_Names
-    elif architecture == "resnet50":
+    elif architecture == "r50":
         layer_names = layers_info.ResNet50_Layer_Names
 
     data = {}
@@ -72,49 +73,57 @@ def get_accuracy_data(architecture, csv_file):
             data[layer] = acc
     return data
 
-def plot_accuracy_vs_speedup(arch, latency_file, accuracy_file, plot_dir):
-    layers = get_layers(latency_file, 0)
-
-    num_NNs = get_num_NNs(latency_file)
-    latency_data = get_latency_data(latency_file)
-    acc_data = get_accuracy_data(arch, accuracy_file)
+def plot_accuracy_vs_ms(arch, latency_files, accuracy_files, labels, plot_dir):
+    num_NNs = get_num_NNs(latency_files[0])
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN in num_NNs:
+            cycol = cycle('rcmkbg').next
+            for arch, latency_file, accuracy_file, label in \
+                    zip(arches, latency_files, accuracy_files, labels):
+                layers = get_layers(latency_file, 0)
 
-            xs  = [latency_data[num_NN][layer]["total"] for layer in layers]
-            ys  = [acc_data[layer] for layer in layers]
+                latency_data = get_latency_data(latency_file)
+                acc_data = get_accuracy_data(arch, accuracy_file)
 
-            plt.scatter(xs, ys, s=30, color="darkorchid", edgecolor='black', linewidth='0.5')
+                xs  = [latency_data[num_NN][layer]["total"] for layer in layers]
+                ys  = [acc_data[layer] for layer in layers]
 
-            plt.tick_params(axis='y', which='major', labelsize=28)
-            plt.tick_params(axis='y', which='minor', labelsize=20)
-            plt.tick_params(axis='x', which='major', labelsize=28)
-            plt.tick_params(axis='x', which='minor', labelsize=20)
+                plt.scatter(xs, ys, s=50, color=cycol(), edgecolor='black', label=label)
 
-            if num_NN  > 3:
-                for label, x, y in zip(layers, xs, ys):
-                    plt.annotate(
-                        label,
-                        fontsize=8,
-                        xy=(x, y),
-                        #arrowprops=dict(arrowstyle = '->', connectionstyle='arc3,rad=0'),
-                        rotation=45)
+                plt.tick_params(axis='y', which='major', labelsize=28)
+                plt.tick_params(axis='y', which='minor', labelsize=20)
+                plt.tick_params(axis='x', which='major', labelsize=28)
+                plt.tick_params(axis='x', which='minor', labelsize=20)
 
-            plt.xlim(150, 375)
-            plt.ylim(.2, 1)
+                plt.xlim(150, 375)
+                plt.ylim(.2, 1)
 
-            plt.xlabel("Latency (ms)", fontsize=20)
-            plt.ylabel("Top-1 Accuracy", fontsize=20)
-            plt.title(str(num_NN) + " apps", fontsize=30)
-            plt.tight_layout()
-            plt.savefig(plot_dir +"/acc-speed-"+str(num_NN)+"-NN.pdf")
+                plt.xlabel("Latency (ms)", fontsize=20)
+                plt.ylabel("Top-1 Accuracy", fontsize=20)
+                plt.legend(loc=4, fontsize=15)
+                plt.title(str(num_NN) + " apps", fontsize=30)
+                plt.tight_layout()
+                plt.savefig(plot_dir +"/acc-ms-"+str(num_NN)+"-NN.pdf")
             plt.clf()
 
 
 if __name__ == "__main__":
-    arch = sys.argv[1]
-    latency_file = sys.argv[2]
-    accuracy_file = sys.argv[3]
-    plot_dir = sys.argv[4]
-    plot_accuracy_vs_speedup(arch, latency_file, accuracy_file, plot_dir)
+
+    arch1 = "iv3"
+    arch2 = "r50"
+
+    latency_file1 = "output/streamer/latency/latency-processors-iv3.csv"
+    latency_file2 = "output/streamer/latency/latency-processors-r50.csv"
+
+    accuracy_file1 = "output/mainstream/accuracy/flowers/inception/flowers-40-0.0001-dropout"
+    accuracy_file2 = "output/mainstream/accuracy/flowers/resnet/flowers-40-0.0001-chokepoints"
+
+    arches = [arch1, arch2]
+    latency_files = [latency_file1, latency_file2]
+    accuracy_files = [accuracy_file1, accuracy_file2]
+    labels = ["InceptionV3", "ResNet50"]
+
+    plot_dir = "plots/tradeoffs/flowers"
+
+    plot_accuracy_vs_ms(arches, latency_files, accuracy_files, labels, plot_dir)
 
