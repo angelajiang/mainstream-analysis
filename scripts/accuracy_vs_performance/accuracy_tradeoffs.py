@@ -72,13 +72,13 @@ def get_accuracy_data(architecture, csv_file):
             data[layer] = acc
     return data
 
-def plot_accuracy_vs_speedup(architecture, latency_file, accuracy_file, plot_dir):
+def plot_accuracy_vs_speedup(arch, latency_file, accuracy_file, plot_dir):
     layers = get_layers(latency_file, 0)
 
     num_NNs = get_num_NNs(latency_file)
     latency_data = get_latency_data(latency_file)
-    acc_data = get_accuracy_data(architecture, accuracy_file)
-    for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
+    acc_data = get_accuracy_data(arch, accuracy_file)
+    for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN in num_NNs:
 
             xs  = [latency_data[num_NN][layer]["total"] for layer in layers]
@@ -112,9 +112,9 @@ def plot_accuracy_vs_speedup(architecture, latency_file, accuracy_file, plot_dir
 
 
 if __name__ == "__main__":
-    architecture = sys.argv[1]
+    arch = sys.argv[1]
     latency_file = sys.argv[2]
     accuracy_file = sys.argv[3]
     plot_dir = sys.argv[4]
-    plot_accuracy_vs_speedup(architecture, latency_file, accuracy_file, plot_dir)
+    plot_accuracy_vs_speedup(arch, latency_file, accuracy_file, plot_dir)
 
