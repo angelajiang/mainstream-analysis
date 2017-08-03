@@ -51,7 +51,7 @@ def get_data(csv_file, experiment_name):
             if num_NN not in data.keys():
                 data[num_NN] = {}
             if layer not in data[num_NN].keys():
-                data[num_NN][layer] = {}
+                data[num_NN][layer] = {"base": [], "task":[]}
 
             if experiment_name == "throughput":
                 if len(tasks) == 0:
@@ -59,23 +59,25 @@ def get_data(csv_file, experiment_name):
                 if base == 0:
                     base = task_avg
 
-            data[num_NN][layer]["base"] = base
-            data[num_NN][layer]["task"] = task_avg
+            data[num_NN][layer]["base"].append(base)
+            data[num_NN][layer]["task"].append(task_avg)
     return data
 
 def plot_throughput(csv_file, plot_dir):
-    layers = get_layers(csv_file)
     num_NNs = get_num_NNs(csv_file)
     data = get_data(csv_file, "throughput")
+    layers = get_layers(csv_file)
 
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN in num_NNs:
             xs = range(len(layers))
 
-            base_fps = [data[num_NN][layer]["base"] for layer in layers]
-            task_fps = [data[num_NN][layer]["task"] for layer in layers]
-            plt.plot(xs, base_fps, label="Base-"+str(num_NN))
-            plt.plot(xs, task_fps, label="Task-"+str(num_NN))
+            base_fps = [np.average(data[num_NN][layer]["base"]) for layer in layers]
+            base_errors = [np.std(data[num_NN][layer]["base"]) for layer in layers]
+            task_fps = [np.average(data[num_NN][layer]["task"]) for layer in layers]
+            task_errors = [np.std(data[num_NN][layer]["task"]) for layer in layers]
+            plt.errorbar(xs, base_fps, yerr=base_errors, label="Base-"+str(num_NN))
+            plt.errorbar(xs, task_fps, yerr=task_errors, label="Task-"+str(num_NN))
 
             # Format plot
             plt.xticks(xs, layers, rotation="vertical")
@@ -85,23 +87,25 @@ def plot_throughput(csv_file, plot_dir):
             plt.legend(loc=0, fontsize=15)
             plt.title(str(num_NN)+" split NN", fontsize=30)
             plt.tight_layout()
-            plt.savefig(plot_dir + "/layer-sweep-throughput-"+str(num_NN)+"-NN.pdf")
+            plot_file = plot_dir + "/layer-sweep-throughput-"+str(num_NN)+"-NN.pdf"
+            plt.savefig(plot_file)
             plt.clf()
+    print plot_file
 
 def plot_processor_latency(processors_file, plot_dir):
     layers = get_layers(processors_file)
     num_NNs = get_num_NNs(processors_file)
-    data_processors = get_data(processors_file, "latency-processors")
+    data = get_data(processors_file, "latency-processors")
     width = 0.4
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN in num_NNs:
             xs = range(len(layers))
 
-            a = [data_processors[num_NN][layer]["base"] for layer in layers]
-            b  = [data_processors[num_NN][layer]["task"] for layer in layers]
-            b1 = [a[j] for j in range(len(a))]
-            plt.bar(xs, a, width, color = "seagreen", label="Base")
-            plt.bar(xs, b, width, bottom=b1, color = "dodgerblue", label="Task")
+            base_ms = [np.average(data[num_NN][layer]["base"]) for layer in layers]
+            task_ms = [np.average(data[num_NN][layer]["task"]) for layer in layers]
+
+            plt.bar(xs, base_ms, width, color = "seagreen", label="Base")
+            plt.bar(xs, task_ms, width, bottom=base_ms, color = "dodgerblue", label="Task")
 
             plt.ylim(0,750)
             plt.xticks(xs, layers, rotation="vertical")
@@ -113,8 +117,8 @@ def plot_processor_latency(processors_file, plot_dir):
             plt.tight_layout()
             plot_file = plot_dir + "/layer-sweep-latency-" + str(num_NN) + "-NN.pdf"
             plt.savefig(plot_file)
-            print plot_file
             plt.clf()
+    print plot_file
 
 
 if __name__ == "__main__":
