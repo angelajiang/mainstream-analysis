@@ -35,7 +35,7 @@ def get_accuracy_data(csv_file):
 
 def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
-        cycol = cycle('rcmkbg').next
+        cycol = cycle('rcgkmbr').next
         for accuracy_file, label in \
                 zip(accuracy_files, labels):
 
@@ -52,9 +52,9 @@ def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
             plt.xlim(0, 350)
             plt.ylim(.2, 1)
 
-            plt.xlabel("Frozen through layer", fontsize=20)
+            plt.xlabel("Number of frozen layers", fontsize=20)
             plt.ylabel("Top-1 Accuracy", fontsize=20)
-            plt.legend(loc=3, fontsize=15)
+            plt.legend(loc=4, fontsize=15)
             plt.gca().invert_xaxis()
             plt.tight_layout()
 

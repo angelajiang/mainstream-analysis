@@ -90,12 +90,12 @@ def plot_accuracy_vs_ms(arch, latency_files, accuracy_files, labels, plot_dir):
 
                 plt.scatter(xs, ys, s=50, color=cycol(), edgecolor='black', label=label)
 
-                plt.tick_params(axis='y', which='major', labelsize=28)
+                plt.tick_params(axis='y', which='major', labelsize=24)
                 plt.tick_params(axis='y', which='minor', labelsize=20)
-                plt.tick_params(axis='x', which='major', labelsize=28)
+                plt.tick_params(axis='x', which='major', labelsize=24)
                 plt.tick_params(axis='x', which='minor', labelsize=20)
 
-                plt.xlim(150, 375)
+                plt.xlim(150, 600)
                 plt.ylim(.2, 1)
 
                 plt.xlabel("Latency (ms)", fontsize=20)
