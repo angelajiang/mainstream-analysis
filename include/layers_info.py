@@ -20,6 +20,7 @@ ResNet50_Layer_Names = {0: "input_1",
                         163: "activation_46",
                         173: "activation_49",
                         177: "dense_2"}
+
 InceptionV3_Layer_Names = {0: "input_1",
                            4: "conv2d_1",
                            7: "conv2d_2",

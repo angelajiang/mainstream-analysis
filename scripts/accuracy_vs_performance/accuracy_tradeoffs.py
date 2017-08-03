@@ -62,6 +62,8 @@ def get_accuracy_data(architecture, csv_file):
         layer_names = layers_info.InceptionV3_Layer_Names
     elif architecture == "r50":
         layer_names = layers_info.ResNet50_Layer_Names
+    elif architecture == "mnets":
+        layer_names = layers_info.MobileNets_Layer_Names
 
     data = {}
     with open(csv_file) as f:
@@ -95,7 +97,7 @@ def plot_accuracy_vs_ms(arch, latency_files, accuracy_files, labels, plot_dir):
                 plt.tick_params(axis='x', which='major', labelsize=24)
                 plt.tick_params(axis='x', which='minor', labelsize=20)
 
-                plt.xlim(150, 600)
+                plt.xlim(0, 600)
                 plt.ylim(.2, 1)
 
                 plt.xlabel("Latency (ms)", fontsize=20)
@@ -111,17 +113,20 @@ if __name__ == "__main__":
 
     arch1 = "iv3"
     arch2 = "r50"
+    arch3 = "mnets"
 
-    latency_file1 = "output/streamer/latency/latency-processors-iv3.csv"
-    latency_file2 = "output/streamer/latency/latency-processors-r50.csv"
+    latency_file1 = "output/streamer/latency/inception/basic/latency-processors-iv3.csv"
+    latency_file2 = "output/streamer/latency/resnet/basic/latency-processors-r50.csv"
+    latency_file3 = "output/streamer/latency/mobilenets/basic/latency.csv"
 
     accuracy_file1 = "output/mainstream/accuracy/flowers/inception/flowers-40-0.0001-dropout"
     accuracy_file2 = "output/mainstream/accuracy/flowers/resnet/flowers-40-0.0001-chokepoints"
+    accuracy_file3 = "output/mainstream/accuracy/flowers/mobilenets/flowers-40-0.0001"
 
-    arches = [arch1, arch2]
-    latency_files = [latency_file1, latency_file2]
-    accuracy_files = [accuracy_file1, accuracy_file2]
-    labels = ["InceptionV3", "ResNet50"]
+    arches = [arch1, arch2, arch3]
+    latency_files = [latency_file1, latency_file2, latency_file3]
+    accuracy_files = [accuracy_file1, accuracy_file2, accuracy_file3]
+    labels = ["InceptionV3", "ResNet50", "MobileNets"]
 
     plot_dir = "plots/tradeoffs/flowers"
 
