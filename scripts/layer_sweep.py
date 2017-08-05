@@ -87,7 +87,8 @@ def get_data(csv_file, experiment_name):
     return data
 
 def plot_throughput(csv_file, plot_dir):
-    layers = [op_to_layer(l) for l in LAYERS]
+    #layers = [op_to_layer(l) for l in LAYERS]
+    layers = get_layers(csv_file)
     num_NNs = get_num_NNs(csv_file)
     data = get_data(csv_file, "throughput")
 
@@ -105,6 +106,7 @@ def plot_throughput(csv_file, plot_dir):
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
             plt.ylabel("Throughput (FPS)", fontsize=28)
+            plt.ylim(5,16)
             plt.legend(loc=0, fontsize=15)
             plt.title(str(num_NN)+" split NN", fontsize=30)
             plt.tight_layout()
@@ -114,19 +116,18 @@ def plot_throughput(csv_file, plot_dir):
 def plot_processor_latency(processors_file, plot_dir):
     layers = get_layers(processors_file)
     num_NNs = get_num_NNs(processors_file)
-    data_processors = get_data(processors_file, "latency-processors")
+    data = get_data(processors_file, "latency-processors")
     width = 0.4
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN in num_NNs:
             xs = range(len(layers))
 
-            a = [data_processors[num_NN][layer]["base"] for layer in layers]
-            b  = [data_processors[num_NN][layer]["task"] for layer in layers]
-            b1 = [a[j] for j in range(len(a))]
-            plt.bar(xs, a, width, color = "seagreen", label="Base")
-            plt.bar(xs, b, width, bottom=b1, color = "dodgerblue", label="Task")
+            base_fps = [np.average(data[num_NN][layer]["base"]) for layer in layers]
+            task_fps = [np.average(data[num_NN][layer]["task"]) for layer in layers]
+            plt.bar(xs, base_fps, width, color = "seagreen", label="Base NNE")
+            plt.bar(xs, task_fps, width, bottom=base_fps, color = "dodgerblue", label="Task NNE")
 
-            plt.ylim(0,750)
+            plt.ylim(0,400)
             plt.xticks(xs, layers, rotation="vertical")
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
@@ -136,7 +137,6 @@ def plot_processor_latency(processors_file, plot_dir):
             plt.tight_layout()
             plot_file = plot_dir + "/layer-sweep-latency-" + str(num_NN) + "-NN.pdf"
             plt.savefig(plot_file)
-            print plot_file
             plt.clf()
 
 
