@@ -86,15 +86,54 @@ def get_data(csv_file, experiment_name):
             data[num_NN][layer]["task"].append(task_avg)
     return data
 
+def plot_max_throughput(csv_file, plot_file):
+    layers = get_layers(csv_file)
+    num_NNs = get_num_NNs(csv_file)
+    data = get_data(csv_file, "throughput")
+
+    task_fps = [np.average(data[num_NN][layers[0]]["task"]) for num_NN in num_NNs]
+    plt.plot(num_NNs, task_fps, label=str(num_NN)+" apps", lw=2)
+
+    # Format plot
+    plt.tick_params(axis='x', which='major', labelsize=28)
+    plt.tick_params(axis='x', which='minor', labelsize=20)
+    plt.tick_params(axis='y', which='major', labelsize=28)
+    plt.tick_params(axis='y', which='minor', labelsize=20)
+    plt.xlabel("Number of applications", fontsize=28)
+    plt.ylabel("Throughput (FPS)", fontsize=28)
+    plt.ylim(0,20)
+    plt.tight_layout()
+    plt.savefig(plot_file)
+    print plot_file
+    plt.clf()
+
 def plot_throughput(csv_file, plot_dir):
     #layers = [op_to_layer(l) for l in LAYERS]
     layers = get_layers(csv_file)
     num_NNs = get_num_NNs(csv_file)
     data = get_data(csv_file, "throughput")
 
+    xs = range(len(layers))
+
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN in num_NNs:
-            xs = range(len(layers))
+
+            task_fps = [np.average(data[num_NN][layer]["task"]) for layer in layers]
+            plt.plot(xs, task_fps, label=str(num_NN)+" apps", lw=2)
+
+        # Format plot
+        plt.xticks(xs, layers, rotation="vertical")
+        plt.tick_params(axis='y', which='major', labelsize=28)
+        plt.tick_params(axis='y', which='minor', labelsize=20)
+        plt.ylabel("Throughput (FPS)", fontsize=28)
+        plt.ylim(0,20)
+        plt.legend(loc=0, fontsize=15)
+        plt.tight_layout()
+        plt.savefig(plot_dir + "/task-throughput.pdf")
+        plt.clf()
+
+    for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
+        for num_NN in num_NNs:
 
             base_fps = [np.average(data[num_NN][layer]["base"]) for layer in layers]
             task_fps = [np.average(data[num_NN][layer]["task"]) for layer in layers]
@@ -106,11 +145,11 @@ def plot_throughput(csv_file, plot_dir):
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
             plt.ylabel("Throughput (FPS)", fontsize=28)
-            plt.ylim(5,16)
+            plt.ylim(0,20)
             plt.legend(loc=0, fontsize=15)
             plt.title(str(num_NN)+" split NN", fontsize=30)
             plt.tight_layout()
-            plt.savefig(plot_dir + "/layer-sweep-throughput-"+str(num_NN)+"-NN.pdf")
+            plt.savefig(plot_dir + "/throughput-"+str(num_NN)+"-NN.pdf")
             plt.clf()
 
 def plot_processor_latency(processors_file, plot_dir):
@@ -135,7 +174,7 @@ def plot_processor_latency(processors_file, plot_dir):
             plt.ylabel("Processor Latency (ms)", fontsize=20)
             plt.title(str(num_NN) + " NNs", fontsize=30)
             plt.tight_layout()
-            plot_file = plot_dir + "/layer-sweep-latency-" + str(num_NN) + "-NN.pdf"
+            plot_file = plot_dir + "/latency-" + str(num_NN) + "-NN.pdf"
             plt.savefig(plot_file)
             plt.clf()
 
