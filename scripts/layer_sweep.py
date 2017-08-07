@@ -31,8 +31,8 @@ LAYERS = ["input_1",
           "mixed7/concat",
           "mixed8/concat",
           "mixed9/concat",
-          "mixed10/concat",
-          "dense_2/Softmax:0"]
+          "mixed10/concat"]
+          #"dense_2/Softmax:0"]
 
 def op_to_layer(op_full):
     tensor_name = (op_full.split(":"))[0]
@@ -108,8 +108,7 @@ def plot_max_throughput(csv_file, plot_file):
     plt.clf()
 
 def plot_throughput(csv_file, plot_dir):
-    #layers = [op_to_layer(l) for l in LAYERS]
-    layers = get_layers(csv_file)
+    layers = [op_to_layer(l) for l in LAYERS]
     num_NNs = get_num_NNs(csv_file)
     data = get_data(csv_file, "throughput")
 
