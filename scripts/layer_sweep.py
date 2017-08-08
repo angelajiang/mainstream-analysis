@@ -90,9 +90,11 @@ def plot_max_throughput(csv_file, plot_file):
     layers = get_layers(csv_file)
     num_NNs = get_num_NNs(csv_file)
     data = get_data(csv_file, "throughput")
+    labels = ["No sharing", "Max sharing"]
 
-    task_fps = [np.average(data[num_NN][layers[0]]["task"]) for num_NN in num_NNs]
-    plt.plot(num_NNs, task_fps, label=str(num_NN)+" apps", lw=2)
+    for layer, label in zip(layers, labels):
+        task_fps = [np.average(data[num_NN][layer]["task"]) for num_NN in num_NNs]
+        plt.plot(num_NNs, task_fps, label=label, lw=2)
 
     # Format plot
     plt.tick_params(axis='x', which='major', labelsize=28)
@@ -102,6 +104,7 @@ def plot_max_throughput(csv_file, plot_file):
     plt.xlabel("Number of applications", fontsize=28)
     plt.ylabel("Throughput (FPS)", fontsize=28)
     plt.ylim(0,20)
+    plt.legend(loc=0, fontsize=15)
     plt.tight_layout()
     plt.savefig(plot_file)
     print plot_file
