@@ -1,3 +1,4 @@
 streamer/plots
 mainstream/plots
 *.pyc
+*.DS_Store
