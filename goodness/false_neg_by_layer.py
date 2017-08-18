@@ -1,43 +1,20 @@
 import pprint as pp
 import math
 import sys
-sys.path.append('include/')
 import matplotlib
 import numpy as np
+import random
 from itertools import cycle
 import matplotlib.pyplot as plt
 
+sys.path.append('include/')
 import layers_info
+sys.path.append('scripts/util/')
+import preprocess
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
-
-def op_to_layer(op_full):
-    tensor_name = (op_full.split(":"))[0]
-    layer = tensor_name.split("/")[0]
-    return layer
-
-def get_layers(csv_file, layers_index):
-    layers = []
-    with open(csv_file) as f:
-        for line in f:
-            vals = line.split(',')
-            op_full = vals[layers_index]
-            layer = op_to_layer(op_full)
-            if layer not in layers:
-                layers.append(layer)
-    return layers
-
-def get_num_NNs(csv_file):
-    num_NNs = []
-    with open(csv_file) as f:
-        for line in f:
-            vals = line.split(',')
-            num_NN = int(vals[1])
-            if num_NN not in num_NNs:
-                num_NNs.append(num_NN)
-    return num_NNs
 
 def get_throughput_data(csv_file):
     data = {}
@@ -45,7 +22,7 @@ def get_throughput_data(csv_file):
         for line in f:
             vals = line.split(',')
             op_full = vals[0]
-            layer = op_to_layer(op_full)
+            layer = preprocess.op_to_layer(op_full)
             num_NN = int(vals[1])
             base = float(vals[2])
             tasks = [float(t) for t in vals[3:]]
@@ -81,34 +58,36 @@ def get_accuracy_data(architecture, csv_file):
             data[layer] = acc
     return data
 
-def get_probability_miss(p_identified, min_event_length_ms, max_fps, observed_fps):
+def get_probability_miss(p_identified_list, min_event_length_ms, max_fps, observed_fps):
     stride = max_fps / float(observed_fps)
     d = min_event_length_ms / float(1000) * max_fps
-    if d < 1:
-        print "Event of length", min_event_length_ms, "ms cannot be detected at", max_fps, "FPS"
-        p_miss = 1
-    elif d < stride:
-        p_encountered = d / stride
-        p_hit = p_encountered * p_identified
-        p_miss = 1 - p_hit
-    else:
-        mod = (d % stride)
-        p1 = (d - (mod)) / d
-        r1 = math.floor(d / stride)
-        p2 = mod / d
-        r2 = math.ceil(d / stride)
-        p_not_identified = 1 - p_identified
-        p_miss = p1 * math.pow(p_not_identified, r1) + \
-                    p2 * math.pow(p_not_identified, r2)
-    print p_miss
-    return p_miss
+    p_misses = []
+    for p_identified in p_identified_list:
+        if d < 1:
+            print "Event of length", min_event_length_ms, "ms cannot be detected at", max_fps, "FPS"
+            p_miss = 1
+        elif d < stride:
+            p_encountered = d / stride
+            p_hit = p_encountered * p_identified
+            p_miss = 1 - p_hit
+        else:
+            mod = (d % stride)
+            p1 = (d - (mod)) / d
+            r1 = math.floor(d / stride)
+            p2 = mod / d
+            r2 = math.ceil(d / stride)
+            p_not_identified = 1 - p_identified
+            p_miss = p1 * math.pow(p_not_identified, r1) + \
+                        p2 * math.pow(p_not_identified, r2)
+        p_misses.append(p_miss)
+    return np.average(p_misses)
 
-def plot_false_negative_rate(arch, latency_file, accuracy_file, min_event_length_ms, max_fps, plot_dir):
-    num_NNs = get_num_NNs(latency_file)
+def plot_false_negative_rate(arch, latency_file, accuracy_file, sigma, num_events, min_event_length_ms, max_fps, plot_dir):
+    num_NNs = preprocess.get_num_NNs(latency_file)
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
         cycol = cycle('rcmkbgy').next
-        for num_NN in num_NNs:
-            layers = get_layers(latency_file, 0)
+        for num_NN in num_NNs[4:8]:
+            layers = preprocess.get_layers(latency_file, 0)
 
             throughput_data = get_throughput_data(latency_file)
             acc_data = get_accuracy_data(arch, accuracy_file)
@@ -119,7 +98,8 @@ def plot_false_negative_rate(arch, latency_file, accuracy_file, min_event_length
 
             ys = []
             for fps, acc in zip(throughputs, accuracies):
-                p_miss = get_probability_miss(acc, min_event_length_ms, max_fps, fps)
+                acc_dist = [random.gauss(acc, sigma) for i in range(num_events)]
+                p_miss = get_probability_miss(acc_dist, min_event_length_ms, max_fps, fps)
                 ys.append(p_miss)
 
             plt.scatter(xs, ys, s=20, color=cycol(), edgecolor='black', label=str(num_NN)+" apps")
@@ -133,7 +113,10 @@ def plot_false_negative_rate(arch, latency_file, accuracy_file, min_event_length
             plt.ylabel("False negative rate", fontsize=20)
             plt.legend(loc=0, fontsize=15)
             plt.tight_layout()
-        plt.savefig(plot_dir +"/prob-miss" + str(min_event_length_ms) + ".pdf")
+        plt.savefig(plot_dir +"/false-neg-" + \
+                                str(min_event_length_ms) + "ms-" + \
+                                str(sigma) + "sig-" + \
+                                str(max_fps) + "fps.pdf")
         plt.clf()
 
 if __name__ == "__main__":
@@ -144,6 +127,6 @@ if __name__ == "__main__":
 
     plot_dir = "plots/goodness/"
 
-    plot_false_negative_rate(arch1, latency_file1, accuracy_file1, 500, 30, plot_dir)
+    plot_false_negative_rate(arch1, latency_file1, accuracy_file1, .4, 10, 500, 30, plot_dir)
     #plot_false_negative_rate(arch1, latency_file1, accuracy_file1, 200, 5, plot_dir)
 
