@@ -3,6 +3,9 @@ import sys
 import matplotlib
 import numpy as np
 
+sys.path.append('scripts/util/')
+import preprocess
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
@@ -34,39 +37,13 @@ LAYERS = ["input_1",
           "mixed10/concat"]
           #"dense_2/Softmax:0"]
 
-def op_to_layer(op_full):
-    tensor_name = (op_full.split(":"))[0]
-    layer = tensor_name.split("/")[0]
-    return layer
-
-def get_layers(csv_file):
-    layers = []
-    with open(csv_file) as f:
-        for line in f:
-            vals = line.split(',')
-            op_full = vals[0]
-            layer = op_to_layer(op_full)
-            if layer not in layers:
-                layers.append(layer)
-    return layers
-
-def get_num_NNs(csv_file):
-    num_NNs = []
-    with open(csv_file) as f:
-        for line in f:
-            vals = line.split(',')
-            num_NN = int(vals[1])
-            if num_NN not in num_NNs:
-                num_NNs.append(num_NN)
-    return num_NNs
-
 def get_data(csv_file, experiment_name):
     data = {}
     with open(csv_file) as f:
         for line in f:
             vals = line.split(',')
             op_full = vals[0]
-            layer = op_to_layer(op_full)
+            layer = preprocess.op_to_layer(op_full)
             num_NN = int(vals[1])
             base = float(vals[2])
             tasks = [float(i) for i in vals[3:]]
@@ -88,7 +65,7 @@ def get_data(csv_file, experiment_name):
 
 def plot_max_throughput(csv_file, plot_file):
     layers = get_layers(csv_file)
-    num_NNs = get_num_NNs(csv_file)
+    num_NNs = preprocess.get_num_NNs(csv_file)
     data = get_data(csv_file, "throughput")
     labels = ["No sharing", "Max sharing"]
 
@@ -111,8 +88,8 @@ def plot_max_throughput(csv_file, plot_file):
     plt.clf()
 
 def plot_throughput(csv_file, plot_dir):
-    layers = [op_to_layer(l) for l in LAYERS]
-    num_NNs = get_num_NNs(csv_file)
+    layers = [preprocess.op_to_layer(l) for l in LAYERS]
+    num_NNs = preprocess.get_num_NNs(csv_file)
     data = get_data(csv_file, "throughput")
 
     xs = range(len(layers))
@@ -124,9 +101,10 @@ def plot_throughput(csv_file, plot_dir):
             plt.plot(xs, task_fps, label=str(num_NN)+" apps", lw=2)
 
         # Format plot
-        plt.xticks(xs, layers, rotation="vertical")
         plt.tick_params(axis='y', which='major', labelsize=28)
         plt.tick_params(axis='y', which='minor', labelsize=20)
+        plt.xlabel("More sharing ->", fontsize=28)
+        plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
         plt.ylabel("Throughput (FPS)", fontsize=28)
         plt.ylim(0,20)
         plt.legend(loc=0, fontsize=15)
@@ -143,7 +121,7 @@ def plot_throughput(csv_file, plot_dir):
             plt.plot(xs, task_fps, label="Task-"+str(num_NN))
 
             # Format plot
-            plt.xticks(xs, layers, rotation="vertical")
+            plt.xlabel("More sharing ->", fontsize=28)
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
             plt.ylabel("Throughput (FPS)", fontsize=28)
@@ -156,7 +134,7 @@ def plot_throughput(csv_file, plot_dir):
 
 def plot_processor_latency(processors_file, plot_dir):
     layers = get_layers(processors_file)
-    num_NNs = get_num_NNs(processors_file)
+    num_NNs = preprocess.get_num_NNs(processors_file)
     data = get_data(processors_file, "latency-processors")
     width = 0.4
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
@@ -168,8 +146,9 @@ def plot_processor_latency(processors_file, plot_dir):
             plt.bar(xs, base_fps, width, color = "seagreen", label="Base NNE")
             plt.bar(xs, task_fps, width, bottom=base_fps, color = "dodgerblue", label="Task NNE")
 
+            plt.xlabel("More sharing ->", fontsize=28)
+            plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
             plt.ylim(0,400)
-            plt.xticks(xs, layers, rotation="vertical")
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
             plt.legend(loc=0, fontsize=15, ncol=2)
@@ -182,13 +161,9 @@ def plot_processor_latency(processors_file, plot_dir):
 
 
 if __name__ == "__main__":
-    cmd = sys.argv[1]
-    plot_dir = sys.argv[2]
-    csv_file = sys.argv[3]
-    if cmd == "throughput":
-        plot_throughput(csv_file, plot_dir)
-    elif cmd == "latency":
-        plot_processor_latency(csv_file, plot_dir)
-    else:
-        print "cmd must be in {throughput, latency}"
+    plot_dir = "plots/performance/throughput/inception/flow_control"
+    csv_file = "output/streamer/throughput/inception/flow_control/multi-app"
+    plot_throughput(csv_file, plot_dir)
+    #plot_throughput(csv_file, plot_dir)
+    #plot_processor_latency(csv_file, plot_dir)
 
