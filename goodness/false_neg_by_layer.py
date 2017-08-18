@@ -104,21 +104,15 @@ def plot_false_negative_rate(arch, latency_file, accuracy_file, sigma, num_event
                 ys.append(p_miss)
 
             plt.scatter(xs, ys, s=50, marker=marker, color=cycol(), edgecolor='black', label=str(num_NN)+" apps")
-            #plt.xticks(xs, layers, rotation="vertical")
-            plt.xlabel("More sharing ->", fontsize=28)
-            plt.tick_params(axis='x',          # changes apply to the x-axis
-                            which='both',      # both major and minor ticks are affected
-                            bottom='off',      # ticks along the bottom edge are off
-                            top='off',         # ticks along the top edge are off
-                            labelbottom='off')
 
+            plt.xlabel("More sharing ->", fontsize=28)
+            plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
             plt.tick_params(axis='y', which='major', labelsize=24)
             plt.tick_params(axis='y', which='minor', labelsize=20)
-            plt.title("Sigma = " + str(sigma), fontsize=30)
-
             plt.ylim(0, 0.6)
-
             plt.ylabel("False negative rate", fontsize=28)
+
+            plt.title("Sigma = " + str(sigma), fontsize=30)
             plt.legend(loc=0, fontsize=15)
             plt.tight_layout()
 
