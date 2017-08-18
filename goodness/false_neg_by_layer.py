@@ -84,9 +84,10 @@ def get_probability_miss(p_identified_list, min_event_length_ms, max_fps, observ
 
 def plot_false_negative_rate(arch, latency_file, accuracy_file, sigma, num_events, min_event_length_ms, max_fps, plot_dir):
     num_NNs = preprocess.get_num_NNs(latency_file)
+    shapes = ["o", "h", "D", "x", "1", "*", "P", "8"]
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
         cycol = cycle('rcmkbgy').next
-        for num_NN in num_NNs[4:8]:
+        for num_NN, marker in zip(num_NNs[4:8], shapes):
             layers = preprocess.get_layers(latency_file, 0)
 
             throughput_data = get_throughput_data(latency_file)
@@ -102,17 +103,25 @@ def plot_false_negative_rate(arch, latency_file, accuracy_file, sigma, num_event
                 p_miss = get_probability_miss(acc_dist, min_event_length_ms, max_fps, fps)
                 ys.append(p_miss)
 
-            plt.scatter(xs, ys, s=20, color=cycol(), edgecolor='black', label=str(num_NN)+" apps")
-            plt.xticks(xs, layers, rotation="vertical")
+            plt.scatter(xs, ys, s=50, marker=marker, color=cycol(), edgecolor='black', label=str(num_NN)+" apps")
+            #plt.xticks(xs, layers, rotation="vertical")
+            plt.xlabel("More sharing ->", fontsize=28)
+            plt.tick_params(axis='x',          # changes apply to the x-axis
+                            which='both',      # both major and minor ticks are affected
+                            bottom='off',      # ticks along the bottom edge are off
+                            top='off',         # ticks along the top edge are off
+                            labelbottom='off')
 
             plt.tick_params(axis='y', which='major', labelsize=24)
             plt.tick_params(axis='y', which='minor', labelsize=20)
+            plt.title("Sigma = " + str(sigma), fontsize=30)
 
-            plt.ylim(0, 1)
+            plt.ylim(0, 0.6)
 
-            plt.ylabel("False negative rate", fontsize=20)
+            plt.ylabel("False negative rate", fontsize=28)
             plt.legend(loc=0, fontsize=15)
             plt.tight_layout()
+
         plt.savefig(plot_dir +"/false-neg-" + \
                                 str(min_event_length_ms) + "ms-" + \
                                 str(sigma) + "sig-" + \
@@ -127,6 +136,8 @@ if __name__ == "__main__":
 
     plot_dir = "plots/goodness/"
 
-    plot_false_negative_rate(arch1, latency_file1, accuracy_file1, .4, 10, 500, 30, plot_dir)
-    #plot_false_negative_rate(arch1, latency_file1, accuracy_file1, 200, 5, plot_dir)
+    plot_false_negative_rate(arch1, latency_file1, accuracy_file1, 0, 10, 300, 30, plot_dir)
+    plot_false_negative_rate(arch1, latency_file1, accuracy_file1, .1, 10, 300, 30, plot_dir)
+    plot_false_negative_rate(arch1, latency_file1, accuracy_file1, .2, 10, 300, 30, plot_dir)
+    plot_false_negative_rate(arch1, latency_file1, accuracy_file1, .4, 10, 300, 30, plot_dir)
 
