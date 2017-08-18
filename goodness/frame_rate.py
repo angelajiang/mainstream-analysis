@@ -3,9 +3,7 @@ import sys
 import matplotlib
 import numpy as np
 
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-plt.ioff()
 
 from matplotlib.pyplot import cm
 
@@ -25,7 +23,7 @@ def get_data(csv_file):
             data_by_slo[slo]["ys"].append(prob)
     return data_by_slo
 
-def plot_models(rate_files, labels, plot_file):
+def plot_models(rate_files, labels, plot_file, slo=None):
     # xs: stride
     # ys: probability
     # Each line is a model
@@ -34,19 +32,25 @@ def plot_models(rate_files, labels, plot_file):
 
     for rate_file, label, color in zip(rate_files, labels, colors):
         data_by_slo = get_data(rate_file)
-        max_slo = max(data_by_slo.keys())
-        xs = data_by_slo[max_slo]["xs"]
-        ys = data_by_slo[max_slo]["ys"]
+        if slo == None:
+            slo = max(data_by_slo.keys())
+        if slo not in data_by_slo.keys():
+            print slo, "not in data_by_slo"
+            sys.exit()
+        xs = data_by_slo[slo]["xs"]
+        ys = data_by_slo[slo]["ys"]
         plt.plot(xs, ys, label=label+" frozen", lw=2, color=color)
 
-    plt.title("Detection within " + str(max_slo) + " frames")
+    plt.title("Detection within " + str(slo) + " frames")
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
     plt.tick_params(axis='x', which='major', labelsize=28)
     plt.tick_params(axis='x', which='minor', labelsize=20)
     plt.xlabel("Stride", fontsize=25)
     plt.ylabel("Probability of detection", fontsize=25)
-    plt.legend(loc=4, fontsize=15)
+    plt.xlim(0, 100)
+    plt.ylim(0, 1)
+    plt.legend(loc=0, fontsize=15)
     plt.tight_layout()
 
     plt.savefig(plot_file)
@@ -57,6 +61,8 @@ def plot_slos(rate_file, plot_file):
     # ys: probability
     # Each line is a SLO
 
+    fps = 1
+
     data_by_slo = get_data(rate_file)
     colors=cm.rainbow(np.linspace(0,1,len(data_by_slo.keys())))
 
@@ -65,7 +71,8 @@ def plot_slos(rate_file, plot_file):
         data = data_by_slo[slo]
         xs = data["xs"]
         ys = data["ys"]
-        plt.plot(xs, ys, label="Within " + str(slo) + " frames", lw=2)
+        label = "W/in " + str(slo) + " frames (" + str(round(float(slo)/fps,2)) +" sec)"
+        plt.plot(xs, ys, label=label, lw=2)
 
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
@@ -73,13 +80,35 @@ def plot_slos(rate_file, plot_file):
     plt.tick_params(axis='x', which='minor', labelsize=20)
     plt.xlabel("Stride", fontsize=25)
     plt.ylabel("Probability of detection", fontsize=25)
-    plt.legend(loc=4, fontsize=15)
+    plt.ylim(0,1)
+    plt.legend(loc=0, fontsize=13)
     plt.tight_layout()
 
     plt.savefig(plot_file)
     plt.clf()
 
+def tmp():
+    fig = plt.figure()
+    labels = ["Within .1 sec", "Within .5 sec", "Within 1 sec"]
+    for l in labels:
+        xs = range(1, 5)
+        ys = [0] * 4
+        plt.plot(xs, ys, label = l)
+    plt.tick_params(axis='y', which='major', labelsize=28)
+    plt.tick_params(axis='y', which='minor', labelsize=20)
+    plt.tick_params(axis='x', which='major', labelsize=28)
+    plt.tick_params(axis='x', which='minor', labelsize=20)
+    plt.xlabel("Number of Apps", fontsize=25)
+    plt.ylabel("P(detect all events)", fontsize=25)
+    plt.legend(fontsize=20)
+    plt.xticks(xs)
+    plt.ylim(0,1)
+    plt.tight_layout()
+    plt.show()
+
 if __name__ == "__main__":
+    tmp()
+    sys.exit()
 
     f1 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-0"
     f2 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-4"
@@ -92,11 +121,30 @@ if __name__ == "__main__":
     f9 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-229"
     f10 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-249"
     f11 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-280"
-    f12 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-313"
+    f12 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-311"
+    f13 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-313"
     plot_file = "plots/frame-rate/frame-rate-afn-models.pdf"
-    plot_models([f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12],
-         ["0", "4", "17", "18", "41", "87", "165", "197", "229", "249", "280", "313"], plot_file)
+   # plot_models([f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13],
+   #      ["0", "4", "17", "18", "41", "87", "165", "197", "229", "249", "280", "311", "313"], plot_file)
 
-    plot_file = "plots/frame-rate/frame-rate-afn-slo.pdf"
-    plot_slos(f5, plot_file)
+    f1 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/7"
+    f2 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/10"
+    f3 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/14"
+    f4 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/18"
+    f5 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/41"
+    f6 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/64"
+    f7 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/87"
+    f8 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/133"
+    f9 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/165"
+    f10 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/197"
+    f11 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/249"
+    f12 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/280"
+    f13 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/311"
+    plot_file = "plots/frame-rate/frame-rate-flowers-models.pdf"
+    plot_models([f1, f3, f5, f7, f8, f9, f10, f11, f12, f13],
+                ["7", "14", "41", "87", "133", "165", "197", "249", "280", "311"],
+                plot_file,
+                40)
 
+    #plot_file = "plots/frame-rate/frame-rate-afn-slo.pdf"
+    #plot_slos(f13, plot_file)
