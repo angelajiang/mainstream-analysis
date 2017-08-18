@@ -37,6 +37,8 @@ LAYERS = ["input_1",
           "mixed10/concat"]
           #"dense_2/Softmax:0"]
 
+MARKERS = ["o", "h", "D", "x", "1", "*", "p", "8"]
+
 def get_data(csv_file, experiment_name):
     data = {}
     with open(csv_file) as f:
@@ -95,21 +97,24 @@ def plot_throughput(csv_file, plot_dir):
     xs = range(len(layers))
 
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
-        for num_NN in num_NNs:
+        for num_NN, marker in zip(num_NNs, MARKERS):
 
             task_fps = [np.average(data[num_NN][layer]["task"]) for layer in layers]
-            plt.plot(xs, task_fps, label=str(num_NN)+" apps", lw=2)
+            plt.plot(xs, task_fps, marker=marker, label=str(num_NN)+" apps", lw=2)
 
         # Format plot
-        plt.tick_params(axis='y', which='major', labelsize=28)
-        plt.tick_params(axis='y', which='minor', labelsize=20)
         plt.xlabel("More sharing ->", fontsize=28)
         plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
         plt.ylabel("Throughput (FPS)", fontsize=28)
+
+        plt.tick_params(axis='y', which='major', labelsize=28)
+        plt.tick_params(axis='y', which='minor', labelsize=20)
         plt.ylim(0,20)
+
         plt.legend(loc=0, fontsize=15)
         plt.tight_layout()
         plt.savefig(plot_dir + "/task-throughput.pdf")
+
         plt.clf()
 
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
