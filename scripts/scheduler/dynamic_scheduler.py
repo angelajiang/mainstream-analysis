@@ -46,7 +46,7 @@ def plot(csv_file, plot_file):
 
     Ys = [.174] * len(Xs)
     shape = shapes[index]
-    plt.plot(Xs, Ys, color="lightcoral", lw=2, marker=shape)
+    plt.plot(Xs, Ys, color="black", lw=2, marker=shape)
     labels.append("Max sharing")
 
     plt.legend(labels, loc=0)
