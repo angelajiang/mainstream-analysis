@@ -76,10 +76,11 @@ if __name__ == "__main__":
 
     accuracy_file1 = "output/mainstream/accuracy/flowers/inception/flowers-40-0.0001-dropout"
     accuracy_file2 = "output/mainstream/accuracy/flowers/resnet/flowers-40-0.0001-chokepoints"
+    accuracy_file3 = "output/mainstream/accuracy/flowers/mobilenets/flowers-40-0.0001"
 
-    accuracy_files = [accuracy_file1, accuracy_file2]
-    labels = ["InceptionV3", "ResNet50"]
-    plot_file = "plots/accuracy/iv3-vs-r50.pdf"
+    accuracy_files = [accuracy_file1, accuracy_file2, accuracy_file3]
+    labels = ["InceptionV3", "ResNet50", "Mobilenets-224"]
+    plot_file = "plots/accuracy/accuracy-by-layer.pdf"
 
     plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
 
