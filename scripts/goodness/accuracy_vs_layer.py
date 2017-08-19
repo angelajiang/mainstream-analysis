@@ -35,7 +35,7 @@ def get_accuracy_data(csv_file):
 
 def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
-        cycol = cycle('rcgkmbr').next
+        cycol = cycle('rcgmbrk').next
         for accuracy_file, label in \
                 zip(accuracy_files, labels):
 
@@ -77,9 +77,10 @@ if __name__ == "__main__":
     accuracy_file1 = "output/mainstream/accuracy/flowers/inception/flowers-40-0.0001-dropout"
     accuracy_file2 = "output/mainstream/accuracy/flowers/resnet/flowers-40-0.0001-chokepoints"
     accuracy_file3 = "output/mainstream/accuracy/flowers/mobilenets/flowers-40-0.0001"
+    accuracy_file4 = "output/mainstream/accuracy/paris/resnet/paris-40-0.0001-chokepoints"
 
-    accuracy_files = [accuracy_file1, accuracy_file2, accuracy_file3]
-    labels = ["InceptionV3", "ResNet50", "Mobilenets-224"]
+    accuracy_files = [accuracy_file1, accuracy_file2, accuracy_file3, accuracy_file4]
+    labels = ["Flowers-InceptionV3", "Flowers-ResNet50", "Flowers-Mobilenets-224", "Paris-ResNet50"]
     plot_file = "plots/accuracy/accuracy-by-layer.pdf"
 
     plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
