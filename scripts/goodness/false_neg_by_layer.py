@@ -87,7 +87,7 @@ def plot_false_negative_rate(arch, latency_file, accuracy_file, sigma, num_event
     shapes = ["o", "h", "D", "x", "1", "*", "P", "8"]
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
         cycol = cycle('rcmkbgy').next
-        for num_NN, marker in zip(num_NNs[4:8], shapes):
+        for num_NN, marker in zip(num_NNs[3:7], shapes):
             layers = preprocess.get_layers(latency_file, 0)
 
             throughput_data = get_throughput_data(latency_file)
