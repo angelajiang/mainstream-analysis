@@ -39,13 +39,16 @@ def plot(csv_file, plot_file):
         print threshold, vals
         Xs = vals["xs"]
         Ys = vals["ys"]
+        Ys = [1 - y for y in Ys]
         shape = shapes[index]
+        # Plot accuracy instead of loss
         plt.plot(Xs, Ys, color=cycol(), lw=2, marker=shape)
-        labels.append(str(int(threshold)) + " fps")
+        labels.append("Mainstream w/ " + str(int(threshold)) + " FPS SLO")
         index += 1
 
-    Ys = [.174] * len(Xs)
+    Ys = [.826] * len(Xs)
     shape = shapes[index]
+
     plt.plot(Xs, Ys, color="black", lw=2, marker=shape)
     labels.append("Max sharing")
 
@@ -56,8 +59,9 @@ def plot(csv_file, plot_file):
     plt.tick_params(axis='x', which='major', labelsize=28)
     plt.tick_params(axis='x', which='minor', labelsize=20)
 
-    plt.xlabel("Number of apps", fontsize=25)
-    plt.ylabel("Avg Relative Top-1 Acc Loss", fontsize=25)
+    plt.xlabel("Number of applications", fontsize=25)
+    plt.ylabel("Avg Relative Top-1 Accuracy", fontsize=25)
+    plt.ylim(0, 1)
     plt.tight_layout()
     plt.savefig(plot_file)
     plt.clf()
