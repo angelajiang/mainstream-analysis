@@ -37,7 +37,7 @@ LAYERS = ["input_1",
           "mixed10/concat"]
           #"dense_2/Softmax:0"]
 
-MARKERS = ["o", "h", "D", "x", "1", "*", "p", "8"]
+MARKERS = ["o", "h", "D", "x", "1", "*", "p","8"]
 
 def get_data(csv_file, experiment_name):
     data = {}
