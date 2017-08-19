@@ -37,7 +37,7 @@ def get_num_NNs(csv_file):
                 num_NNs.append(num_NN)
     return num_NNs
 
-def get_latency_data(csv_file):
+def get_max_fps_data(csv_file):
     data = {}
     with open(csv_file) as f:
         for line in f:
@@ -52,9 +52,7 @@ def get_latency_data(csv_file):
             if layer not in data[num_NN].keys():
                 data[num_NN][layer] = {}
 
-            data[num_NN][layer]["base"] = base
-            data[num_NN][layer]["task"] = task
-            data[num_NN][layer]["total"] = base + task
+            data[num_NN][layer]["total"] = 1/(float(task + base) / 1000)
     return data
 
 def get_accuracy_data(architecture, csv_file):
@@ -84,7 +82,7 @@ def plot_accuracy_vs_ms(arch, latency_files, accuracy_files, labels, plot_dir):
                     zip(arches, latency_files, accuracy_files, labels):
                 layers = get_layers(latency_file, 0)
 
-                latency_data = get_latency_data(latency_file)
+                latency_data = get_max_fps_data(latency_file)
                 acc_data = get_accuracy_data(arch, accuracy_file)
 
                 xs  = [latency_data[num_NN][layer]["total"] for layer in layers]
@@ -97,15 +95,14 @@ def plot_accuracy_vs_ms(arch, latency_files, accuracy_files, labels, plot_dir):
                 plt.tick_params(axis='x', which='major', labelsize=24)
                 plt.tick_params(axis='x', which='minor', labelsize=20)
 
-                plt.xlim(0, 600)
-                plt.ylim(.2, 1)
+                plt.ylim(0, 1)
 
-                plt.xlabel("Latency (ms)", fontsize=20)
-                plt.ylabel("Top-1 Accuracy", fontsize=20)
+                plt.xlabel("Throughput (FPS)", fontsize=25)
+                plt.ylabel("Top-1 Accuracy", fontsize=25)
                 plt.legend(loc=4, fontsize=15)
                 plt.title(str(num_NN) + " apps", fontsize=30)
                 plt.tight_layout()
-                plt.savefig(plot_dir +"/acc-ms-"+str(num_NN)+"-NN.pdf")
+                plt.savefig(plot_dir +"/acc-fps-"+str(num_NN)+"-NN.pdf")
             plt.clf()
 
 
