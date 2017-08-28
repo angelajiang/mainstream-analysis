@@ -12,14 +12,15 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 
-def plot(csv_file, plot_file):
+def plot(csv_file):
     data = {}
+    thresholds = [2, 4, 6, 8]
     with open(csv_file) as f:
         for line in f:
             vals = line.split(',')
             num_apps = int(vals[0])
             threshold = float(vals[1])
-            if threshold in [2, 4, 6, 8]:
+            if threshold in thresholds:
                 err = float(vals[2])
                 stdev = float(vals[4])
                 num_frozen_list = [float(v) for v in vals[4:]]
@@ -33,24 +34,20 @@ def plot(csv_file, plot_file):
 
     # Plot accuracy on the y axis
     cycol = cycle('bgrcmyk').next
-    shapes = ["o", "h", "D", "x", "1", "*", "P", "8"]
-    index = 0
-    for threshold, vals in data.iteritems():
-        print threshold, vals
+    markers = ["o", "h", "D", "p", "8", "x", "1"]
+
+    Xs = data[thresholds[0]]["xs"]
+    Ys = [.174] * len(Xs)
+    plt.plot(Xs, Ys, color="black", lw=2, marker="*", markersize=10)
+    labels.append("Max sharing")
+
+    count = 0
+    for threshold, vals in reversed(sorted(data.iteritems())):
         Xs = vals["xs"]
         Ys = vals["ys"]
-        Ys = [1 - y for y in Ys]
-        shape = shapes[index]
-        # Plot accuracy instead of loss
-        plt.plot(Xs, Ys, color=cycol(), lw=2, marker=shape)
-        labels.append("Mainstream w/ " + str(int(threshold)) + " FPS SLO")
-        index += 1
-
-    Ys = [.826] * len(Xs)
-    shape = shapes[index]
-
-    plt.plot(Xs, Ys, color="black", lw=2, marker=shape)
-    labels.append("Max sharing")
+        plt.plot(Xs, Ys, color=cycol(), lw=2, marker=markers[count], markersize=10)
+        labels.append(str(int(threshold)) + " fps")
+        count += 1
 
     plt.legend(labels, loc=0)
 
@@ -59,14 +56,13 @@ def plot(csv_file, plot_file):
     plt.tick_params(axis='x', which='major', labelsize=28)
     plt.tick_params(axis='x', which='minor', labelsize=20)
 
-    plt.xlabel("Number of applications", fontsize=25)
-    plt.ylabel("Avg Relative Top-1 Accuracy", fontsize=25)
-    plt.ylim(0, 1)
+    plt.xlabel("Number of apps", fontsize=25)
+    plt.ylabel("Avg Relative Top-1 Acc Loss", fontsize=25)
     plt.tight_layout()
-    plt.savefig(plot_file)
+    plt.savefig("plots/scheduler/dynamic-scheduler-uniform-flipped.pdf")
     plt.clf()
 
 if __name__ == "__main__":
     csv_file = "output/streamer/scheduler/dynamic-uniform.csv" 
-    plot_file = "plots/scheduler/dynamic-scheduler-uniform.pdf"
-    plot(csv_file, plot_file)
+
+    plot(csv_file)
