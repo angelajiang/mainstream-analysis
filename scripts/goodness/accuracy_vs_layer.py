@@ -52,8 +52,8 @@ def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
             plt.xlim(0, 350)
             plt.ylim(.2, 1)
 
-            plt.xlabel("Number of frozen layers", fontsize=20)
-            plt.ylabel("Top-1 Accuracy", fontsize=20)
+            plt.xlabel("Number of frozen layers", fontsize=26)
+            plt.ylabel("Top-1 Accuracy", fontsize=26)
             plt.legend(loc=4, fontsize=15)
             plt.gca().invert_xaxis()
             plt.tight_layout()

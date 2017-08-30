@@ -16,7 +16,7 @@ def get_data(csv_file):
             vals = line.split(',')
             stride = int(vals[0])
             slo = int(vals[1])
-            prob = float(vals[2])
+            prob = 1 - float(vals[2])
             if slo not in data_by_slo.keys():
                 data_by_slo[slo] = {"xs": [], "ys": []}
             data_by_slo[slo]["xs"].append(stride)
@@ -47,7 +47,7 @@ def plot_models(rate_files, labels, plot_file, slo=None):
     plt.tick_params(axis='x', which='major', labelsize=28)
     plt.tick_params(axis='x', which='minor', labelsize=20)
     plt.xlabel("Stride", fontsize=25)
-    plt.ylabel("Probability of detection", fontsize=25)
+    plt.ylabel("False negative rate", fontsize=25)
     plt.xlim(0, 100)
     plt.ylim(0, 1)
     plt.legend(loc=0, fontsize=15)
@@ -79,7 +79,8 @@ def plot_slos(rate_file, plot_file):
     plt.tick_params(axis='x', which='major', labelsize=28)
     plt.tick_params(axis='x', which='minor', labelsize=20)
     plt.xlabel("Stride", fontsize=25)
-    plt.ylabel("Probability of detection", fontsize=25)
+    plt.ylabel("False negative rate", fontsize=25)
+    plt.xlim(0, 60)
     plt.ylim(0,1)
     plt.legend(loc=0, fontsize=13)
     plt.tight_layout()
@@ -87,28 +88,7 @@ def plot_slos(rate_file, plot_file):
     plt.savefig(plot_file)
     plt.clf()
 
-def tmp():
-    fig = plt.figure()
-    labels = ["Within .1 sec", "Within .5 sec", "Within 1 sec"]
-    for l in labels:
-        xs = range(1, 5)
-        ys = [0] * 4
-        plt.plot(xs, ys, label = l)
-    plt.tick_params(axis='y', which='major', labelsize=28)
-    plt.tick_params(axis='y', which='minor', labelsize=20)
-    plt.tick_params(axis='x', which='major', labelsize=28)
-    plt.tick_params(axis='x', which='minor', labelsize=20)
-    plt.xlabel("Number of Apps", fontsize=25)
-    plt.ylabel("P(detect all events)", fontsize=25)
-    plt.legend(fontsize=20)
-    plt.xticks(xs)
-    plt.ylim(0,1)
-    plt.tight_layout()
-    plt.show()
-
 if __name__ == "__main__":
-    tmp()
-    sys.exit()
 
     f1 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-0"
     f2 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-4"
@@ -126,6 +106,9 @@ if __name__ == "__main__":
     plot_file = "plots/frame-rate/frame-rate-afn-models.pdf"
    # plot_models([f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13],
    #      ["0", "4", "17", "18", "41", "87", "165", "197", "229", "249", "280", "311", "313"], plot_file)
+
+    plot_file = "plots/frame-rate/frame-rate-afn-slo.pdf"
+    plot_slos(f13, plot_file)
 
     f1 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/7"
     f2 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/10"
@@ -146,5 +129,3 @@ if __name__ == "__main__":
                 plot_file,
                 40)
 
-    #plot_file = "plots/frame-rate/frame-rate-afn-slo.pdf"
-    #plot_slos(f13, plot_file)
