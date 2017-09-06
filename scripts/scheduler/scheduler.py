@@ -56,7 +56,7 @@ def plot(csv_file, max_file, min_file):
 
     plt.xlabel("Number of apps", fontsize=25)
     plt.ylabel("False negative rate", fontsize=25)
-    plt.xlim(1, 12)
+    plt.xlim(1, 15)
     plt.tight_layout()
     plt.show()
     plt.savefig("plots/scheduler/scheduler.pdf")
