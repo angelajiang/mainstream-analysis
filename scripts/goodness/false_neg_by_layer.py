@@ -82,48 +82,97 @@ def get_probability_miss(p_identified_list, min_event_length_ms, max_fps, observ
         p_misses.append(p_miss)
     return np.average(p_misses)
 
-def plot_false_negative_rate(arch, latency_file, accuracy_file, sigma, num_events, min_event_length_ms, max_fps, plot_dir):
+def plot_false_negative_rate_nosharing(arch, latency_file, accuracy_file, sigma, num_events,\
+                                       min_event_length_ms, max_fps, plot_dir, outfile):
     num_NNs = preprocess.get_num_NNs(latency_file)
-    shapes = ["o", "h", "D", "x", "1", "*", "P", "8"]
+    marker = "h"
+    layer = preprocess.get_layers(latency_file, 0)[0]
+    throughput_data = get_throughput_data(latency_file)
+    acc_data = get_accuracy_data(arch, accuracy_file)
+
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
-        cycol = cycle('crmkbgy').next
-        #for num_NN, marker in zip(num_NNs[3:7], shapes):
-        num_NN = 4
-        marker = "h"
-        layers = preprocess.get_layers(latency_file, 0)
-
-        throughput_data = get_throughput_data(latency_file)
-        acc_data = get_accuracy_data(arch, accuracy_file)
-
-        xs  = range(0, len(layers))
-        throughputs  = [throughput_data[num_NN][layer]["task"] for layer in layers]
-        accuracies  = [acc_data[layer] for layer in layers]
-
+        xs = []
         ys = []
-        for fps, acc in zip(throughputs, accuracies):
-            acc_dist = [random.gauss(acc, sigma) for i in range(num_events)]
-            p_miss = get_probability_miss(acc_dist, min_event_length_ms, max_fps, fps)
+        for num_NN in num_NNs:
+
+            xs.append(num_NN)
+
+            throughput = throughput_data[num_NN][layer]["task"]
+            accuracy  = acc_data[layer]
+            acc_dist = [random.gauss(accuracy, sigma) for i in range(num_events)]
+
+            p_miss = get_probability_miss(acc_dist, min_event_length_ms, max_fps, throughput)
             ys.append(p_miss)
 
-        plt.scatter(xs, ys, s=50, marker=marker, color=cycol(), edgecolor='black', label=str(num_NN)+" apps")
+        plt.scatter(xs, ys, s=50, marker=marker, edgecolor='black', label=str(num_NN)+" apps")
 
         plt.xlabel("More sharing ->\n(inc fps, dec acc)", fontsize=28)
         plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
         plt.tick_params(axis='y', which='major', labelsize=24)
         plt.tick_params(axis='y', which='minor', labelsize=20)
-        plt.xlim(6, len(layers))
-        plt.ylim(0, 0.3)
         plt.ylabel("False negative rate", fontsize=28)
 
         #plt.title("Sigma = " + str(sigma), fontsize=30)
         plt.legend(loc=0, fontsize=15)
         plt.tight_layout()
 
-        plt.savefig(plot_dir +"/false-neg-" + \
+        plt.savefig(plot_dir +"/no-sharing-fnr-" + str(num_NN) + "apps-" + \
                                 str(min_event_length_ms) + "ms-" + \
-                                str(sigma) + "sig-" + \
-                                str(max_fps) + "fps.pdf")
+                                str(sigma) + "sig.pdf")
         plt.clf()
+
+    with open(outfile, "w+") as f:
+        for x, y in zip(xs, ys):
+            line = str(x) + "," + str(round(y,4)) + "\n"
+            f.write(line)
+
+def plot_false_negative_rate(arch, latency_file, accuracy_file, sigma, num_events, min_event_length_ms, max_fps, plot_dir):
+    num_NNs = preprocess.get_num_NNs(latency_file)
+    shapes = ["o", "h", "D", "x", "1", "*", "P", "8"]
+    for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
+        for num_NN in [2,4,6,8]:
+            cycol = cycle('crmkbgy').next
+            #for num_NN, marker in zip(num_NNs[3:7], shapes):
+            marker = "h"
+            layers = preprocess.get_layers(latency_file, 0)
+
+            throughput_data = get_throughput_data(latency_file)
+            acc_data = get_accuracy_data(arch, accuracy_file)
+
+            xs  = range(0, len(layers))
+            throughputs  = [throughput_data[num_NN][layer]["task"] for layer in layers]
+            all_accuracies  = [acc_data[layer] for layer in layers]
+            # If there is only one app, no matter what layer, accuracy is at its max
+            if num_NN == 1:
+                accuracies = [max(all_accuracies) for layer in layers]
+            else:
+                accuracies  = [acc_data[layer] for layer in layers]
+
+            ys = []
+            for fps, acc in zip(throughputs, accuracies):
+                acc_dist = [random.gauss(acc, sigma) for i in range(num_events)]
+                p_miss = get_probability_miss(acc_dist, min_event_length_ms, max_fps, fps)
+                ys.append(p_miss)
+
+            plt.scatter(xs, ys, s=50, marker=marker, color=cycol(), edgecolor='black', label=str(num_NN)+" apps")
+
+            plt.xlabel("More sharing ->\n(inc fps, dec acc)", fontsize=28)
+            plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
+            plt.tick_params(axis='y', which='major', labelsize=24)
+            plt.tick_params(axis='y', which='minor', labelsize=20)
+            plt.xlim(6, len(layers))
+            plt.ylim(0, 0.3)
+            plt.ylabel("False negative rate", fontsize=28)
+
+            #plt.title("Sigma = " + str(sigma), fontsize=30)
+            plt.legend(loc=0, fontsize=15)
+            plt.tight_layout()
+
+            plt.savefig(plot_dir +"/false-neg-" + str(num_NN) + "apps-" + \
+                                    str(min_event_length_ms) + "ms-" + \
+                                    str(sigma) + "sig-" + \
+                                    str(max_fps) + "fps.pdf")
+            plt.clf()
 
 if __name__ == "__main__":
 
@@ -133,9 +182,5 @@ if __name__ == "__main__":
 
     plot_dir = "plots/goodness/"
 
-    plot_false_negative_rate(arch1, latency_file1, accuracy_file1, 0, 10000, 300, 30, plot_dir)
-    plot_false_negative_rate(arch1, latency_file1, accuracy_file1, .1, 10000, 300, 30, plot_dir)
-    plot_false_negative_rate(arch1, latency_file1, accuracy_file1, .2, 10000, 300, 30, plot_dir)
-    plot_false_negative_rate(arch1, latency_file1, accuracy_file1, .3, 10000, 300, 30, plot_dir)
-    plot_false_negative_rate(arch1, latency_file1, accuracy_file1, .4, 10000, 300, 30, plot_dir)
+    plot_false_negative_rate_nosharing(arch1, latency_file1, accuracy_file1, 0.2, 10000, 500, 13, plot_dir, "/tmp/out")
 
