@@ -15,6 +15,17 @@ def get_layers(csv_file, layers_index):
                 layers.append(layer)
     return layers
 
+def get_all_layers(csv_file):
+    layers = []
+    with open(csv_file) as f:
+        for line in f:
+            vals = line.split(',')
+            op_full = vals[0]
+            layer = op_to_layer(op_full)
+            if layer not in layers:
+                layers.append(layer)
+    return layers
+
 def get_num_NNs(csv_file):
     num_NNs = []
     with open(csv_file) as f:

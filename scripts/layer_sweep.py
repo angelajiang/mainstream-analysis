@@ -66,7 +66,7 @@ def get_data(csv_file, experiment_name):
     return data
 
 def plot_max_throughput(csv_file, plot_file):
-    layers = get_layers(csv_file)
+    layers = preprocess.get_layers(csv_file, 0)
     num_NNs = preprocess.get_num_NNs(csv_file)
     data = get_data(csv_file, "throughput")
     labels = ["No sharing", "Max sharing"]
@@ -138,7 +138,7 @@ def plot_throughput(csv_file, plot_dir):
             plt.clf()
 
 def plot_processor_latency(processors_file, plot_dir):
-    layers = get_layers(processors_file)
+    layers = preprocess.get_layers(processors_file, 0)
     num_NNs = preprocess.get_num_NNs(processors_file)
     data = get_data(processors_file, "latency-processors")
     width = 0.4
@@ -152,12 +152,13 @@ def plot_processor_latency(processors_file, plot_dir):
             plt.bar(xs, task_fps, width, bottom=base_fps, color = "dodgerblue", label="Task NNE")
 
             plt.xlabel("More sharing ->", fontsize=28)
+            plt.ylabel("Processor Latency (ms)", fontsize=28)
+            plt.ylim(0, 300)
             plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
-            plt.ylim(0,400)
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
-            plt.legend(loc=0, fontsize=15, ncol=2)
-            plt.ylabel("Processor Latency (ms)", fontsize=20)
+            plt.legend(loc=0, fontsize=20, ncol=2)
+            plt.grid()
             plt.title(str(num_NN) + " NNs", fontsize=30)
             plt.tight_layout()
             plot_file = plot_dir + "/latency-" + str(num_NN) + "-NN.pdf"

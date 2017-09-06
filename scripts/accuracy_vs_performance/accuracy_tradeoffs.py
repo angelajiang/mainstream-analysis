@@ -78,6 +78,7 @@ def plot_accuracy_vs_ms(arch, latency_files, accuracy_files, labels, plot_dir):
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN in num_NNs:
             cycol = cycle('rcmkbg').next
+            cymark= cycle('ovDxh1*').next
             for arch, latency_file, accuracy_file, label in \
                     zip(arches, latency_files, accuracy_files, labels):
                 layers = get_layers(latency_file, 0)
@@ -88,7 +89,7 @@ def plot_accuracy_vs_ms(arch, latency_files, accuracy_files, labels, plot_dir):
                 xs  = [latency_data[num_NN][layer]["total"] for layer in layers]
                 ys  = [acc_data[layer] for layer in layers]
 
-                plt.scatter(xs, ys, s=50, color=cycol(), edgecolor='black', label=label)
+                plt.scatter(xs, ys, s=60, marker=cymark(), color=cycol(), edgecolor='black', label=label)
 
                 plt.tick_params(axis='y', which='major', labelsize=24)
                 plt.tick_params(axis='y', which='minor', labelsize=20)
@@ -99,8 +100,9 @@ def plot_accuracy_vs_ms(arch, latency_files, accuracy_files, labels, plot_dir):
 
                 plt.xlabel("Throughput (FPS)", fontsize=25)
                 plt.ylabel("Top-1 Accuracy", fontsize=25)
-                plt.legend(loc=4, fontsize=15)
-                plt.title(str(num_NN) + " apps", fontsize=30)
+                plt.legend(loc=4, fontsize=20)
+                plt.title(str(num_NN) + " applications", fontsize=30)
+                plt.grid()
                 plt.tight_layout()
                 plt.savefig(plot_dir +"/acc-fps-"+str(num_NN)+"-NN.pdf")
             plt.clf()
@@ -123,7 +125,7 @@ if __name__ == "__main__":
     arches = [arch1, arch2, arch3]
     latency_files = [latency_file1, latency_file2, latency_file3]
     accuracy_files = [accuracy_file1, accuracy_file2, accuracy_file3]
-    labels = ["InceptionV3", "ResNet50", "MobileNets"]
+    labels = ["InceptionV3", "ResNet50", "MobileNets-224"]
 
     plot_dir = "plots/tradeoffs/flowers"
 
