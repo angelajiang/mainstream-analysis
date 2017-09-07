@@ -31,7 +31,7 @@ def print_latencies(csv_file):
                 layers.append(layer)
             data[layer].append(total_latency)
 
-    layer_names = layers_info.InceptionV3_Layer_Names
+    layer_names = layers_info.MobileNets_Layer_Names
 
     last_avg_latency = 0
     last_layer_number = 0
@@ -50,7 +50,10 @@ def print_latencies(csv_file):
         last_avg_latency = avg_latency
         last_layer_number = layer_number
 
-    print layer_latencies
+    max_latency = max(layer_latencies)
+    normalized_latencies = [round(l / float(max_latency), 4) for l in layer_latencies]
+
+    print normalized_latencies
 
 if __name__ == "__main__":
     csv_file = sys.argv[1]

@@ -12,7 +12,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 
-def plot(csv_file):
+def plot(csv_file, plot_dir):
     data = {}
     thresholds = [2, 4, 6, 8]
     with open(csv_file) as f:
@@ -56,13 +56,17 @@ def plot(csv_file):
     plt.tick_params(axis='x', which='major', labelsize=28)
     plt.tick_params(axis='x', which='minor', labelsize=20)
 
-    plt.xlabel("Number of apps", fontsize=25)
-    plt.ylabel("Avg Relative Top-1 Acc Loss", fontsize=25)
+    plt.xlim(1,10)
+    plt.xlabel("Number of applications", fontsize=25)
+    plt.ylabel("Image-level Accuracy Loss", fontsize=25)
+    plt.grid()
     plt.tight_layout()
-    plt.savefig("plots/scheduler/dynamic-scheduler-uniform-flipped.pdf")
+    plt.savefig(plot_dir + "/dynamic-scheduler-uniform-flipped.pdf")
     plt.clf()
 
 if __name__ == "__main__":
     csv_file = "output/streamer/scheduler/dynamic-uniform.csv" 
+    plot_dir = "plots/scheduler/"
 
-    plot(csv_file)
+
+    plot(csv_file, plot_dir)
