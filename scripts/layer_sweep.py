@@ -98,7 +98,6 @@ def plot_throughput(csv_file, plot_dir):
 
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN, marker in zip(num_NNs, MARKERS):
-
             task_fps = [np.average(data[num_NN][layer]["task"]) for layer in layers]
             plt.plot(xs, task_fps, marker=marker, label=str(num_NN)+" apps", lw=2)
 
@@ -112,6 +111,8 @@ def plot_throughput(csv_file, plot_dir):
         plt.ylim(0,20)
 
         plt.legend(loc=0, fontsize=15)
+        plt.gca().xaxis.grid(True)
+        plt.gca().yaxis.grid(True)
         plt.tight_layout()
         plt.savefig(plot_dir + "/task-throughput.pdf")
 
