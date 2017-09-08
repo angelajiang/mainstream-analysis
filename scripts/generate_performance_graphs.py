@@ -1,5 +1,6 @@
 import sys
 sys.path.append("scripts")
+import num_apps_bar
 import layer_sweep
 sys.path.append("scripts/scheduler")
 import dynamic_scheduler
@@ -39,4 +40,10 @@ if __name__ == "__main__":
     plot_file = "plots/accuracy/accuracy-by-layer.pdf"
 
     accuracy_vs_layer.plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
+
+    # Image-level accuracy - Mainstream vs No sharing
+    xs, ys = num_apps_bar.get_data("output/streamer/scheduler/dynamic-uniform.csv", 0.015)
+    ys2 = [5, 3, 2, 1, 1]
+    num_apps_bar.plot("plots/num_apps_bar.pdf", xs, ys, ys2)
+
 
