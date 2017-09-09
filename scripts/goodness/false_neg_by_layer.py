@@ -42,21 +42,21 @@ def get_throughput_data(csv_file):
 
 def get_accuracy_data(architecture, csv_file):
     if architecture == "iv3":
-        layer_names = layers_info.InceptionV3_Layer_Names
+        layer_name_by_num_frozen = layers_info.InceptionV3_Layer_Names
     elif architecture == "r50":
-        layer_names = layers_info.ResNet50_Layer_Names
+        layer_name_by_num_frozen = layers_info.ResNet50_Layer_Names
     elif architecture == "mnets":
-        layer_names = layers_info.MobileNets_Layer_Names
+        layer_name_by_num_frozen = layers_info.MobileNets_Layer_Names
 
-    data = {}
+    acc_by_layer = {}
     with open(csv_file) as f:
         for line in f:
             vals = line.split(',')
             frozen_index = int(vals[0])
             acc = float(vals[1])
-            layer = layer_names[frozen_index]
-            data[layer] = acc
-    return data
+            layer = layer_name_by_num_frozen[frozen_index]
+            acc_by_layer[layer] = acc
+    return acc_by_layer, layer_name_by_num_frozen
 
 def get_probability_miss(p_identified_list, min_event_length_ms, max_fps, observed_fps):
     stride = max_fps / float(observed_fps)
@@ -88,7 +88,7 @@ def plot_false_negative_rate_nosharing(arch, latency_file, accuracy_file, sigma,
     marker = "h"
     layer = preprocess.get_layers(latency_file, 0)[0]
     throughput_data = get_throughput_data(latency_file)
-    acc_data = get_accuracy_data(arch, accuracy_file)
+    acc_data, layer_name_by_num_frozen = get_accuracy_data(arch, accuracy_file)
 
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
         xs = []
@@ -130,14 +130,14 @@ def plot_false_negative_rate(arch, latency_file, accuracy_file, sigma, num_event
     num_NNs = preprocess.get_num_NNs(latency_file)
     shapes = ["o", "h", "D", "x", "1", "*", "P", "8"]
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
-        for num_NN in [2,4,6,8]:
+        for num_NN in [4]:
             cycol = cycle('crmkbgy').next
             #for num_NN, marker in zip(num_NNs[3:7], shapes):
             marker = "h"
             layers = preprocess.get_layers(latency_file, 0)
 
             throughput_data = get_throughput_data(latency_file)
-            acc_data = get_accuracy_data(arch, accuracy_file)
+            acc_data, layer_name_by_num_frozen = get_accuracy_data(arch, accuracy_file)
 
             xs  = range(0, len(layers))
             throughputs  = [throughput_data[num_NN][layer]["task"] for layer in layers]
@@ -148,24 +148,52 @@ def plot_false_negative_rate(arch, latency_file, accuracy_file, sigma, num_event
             else:
                 accuracies  = [acc_data[layer] for layer in layers]
 
+
             ys = []
-            for fps, acc in zip(throughputs, accuracies):
+            num_frozen_list = []
+            fpses = []
+            for fps, acc, layer in zip(throughputs, accuracies, layers):
                 acc_dist = [random.gauss(acc, sigma) for i in range(num_events)]
                 p_miss = get_probability_miss(acc_dist, min_event_length_ms, max_fps, fps)
                 ys.append(p_miss)
 
+                # Get info for annotation
+                for num_frozen, layer_name in layer_name_by_num_frozen.iteritems():
+                    if layer ==  layer_name:
+                        break
+                num_frozen_list.append(num_frozen)
+                fpses.append(fps)
+
             plt.scatter(xs, ys, s=50, marker=marker, color=cycol(), edgecolor='black', label=str(num_NN)+" apps")
+
+            # Annotate optimal point
+            min_y = min(ys)
+            x, num_frozen, fps = \
+                    [(x, num_frozen, round(fps,0)) for x, y, num_frozen, fps \
+                                                        in zip(xs,ys, num_frozen_list, fpses) if y==min_y][0]
+
+            max_layers = max(layer_name_by_num_frozen.keys()) + 1
+            percent_frozen = int(num_frozen / float(max_layers) * 100)
+
+            plt.annotate("Best: Share "+str(percent_frozen) +"% layers @ " + str(fps) + " FPS",
+                         xy=(x, min_y),
+                         xytext=(-300, 170),
+                         xycoords='data',
+                         fontsize=22,
+                         textcoords='offset points',
+                         arrowprops=dict(arrowstyle="->"))
 
             plt.xlabel("More sharing ->\n(inc fps, dec acc)", fontsize=28)
             plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
             plt.tick_params(axis='y', which='major', labelsize=24)
             plt.tick_params(axis='y', which='minor', labelsize=20)
             plt.xlim(6, len(layers))
-            plt.ylim(0, 0.3)
+            plt.ylim(0, 0.2)
             plt.ylabel("False negative rate", fontsize=28)
 
             #plt.title("Sigma = " + str(sigma), fontsize=30)
-            plt.legend(loc=0, fontsize=15)
+            plt.gca().yaxis.grid(True)
+            plt.legend(loc=0, fontsize=20)
             plt.tight_layout()
 
             plt.savefig(plot_dir +"/false-neg-" + str(num_NN) + "apps-" + \
@@ -182,5 +210,6 @@ if __name__ == "__main__":
 
     plot_dir = "plots/goodness/"
 
-    plot_false_negative_rate_nosharing(arch1, latency_file1, accuracy_file1, 0.2, 10000, 500, 13, plot_dir, "/tmp/out")
+    #plot_false_negative_rate_nosharing(arch1, latency_file1, accuracy_file1, 0.2, 10000, 500, 13, plot_dir, "/tmp/out")
+    plot_false_negative_rate(arch1, latency_file1, accuracy_file1, 0.2, 10000, 250, 14, plot_dir)
 
