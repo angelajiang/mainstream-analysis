@@ -37,10 +37,13 @@ def id_to_filename(i):
     filename = "image_" + zeroes + str(i) + ".jpg"
     return filename
 
-def make_video(positives, negatives, event_length_frames, non_event_length_frames, images_dir, dst_dir):
+def make_video(positives, negatives, event_length_frames, non_event_length_frames,
+               warmup_frames, images_dir, dst_dir):
     ordered_ids = []
     cur_positive_index = 0
     cur_negative_index = 0
+    for i in range(warmup_frames):
+        ordered_ids.append(positives[cur_positive_index])
     while cur_positive_index < len(positives) \
             and cur_negative_index < len(negatives):
         for i in range(event_length_frames):
@@ -58,6 +61,7 @@ def make_video(positives, negatives, event_length_frames, non_event_length_frame
         new_file_name = str(i) + ".jpg"
         new_dst_full_file = os.path.join(dst_dir, new_file_name)
 
+        print orig_full_file, dst_full_file
         shutil.copyfile(orig_full_file, dst_full_file)
         os.rename(dst_full_file, new_dst_full_file)
 
@@ -68,6 +72,5 @@ if __name__ == "__main__":
     dst_dir = '/Users/angela/src/data/image-data/flowers_video'
     positives = get_positive_ids(imagelabels_file, 54)
     negatives = get_negative_ids(imagelabels_file, 54)
-    make_video(positives, negatives, 7, 0, images_dir, dst_dir)
-
+    make_video(positives, negatives, 7, 0, 5000, images_dir, dst_dir)
 
