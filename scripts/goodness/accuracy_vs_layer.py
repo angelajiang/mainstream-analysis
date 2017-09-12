@@ -46,16 +46,19 @@ def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
 
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
-            plt.tick_params(axis='x', which='major', labelsize=28)
-            plt.tick_params(axis='x', which='minor', labelsize=20)
+            #plt.tick_params(axis='x', which='major', labelsize=28)
+            #plt.tick_params(axis='x', which='minor', labelsize=20)
 
             plt.xlim(0, 350)
             plt.ylim(.2, 1)
 
-            plt.xlabel("Number of frozen layers", fontsize=26)
-            plt.ylabel("Top-1 Accuracy", fontsize=26)
-            plt.legend(loc=4, fontsize=15)
-            plt.gca().invert_xaxis()
+            plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
+            plt.xlabel("More frozen layers ->", fontsize=28)
+            plt.ylabel("Top-1 Accuracy", fontsize=28)
+            plt.legend(loc=4, fontsize=20)
+            #plt.gca().invert_xaxis()
+            plt.gca().xaxis.grid(True)
+            plt.gca().yaxis.grid(True)
             plt.tight_layout()
 
             plt.savefig(plot_file)

@@ -101,7 +101,7 @@ def plot_accuracy_vs_ms(arch, latency_files, accuracy_files, labels, plot_dir):
                 plt.xlabel("Throughput (FPS)", fontsize=25)
                 plt.ylabel("Top-1 Accuracy", fontsize=25)
                 plt.legend(loc=4, fontsize=20)
-                plt.title(str(num_NN) + " applications", fontsize=30)
+                #plt.title(str(num_NN) + " applications", fontsize=30)
                 plt.grid()
                 plt.tight_layout()
                 plt.savefig(plot_dir +"/acc-fps-"+str(num_NN)+"-NN.pdf")
