@@ -179,8 +179,20 @@ def plot_processor_latency(processors_file, plot_dir):
 
             base_fps = [np.average(data[num_NN][layer]["base"]) for layer in layers]
             task_fps = [np.average(data[num_NN][layer]["task"]) for layer in layers]
-            plt.bar(xs, base_fps, width, color = "seagreen", label="Base NNE")
-            plt.bar(xs, task_fps, width, bottom=base_fps, color = "dodgerblue", label="Task NNE")
+            base_errs = [np.std(data[num_NN][layer]["base"]) for layer in layers]
+            task_errs = [np.std(data[num_NN][layer]["task"]) for layer in layers]
+
+            plt.bar(xs, base_fps, width, yerr=base_errs,
+                    label="Shared NNE",
+                    color=plot_util.NO_SHARING["color"],
+                    hatch=plot_util.NO_SHARING["pattern"],
+                    error_kw={'ecolor':'green', 'linewidth':3})
+
+            plt.bar(xs, task_fps, width, bottom=base_fps, yerr=task_errs,
+                    label="Task NNE",
+                    color=plot_util.MAINSTREAM["color"],
+                    hatch=plot_util.MAINSTREAM["pattern"],
+                    error_kw={'ecolor':'green', 'linewidth':3})
 
             plt.xlabel("More sharing ->", fontsize=28)
             plt.ylabel("Processor Latency (ms)", fontsize=28)
@@ -193,6 +205,7 @@ def plot_processor_latency(processors_file, plot_dir):
             plt.title(str(num_NN) + " NNs", fontsize=30)
             plt.tight_layout()
             plot_file = plot_dir + "/latency-" + str(num_NN) + "-NN.pdf"
+            print plot_file
             plt.savefig(plot_file)
             plt.clf()
 

@@ -190,3 +190,36 @@ if __name__ == "__main__":
 
     plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
     plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+
+    ## Independence versus dependence
+    ms1 = "output/streamer/scheduler/scheduler-s0-250-dependence-mainstream" 
+    max1 = "output/streamer/scheduler/scheduler-s0-250-dependence-maxsharing" 
+    min1 = "output/streamer/scheduler/scheduler-s0-250-dependence-nosharing" 
+    f1 ="scheduler-s0-250-flowers-dependent"
+    t1 = "Dependent accuracy"
+
+    ms_files = [ms1]
+    max_files = [max1]
+    min_files = [min1]
+    f_files = [f1]
+    f_files_annotated = [f + "-annotated" for f in f_files]
+    titles = [t1]
+
+    plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+
+    ms2 = "output/streamer/scheduler/scheduler-s0-250-mainstream" 
+    max2 = "output/streamer/scheduler/scheduler-s0-250-maxsharing" 
+    min2 = "output/streamer/scheduler/scheduler-s0-250-nosharing" 
+    f2 ="scheduler-s0-250-flowers-independent"
+    t2 = "Independent accuracy"
+
+    ms_files = [ms2]
+    max_files = [max2]
+    min_files = [min2]
+    f_files = [f2]
+    f_files_annotated = [f + "-annotated" for f in f_files]
+    titles = [t2]
+
+    plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
