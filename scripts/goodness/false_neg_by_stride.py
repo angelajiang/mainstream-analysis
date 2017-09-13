@@ -88,28 +88,40 @@ def plot_slos(rate_file, plot_file):
     plt.savefig(plot_file)
     plt.clf()
 
-def plot_dependence(rate_file, plot_file):
+def plot_dependence(dependent_file, independent_file, plot_file):
     # xs: Sample rate
     # ys: probability
 
     fps = 1
 
-    data_by_slo = get_data(rate_file)
-    colors=cm.rainbow(np.linspace(0,1,len(data_by_slo.keys())))
+    # Dependent
+
+    data_by_slo = get_data(dependent_file)
 
     slos = sorted(data_by_slo.keys())
     slo = slos[1]
 
-    # Dependent
-
-    # Independent
     data = data_by_slo[slo]
     strides = data["xs"]
     xs = [1 / float(s) for s in strides]
     ys = data["ys"]
     xlabels = ["1/" + str(s) for s in strides]
-    label = "Independent"
+    label = "dependent"
+    plt.plot(xs, ys, label=label, lw=2)
 
+
+    # Independent
+    data_by_slo = get_data(independent_file)
+
+    slos = sorted(data_by_slo.keys())
+    slo = slos[1]
+
+    data = data_by_slo[slo]
+    strides = data["xs"]
+    xs = [1 / float(s) for s in strides]
+    ys = data["ys"]
+    xlabels = ["1/" + str(s) for s in strides]
+    label = "independent"
     plt.plot(xs, ys, label=label, lw=2)
 
     plt.tick_params(axis='y', which='major', labelsize=28)
@@ -172,5 +184,7 @@ if __name__ == "__main__":
     #plot_slos(f13, plot_file)
 
     plot_file = "plots/frame-rate/frame-rate-afn-dependences.pdf"
-    plot_dependence(f13, plot_file)
+    dependent_file = "/users/ahjiang/src/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-full"
+    independent_file = "/users/ahjiang/src/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-full"
+    plot_dependence(dependent_file, independent_file, plot_file)
 
