@@ -2,20 +2,22 @@ import pprint as pp
 import sys
 sys.path.append('include/')
 import layers_info
+sys.path.append('scripts/util/')
+import plot_util
 
 import matplotlib
 import numpy as np
 
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-plt.ioff()
+#plt.ioff()
 
 def op_to_layer(op_full):
     tensor_name = (op_full.split(":"))[0]
     layer = tensor_name.split("/")[0]
     return layer
 
-def print_latencies(csv_file):
+def print_and_plot_latencies(csv_file, layer_names, label, plot_dir):
     data = {}
 
     layers = []
@@ -31,20 +33,26 @@ def print_latencies(csv_file):
                 layers.append(layer)
             data[layer].append(total_latency)
 
-    layer_names = layers_info.MobileNets_Layer_Names
-
     last_avg_latency = 0
     last_layer_number = 0
 
     layer_latencies = []
+    ys = []
+    errs = []
 
     for layer in layers:
         total_latencies = data[layer]
-        avg_total_latency = np.average(total_latencies)
-        avg_latency = round(avg_total_latency - last_avg_latency, 4)
+        latencies = [l - last_avg_latency for l in total_latencies]
+
+        # Data for plot
+        avg_latency = round(np.average(latencies), 4)
+        err = np.std(latencies)
+        ys.append(avg_latency)
+        errs.append(err)
+
+        # Data for print
         layer_number = [num for num, name in layer_names.iteritems() if name == layer][0]
         arr = [avg_latency] * (layer_number - last_layer_number)
-
         layer_latencies += arr
 
         last_avg_latency = avg_latency
@@ -53,8 +61,38 @@ def print_latencies(csv_file):
     max_latency = max(layer_latencies)
     normalized_latencies = [round(l / float(max_latency), 4) for l in layer_latencies]
 
+    width = 0.75
+    plt.clf()
+    xs = range(len(ys))
+    plt.bar(xs[1:], ys[1:], width, yerr=err,
+            color=plot_util.NO_SHARING["color"],
+            hatch=plot_util.NO_SHARING["pattern"],
+            label=label,
+            error_kw={'ecolor':'green', 'linewidth':3})
+    plt.tick_params(axis='y', which='major', labelsize=28)
+    plt.tick_params(axis='y', which='minor', labelsize=20)
+    plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
+    plt.legend(loc=0, fontsize=25)
+    plt.ylim(0, max(ys)+10)
+    plt.gca().yaxis.grid(True)
+    plt.xlabel("Layer", fontsize=28)
+    plt.ylabel("Forward-pass latency (ms)", fontsize=28)
+    plt.savefig(plot_dir + "/latency-by-layer-" + label + ".pdf")
+
     print normalized_latencies
 
 if __name__ == "__main__":
-    csv_file = sys.argv[1]
-    print_latencies(csv_file)
+    csv_file = "output/streamer/latency/inception/basic/latency-by-layer.csv"
+    layer_names = layers_info.InceptionV3_Layer_Names
+    plot_dir = "plots/performance/latency/inception/basic/"
+    print_and_plot_latencies(csv_file, layer_names, "InceptionV3", plot_dir)
+
+    csv_file = "output/streamer/latency/mobilenets/basic/latency-by-layer.csv"
+    layer_names = layers_info.MobileNets_Layer_Names
+    plot_dir = "plots/performance/latency/mobilenets/basic/"
+    print_and_plot_latencies(csv_file, layer_names, "MobileNets-224", plot_dir)
+
+    csv_file = "output/streamer/latency/resnet/basic/latency-by-layer.csv"
+    layer_names = layers_info.ResNet50_Layer_Names
+    plot_dir = "plots/performance/latency/resnet/basic/"
+    print_and_plot_latencies(csv_file, layer_names, "ResNet-50", plot_dir)
