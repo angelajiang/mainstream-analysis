@@ -80,7 +80,7 @@ def plot_slos(rate_file, plot_file):
     plt.tick_params(axis='x', which='minor', labelsize=20)
     plt.xlabel("Stride", fontsize=25)
     plt.ylabel("False negative rate", fontsize=25)
-    plt.xlim(0, 60)
+    plt.xlim(0, 30)
     plt.ylim(0,1)
     plt.legend(loc=0, fontsize=13)
     plt.tight_layout()
@@ -88,7 +88,68 @@ def plot_slos(rate_file, plot_file):
     plt.savefig(plot_file)
     plt.clf()
 
+def plot_dependence(rate_file, plot_file):
+    # xs: Sample rate
+    # ys: probability
+
+    fps = 1
+
+    data_by_slo = get_data(rate_file)
+    colors=cm.rainbow(np.linspace(0,1,len(data_by_slo.keys())))
+
+    slos = sorted(data_by_slo.keys())
+    slo = slos[1]
+
+    # Dependent
+
+    # Independent
+    data = data_by_slo[slo]
+    strides = data["xs"]
+    xs = [1 / float(s) for s in strides]
+    ys = data["ys"]
+    xlabels = ["1/" + str(s) for s in strides]
+    label = "Independent"
+
+    plt.plot(xs, ys, label=label, lw=2)
+
+    plt.tick_params(axis='y', which='major', labelsize=28)
+    plt.tick_params(axis='y', which='minor', labelsize=20)
+    plt.tick_params(axis='x', which='major', labelsize=28)
+    plt.tick_params(axis='x', which='minor', labelsize=20)
+    plt.xlabel("Sample rate", fontsize=25)
+    plt.ylabel("False negative rate", fontsize=25)
+    plt.xticks(xs, xlabels)
+    plt.xscale('log')
+    plt.xlim(0, 1)
+    plt.ylim(0,1)
+    plt.legend(loc=0, fontsize=20)
+    plt.tight_layout()
+
+    plt.savefig(plot_file)
+    plt.clf()
+
 if __name__ == "__main__":
+
+    f1 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/7"
+    f2 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/10"
+    f3 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/14"
+    f4 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/18"
+    f5 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/41"
+    f6 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/64"
+    f7 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/87"
+    f8 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/133"
+    f9 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/165"
+    f10 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/197"
+    f11 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/249"
+    f12 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/280"
+    f13 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/311"
+    plot_file = "plots/frame-rate/frame-rate-flowers-models.pdf"
+    '''
+    plot_models([f1, f3, f5, f7, f8, f9, f10, f11, f12, f13],
+                ["7", "14", "41", "87", "133", "165", "197", "249", "280", "311"],
+                plot_file,
+                40)
+    '''
 
     f1 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-0"
     f2 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-4"
@@ -108,24 +169,8 @@ if __name__ == "__main__":
    #      ["0", "4", "17", "18", "41", "87", "165", "197", "229", "249", "280", "311", "313"], plot_file)
 
     plot_file = "plots/frame-rate/frame-rate-afn-slo.pdf"
-    plot_slos(f13, plot_file)
+    #plot_slos(f13, plot_file)
 
-    f1 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/7"
-    f2 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/10"
-    f3 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/14"
-    f4 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/18"
-    f5 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/41"
-    f6 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/64"
-    f7 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/87"
-    f8 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/133"
-    f9 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/165"
-    f10 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/197"
-    f11 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/249"
-    f12 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/280"
-    f13 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/311"
-    plot_file = "plots/frame-rate/frame-rate-flowers-models.pdf"
-    plot_models([f1, f3, f5, f7, f8, f9, f10, f11, f12, f13],
-                ["7", "14", "41", "87", "133", "165", "197", "249", "280", "311"],
-                plot_file,
-                40)
+    plot_file = "plots/frame-rate/frame-rate-afn-dependences.pdf"
+    plot_dependence(f13, plot_file)
 
