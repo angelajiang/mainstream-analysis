@@ -178,7 +178,8 @@ if __name__ == "__main__":
     plot_file = "plots/frame-rate/frame-rate-afn-dependences.pdf"
     dependent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-full"
     independent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-full"
-    files = [dependent_file, independent_file]
-    labels = ["Dependent", "Independent"]
+    empirical_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical"
+    files = [independent_file, dependent_file, empirical_file]
+    labels = ["Dependent", "Independent", "Empirical"]
     plot_dependence(files, labels, plot_file)
 
