@@ -97,14 +97,13 @@ def plot_slos(rate_file, plot_file):
     plt.savefig(plot_file)
     plt.clf()
 
-def plot_dependence(files, labels, plot_file):
+def plot_dependence(files, labels, event_lengths, plot_file):
     # strides: strides
     # xs: sample rate
     # ys: probability
 
     fps = 1
 
-    # Dependent
     for filename, label in zip(files, labels):
 
         data = get_data(filename)
@@ -116,16 +115,21 @@ def plot_dependence(files, labels, plot_file):
         ys = data["ys"]
         plt.plot(xs, ys, label=label, lw=2)
 
+    max_y = 0.4
+
+    for length in event_lengths:
+        plt.axvline(x= 1.0 / length, linestyle="--", color="black", alpha=0.3)
+
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
     plt.tick_params(axis='x', which='major', labelsize=28)
     plt.tick_params(axis='x', which='minor', labelsize=20)
-    plt.xlabel("Sample rate", fontsize=25)
-    plt.ylabel("False negative rate", fontsize=25)
+    plt.xlabel("Sample rate", fontsize=28)
+    plt.ylabel("False negative rate", fontsize=28)
     plt.xticks(xs, xlabels)
     plt.xscale('log')
     plt.xlim(0,1)
-    plt.ylim(0,0.5)
+    plt.ylim(0, max_y)
     plt.legend(loc=0, fontsize=20)
     plt.tight_layout()
 
@@ -175,11 +179,21 @@ if __name__ == "__main__":
     plot_file = "plots/frame-rate/frame-rate-afn-slo.pdf"
     #plot_slos(f13, plot_file)
 
+    event_lengths = [286, 77, 92, 437, 274, 255, 251, 153]
+
     plot_file = "plots/frame-rate/frame-rate-afn-dependences.pdf"
-    dependent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-full"
-    independent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-full"
-    empirical_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical"
-    files = [independent_file, dependent_file, empirical_file]
+    dependent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-whole"
+    independent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-whole"
+    empirical_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
+    files = [dependent_file, independent_file, empirical_file]
     labels = ["Dependent", "Independent", "Empirical"]
-    plot_dependence(files, labels, plot_file)
+    plot_dependence(files, labels, event_lengths, plot_file)
+
+    plot_file = "plots/frame-rate/frame-rate-afn-dependences2.pdf"
+    dependent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent"
+    independent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent"
+    empirical_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
+    files = [dependent_file, independent_file, empirical_file]
+    labels = ["Dependent", "Independent", "Empirical"]
+    plot_dependence(files, labels, event_lengths, plot_file)
 
