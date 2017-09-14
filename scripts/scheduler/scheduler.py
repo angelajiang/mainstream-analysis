@@ -111,12 +111,9 @@ if __name__ == "__main__":
     plot_dir = "plots/scheduler"
 
     ## Event length param sweep
-    #ms1 = "output/streamer/scheduler/scheduler-s0-100-ms.csv" 
-    #max1 = "output/streamer/scheduler/scheduler-s0-100-max.csv" 
-    #min1 = "output/streamer/scheduler/scheduler-s0-100-min.csv" 
-    ms1 = "output/streamer/scheduler/scheduler-s0-250-mainstream" 
-    max1 = "output/streamer/scheduler/scheduler-s0-250-maxsharing" 
-    min1 = "output/streamer/scheduler/scheduler-s0-250-nosharing" 
+    ms1 = "output/streamer/scheduler/scheduler-s0-100-ms.csv" 
+    max1 = "output/streamer/scheduler/scheduler-s0-100-max.csv" 
+    min1 = "output/streamer/scheduler/scheduler-s0-100-min.csv" 
     f1 ="scheduler-s0-100"
     t1 = "Within 100ms (1.4 Frames)"
 
@@ -126,9 +123,9 @@ if __name__ == "__main__":
     f2 ="scheduler-s0-500"
     t2 = "Within 500ms (7 Frames)"
 
-    ms3 = "output/streamer/scheduler/scheduler-s0-app10-ms.csv" 
-    max3 = "output/streamer/scheduler/scheduler-s0-app10-max.csv" 
-    min3 = "output/streamer/scheduler/scheduler-s0-app10-min.csv" 
+    ms3 = "output/streamer/scheduler/scheduler-s0-250-mainstream" 
+    max3 = "output/streamer/scheduler/scheduler-s0-250ms-independent-maxsharing" 
+    min3 = "output/streamer/scheduler/scheduler-s0-250-nosharing" 
     f3 ="scheduler-s0-250"
     t3 = "Within 250ms (2.8 Frames)"
 
@@ -144,7 +141,7 @@ if __name__ == "__main__":
 
     ## Different applications
     ms1 = "output/streamer/scheduler/scheduler-s0-250-mainstream" 
-    max1 = "output/streamer/scheduler/scheduler-s0-250-maxsharing" 
+    max1 = "output/streamer/scheduler/scheduler-s0-250ms-independent-maxsharing" 
     min1 = "output/streamer/scheduler/scheduler-s0-250-nosharing" 
     f1 ="scheduler-s0-250-flowers"
     t1 = "Flowers"
@@ -209,9 +206,41 @@ if __name__ == "__main__":
     plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
     ms2 = "output/streamer/scheduler/scheduler-s0-250-mainstream" 
-    max2 = "output/streamer/scheduler/scheduler-s0-250-maxsharing" 
+    max2 = "output/streamer/scheduler/scheduler-s0-250ms-independent-maxsharing" 
     min2 = "output/streamer/scheduler/scheduler-s0-250-nosharing" 
     f2 ="scheduler-s0-250-flowers-independent"
+    t2 = "Independent accuracy"
+
+    ms_files = [ms2]
+    max_files = [max2]
+    min_files = [min2]
+    f_files = [f2]
+    f_files_annotated = [f + "-annotated" for f in f_files]
+    titles = [t2]
+
+    plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+
+    ms1 = "output/streamer/scheduler/scheduler-s0-500-dependence-mainstream" 
+    max1 = "output/streamer/scheduler/scheduler-s0-500-dependence-maxsharing" 
+    min1 = "output/streamer/scheduler/scheduler-s0-500-dependence-nosharing" 
+    f1 ="scheduler-s0-500-flowers-dependent"
+    t1 = "Dependent accuracy"
+
+    ms_files = [ms1]
+    max_files = [max1]
+    min_files = [min1]
+    f_files = [f1]
+    f_files_annotated = [f + "-annotated" for f in f_files]
+    titles = [t1]
+
+    plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+
+    ms2 = "output/streamer/scheduler/scheduler-s0-500-ms.csv" 
+    max2 = "output/streamer/scheduler/scheduler-s0-500-max.csv" 
+    min2 = "output/streamer/scheduler/scheduler-s0-500-min.csv" 
+    f2 ="scheduler-s0-500-flowers-independent"
     t2 = "Independent accuracy"
 
     ms_files = [ms2]
