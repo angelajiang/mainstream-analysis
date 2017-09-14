@@ -7,10 +7,8 @@ import matplotlib.pyplot as plt
 
 from matplotlib.pyplot import cm
 
-def get_data(csv_file):
+def get_data_by_stride_and_slo(csv_file):
     data_by_slo = {}
-    xs = []
-    ys = []
     with open(csv_file) as f:
         for line in f:
             vals = line.split(',')
@@ -23,6 +21,17 @@ def get_data(csv_file):
             data_by_slo[slo]["ys"].append(prob)
     return data_by_slo
 
+def get_data(csv_file):
+    data = {"strides": [], "ys": []}
+    with open(csv_file) as f:
+        for line in f:
+            vals = line.split(',')
+            stride = int(vals[0])
+            prob = 1 - float(vals[1])
+            data["strides"].append(stride)
+            data["ys"].append(prob)
+    return data
+
 def plot_models(rate_files, labels, plot_file, slo=None):
     # xs: stride
     # ys: probability
@@ -31,7 +40,7 @@ def plot_models(rate_files, labels, plot_file, slo=None):
     colors=cm.rainbow(np.linspace(0,1,len(labels)))
 
     for rate_file, label, color in zip(rate_files, labels, colors):
-        data_by_slo = get_data(rate_file)
+        data_by_slo = get_data_by_stride_and_slo(rate_file)
         if slo == None:
             slo = max(data_by_slo.keys())
         if slo not in data_by_slo.keys():
@@ -63,7 +72,7 @@ def plot_slos(rate_file, plot_file):
 
     fps = 1
 
-    data_by_slo = get_data(rate_file)
+    data_by_slo = get_data_by_stride_and_slo(rate_file)
     colors=cm.rainbow(np.linspace(0,1,len(data_by_slo.keys())))
 
     slos = sorted(data_by_slo.keys())
@@ -88,41 +97,24 @@ def plot_slos(rate_file, plot_file):
     plt.savefig(plot_file)
     plt.clf()
 
-def plot_dependence(dependent_file, independent_file, plot_file):
-    # xs: Sample rate
+def plot_dependence(files, labels, plot_file):
+    # strides: strides
+    # xs: sample rate
     # ys: probability
 
     fps = 1
 
     # Dependent
+    for filename, label in zip(files, labels):
 
-    data_by_slo = get_data(dependent_file)
+        data = get_data(filename)
+        strides = sorted(data.keys())
 
-    slos = sorted(data_by_slo.keys())
-    slo = slos[1]
-
-    data = data_by_slo[slo]
-    strides = data["xs"]
-    xs = [1 / float(s) for s in strides]
-    ys = data["ys"]
-    xlabels = ["1/" + str(s) for s in strides]
-    label = "dependent"
-    plt.plot(xs, ys, label=label, lw=2)
-
-
-    # Independent
-    data_by_slo = get_data(independent_file)
-
-    slos = sorted(data_by_slo.keys())
-    slo = slos[1]
-
-    data = data_by_slo[slo]
-    strides = data["xs"]
-    xs = [1 / float(s) for s in strides]
-    ys = data["ys"]
-    xlabels = ["1/" + str(s) for s in strides]
-    label = "independent"
-    plt.plot(xs, ys, label=label, lw=2)
+        strides = data["strides"]
+        xs = [1 / float(s) for s in strides]
+        xlabels = ["1/" + str(s) for s in strides]
+        ys = data["ys"]
+        plt.plot(xs, ys, label=label, lw=2)
 
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
@@ -132,8 +124,8 @@ def plot_dependence(dependent_file, independent_file, plot_file):
     plt.ylabel("False negative rate", fontsize=25)
     plt.xticks(xs, xlabels)
     plt.xscale('log')
-    plt.xlim(0, 1)
-    plt.ylim(0,1)
+    plt.xlim(0,1)
+    plt.ylim(0,0.5)
     plt.legend(loc=0, fontsize=20)
     plt.tight_layout()
 
@@ -184,7 +176,9 @@ if __name__ == "__main__":
     #plot_slos(f13, plot_file)
 
     plot_file = "plots/frame-rate/frame-rate-afn-dependences.pdf"
-    dependent_file = "/users/ahjiang/src/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-full"
-    independent_file = "/users/ahjiang/src/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-full"
-    plot_dependence(dependent_file, independent_file, plot_file)
+    dependent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-full"
+    independent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-full"
+    files = [dependent_file, independent_file]
+    labels = ["Dependent", "Independent"]
+    plot_dependence(files, labels, plot_file)
 
