@@ -59,9 +59,9 @@ def plot(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotated
             xs2, ys2, errs2, losses2, fpses2 = get_data(max_file)
             xs3, ys3, errs3, losses3, fpses3 = get_data(min_file)
 
-            plt.errorbar(xs1, ys1, yerr=errs1, marker=plot_util.MAINSTREAM['marker'], lw=2, label="Mainstream")
-            plt.errorbar(xs2, ys2, yerr=errs2, marker=plot_util.MAX_SHARING['marker'], lw=2, label="Max sharing")
             plt.errorbar(xs3, ys3, yerr=errs3, marker=plot_util.NO_SHARING['marker'], lw=2, label="No sharing")
+            plt.errorbar(xs2, ys2, yerr=errs2, marker=plot_util.MAX_SHARING['marker'], lw=2, label="Max sharing")
+            plt.errorbar(xs1, ys1, yerr=errs1, marker=plot_util.MAINSTREAM['marker'], lw=2, label="Mainstream")
 
             if annotated:
                 for x1, y1, loss, fps in zip(xs1[0::4], ys1[0::4], losses1[0::4], fpses1[0::4]):
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
     ## Different applications
-    ms1 = "output/streamer/scheduler/cost/scheduler-s0-250-cost-mainstream" 
+    ms1 = "output/streamer/scheduler/scheduler-s0-250-mainstream" 
     max1 = "output/streamer/scheduler/scheduler-s0-250ms-independent-maxsharing" 
     min1 = "output/streamer/scheduler/scheduler-s0-250-nosharing" 
     f1 ="scheduler-s0-250-flowers"
