@@ -17,17 +17,20 @@ COLORS = {"grey": colors.colorConverter.to_rgb("#4D4D4D"),
           "grey5": colors.colorConverter.to_rgb("#bfbfbf"),
           }
 
-MAINSTREAM = {"color": COLORS["grey1"],
+MAINSTREAM = {"color": COLORS["blue"],
               "marker": "h",
-              "pattern": "-----"
+              "pattern": "---",
+              "label": "Mainstream"
               }
 
-NO_SHARING = {"color": COLORS["grey5"],
+NO_SHARING = {"color": COLORS["red"],
               "marker": "o",
-              "pattern": "\\\\\\"
+              "pattern": "\\\\",
+              "label": "No Sharing"
               }
 
-MAX_SHARING = {"color": COLORS["grey3"],
+MAX_SHARING = {"color": COLORS["green"],
               "marker": "d",
-              "pattern": "xxxxx"
+              "pattern": "xxxxx",
+              "label": "Max Sharing"
               }
