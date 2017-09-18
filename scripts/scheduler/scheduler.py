@@ -29,7 +29,9 @@ def get_data(csv_file):
             vals = line.split(',')
             num_apps = int(vals[0])
             acc_loss = round(float(vals[2]),2)
-            fps_list = [float(v) for v in vals[(4+num_apps):]]
+            fps_start = num_apps + 4
+            fps_end = (2 *num_apps) + 3
+            fps_list = [float(v) for v in vals[fps_start:fps_end]]
             average_fps = round(np.average(fps_list),2)
 
             if num_apps not in metrics.keys():
@@ -123,7 +125,7 @@ if __name__ == "__main__":
     f2 ="scheduler-s0-500"
     t2 = "Within 500ms (7 Frames)"
 
-    ms3 = "output/streamer/scheduler/scheduler-s0-250-mainstream" 
+    ms3 = "output/streamer/scheduler/cost/scheduler-s0-250-cost-mainstream" 
     max3 = "output/streamer/scheduler/scheduler-s0-250ms-independent-maxsharing" 
     min3 = "output/streamer/scheduler/scheduler-s0-250-nosharing" 
     f3 ="scheduler-s0-250"
@@ -140,7 +142,7 @@ if __name__ == "__main__":
     plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
     ## Different applications
-    ms1 = "output/streamer/scheduler/scheduler-s0-250-mainstream" 
+    ms1 = "output/streamer/scheduler/cost/scheduler-s0-250-cost-mainstream" 
     max1 = "output/streamer/scheduler/scheduler-s0-250ms-independent-maxsharing" 
     min1 = "output/streamer/scheduler/scheduler-s0-250-nosharing" 
     f1 ="scheduler-s0-250-flowers"
@@ -205,7 +207,7 @@ if __name__ == "__main__":
     plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
     plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
-    ms2 = "output/streamer/scheduler/scheduler-s0-250-mainstream" 
+    ms2 = "output/streamer/scheduler/cost/scheduler-s0-250-cost-mainstream" 
     max2 = "output/streamer/scheduler/scheduler-s0-250ms-independent-maxsharing" 
     min2 = "output/streamer/scheduler/scheduler-s0-250-nosharing" 
     f2 ="scheduler-s0-250-flowers-independent"
@@ -249,6 +251,23 @@ if __name__ == "__main__":
     f_files = [f2]
     f_files_annotated = [f + "-annotated" for f in f_files]
     titles = [t2]
+
+    plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+
+    ## Multiple applications
+    ms1 = "output/streamer/scheduler/cost/scheduler-s0-250-multiapp-mainstream" 
+    max1 = "output/streamer/scheduler/cost/scheduler-s0-250-multiapp-maxsharing" 
+    min1 = "output/streamer/scheduler/cost/scheduler-s0-250-multiapp-nosharing" 
+    f1 ="scheduler-s0-250-flowers-multiapp"
+    t1 = "Multiple applications"
+
+    ms_files = [ms1]
+    max_files = [max1]
+    min_files = [min1]
+    f_files = [f1]
+    f_files_annotated = [f + "-annotated" for f in f_files]
+    titles = [t1]
 
     plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
     plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
