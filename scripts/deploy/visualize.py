@@ -25,7 +25,6 @@ def visualize_deployment(files, objects, plot_dir):
                     label=obj["label"],
                     color=obj["color"],
                     marker = obj["marker"])
-    print ys[140:160]
     plot_file = plot_dir + "/deploy-time-series.pdf"
     plt.legend()
     plt.savefig(plot_file)

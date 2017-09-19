@@ -50,11 +50,11 @@ def plot(plot_file, slos, ys_mainstream, ys_nosharing):
     rects1 = ax.bar(index, ys_nosharing, bar_width,
                     color=plot_util.NO_SHARING["color"],
                     hatch=plot_util.NO_SHARING["pattern"],
-                    label='No Sharing')
+                    label=plot_util.NO_SHARING["label"])
     rects2 = ax.bar(index + (bar_width), ys_mainstream, bar_width,
                     color=plot_util.MAINSTREAM['color'],
                     hatch=plot_util.MAINSTREAM["pattern"],
-                    label='Mainstream')
+                    label=plot_util.MAINSTREAM["label"])
 
     #ax.set_xticks((ind + bar_width * 2) / 2)
     xs = [i + (bar_width * (3 / 2)) for i in np.arange(len(slos))]

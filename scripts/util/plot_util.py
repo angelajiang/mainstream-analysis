@@ -2,14 +2,15 @@
 from matplotlib import colors
 
 COLORS = {"grey": colors.colorConverter.to_rgb("#4D4D4D"),
-          "blue": colors.colorConverter.to_rgb("#5DA5DA"),
-          "orange": colors.colorConverter.to_rgb("#FAA43A"),
-          "green": colors.colorConverter.to_rgb("#60BD68"),
-          "pink": colors.colorConverter.to_rgb("#F17CB0"),
+          "blue": colors.colorConverter.to_rgb("#2B83BA"),
+          "orange": colors.colorConverter.to_rgb("#FDAE61"),
+          "green": colors.colorConverter.to_rgb("#ABDDA4"),
+          "seafoam": colors.colorConverter.to_rgb("#9DD192"),
+          "pink": colors.colorConverter.to_rgb("#F2686D"),
           "brown": colors.colorConverter.to_rgb("#B2912F"),
-          "purple": colors.colorConverter.to_rgb("#B276B2"),
+          "purple": colors.colorConverter.to_rgb("#C988BB"),
           "yellow": colors.colorConverter.to_rgb("#DECF3F"),
-          "red": colors.colorConverter.to_rgb("#F15854"),
+          "red": colors.colorConverter.to_rgb("#D7191C"),
           "grey1": colors.colorConverter.to_rgb("#ffffff"),
           "grey2": colors.colorConverter.to_rgb("#f2f2f2"),
           "grey3": colors.colorConverter.to_rgb("#e6e6e6"),
@@ -17,13 +18,13 @@ COLORS = {"grey": colors.colorConverter.to_rgb("#4D4D4D"),
           "grey5": colors.colorConverter.to_rgb("#bfbfbf"),
           }
 
-MAINSTREAM = {"color": COLORS["blue"],
+MAINSTREAM = {"color": COLORS["orange"],
               "marker": "h",
               "pattern": "---",
               "label": "Mainstream"
               }
 
-NO_SHARING = {"color": COLORS["red"],
+NO_SHARING = {"color": COLORS["blue"],
               "marker": "o",
               "pattern": "\\\\",
               "label": "No Sharing"

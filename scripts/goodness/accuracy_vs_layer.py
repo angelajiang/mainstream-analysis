@@ -53,8 +53,8 @@ def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
             plt.ylim(.2, 1)
 
             plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
-            plt.xlabel("More frozen layers ->", fontsize=28)
-            plt.ylabel("Top-1 Accuracy", fontsize=28)
+            plt.xlabel("More frozen NN-cells ->", fontsize=30)
+            plt.ylabel("Top-1 Accuracy", fontsize=30)
             plt.legend(loc=4, fontsize=20)
             #plt.gca().invert_xaxis()
             plt.gca().xaxis.grid(True)
@@ -81,9 +81,29 @@ if __name__ == "__main__":
     accuracy_file2 = "output/mainstream/accuracy/flowers/resnet/flowers-40-0.0001-chokepoints"
     accuracy_file3 = "output/mainstream/accuracy/flowers/mobilenets/flowers-40-0.0001"
     accuracy_file4 = "output/mainstream/accuracy/paris/resnet/paris-40-0.0001-chokepoints"
+    accuracy_file5 = "output/mainstream/accuracy/paris/inception/paris-40-0.0001-dropout"
+    accuracy_file6 = "output/mainstream/accuracy/paris/mobilenets/paris-40-0.0001"
+    accuracy_file7 = "output/mainstream/accuracy/cats/cats-inception-accuracy"
 
-    accuracy_files = [accuracy_file1, accuracy_file2, accuracy_file3, accuracy_file4]
-    labels = ["Flowers-InceptionV3", "Flowers-ResNet50", "Flowers-Mobilenets-224", "Paris-ResNet50"]
+    accuracy_files = [
+                      accuracy_file2,
+                      accuracy_file5,
+                      accuracy_file4,
+                      accuracy_file1,
+                      #accuracy_file7,
+                      accuracy_file6,
+                      accuracy_file3
+                      ]
+
+    labels = [
+              "Flowers-ResNet50",
+              "Paris-InceptionV3",
+              "Paris-ResNet50",
+              "Flowers-InceptionV3",
+              #"Cats-InceptionV3",
+              "Paris-MobileNets-224",
+              "Flowers-MobileNets-224"
+              ]
     plot_file = "plots/accuracy/accuracy-by-layer.pdf"
 
     plot_accuracy_vs_layer(accuracy_files, labels, plot_file)

@@ -205,7 +205,6 @@ def plot_processor_latency(processors_file, plot_dir):
             plt.title(str(num_NN) + " NNs", fontsize=30)
             plt.tight_layout()
             plot_file = plot_dir + "/latency-" + str(num_NN) + "-NN.pdf"
-            print plot_file
             plt.savefig(plot_file)
             plt.clf()
 

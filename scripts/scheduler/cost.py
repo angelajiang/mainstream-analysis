@@ -59,7 +59,7 @@ def plot(ms_file, plot_dir):
 
 if __name__ == "__main__":
     plot_dir = "plots/scheduler"
-    ms_file = "output/streamer/scheduler/cost/scheduler-s0-250-cost-mainstream" 
+    ms_file = "output/streamer/scheduler/cost/scheduler-s0-cost" 
     plot(ms_file, plot_dir)
 
 
