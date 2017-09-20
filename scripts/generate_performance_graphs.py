@@ -8,6 +8,10 @@ import scheduler
 sys.path.append("scripts/goodness")
 import accuracy_vs_layer
 
+import seaborn as sns
+
+sns.set()
+
 if __name__ == "__main__":
 
     # Max throughput
