@@ -67,7 +67,7 @@ def plot(plot_file, slos, ys_mainstream, ys_nosharing):
     ax.tick_params(axis='y', which='minor', labelsize=20)
     plt.xlabel("Throughput SLO", fontsize=28)
     plt.ylabel('Number of applications', fontsize=28)
-    plt.title('Within 99% accuracy', fontsize=25)
+    plt.title('Within 99% accuracy', fontsize=30)
     plt.legend(loc=0, fontsize=25)
     plt.gca().yaxis.grid(True)
     plt.tight_layout()

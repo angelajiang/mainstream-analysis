@@ -17,8 +17,6 @@ def get_data(csv_file):
     with open(csv_file) as f:
         for line in f:
             vals = line.split(',')
-            video_name = vals[0]
-            dependence = vals[1]
             num_apps = int(vals[2])
             scheduler = vals[3]
             fnr = 1 - float(vals[4])
@@ -39,16 +37,14 @@ def plot(csv_file, plot_dir):
             scheduler_data = plot_data[scheduler]
             if scheduler == "MS":
                 plot_config = plot_util.MAINSTREAM
-                label = "Mainstream"
             elif scheduler == "No":
                 plot_config = plot_util.NO_SHARING
-                label = "No sharing"
             elif scheduler == "Max":
                 plot_config = plot_util.MAX_SHARING
-                label = "Max sharing"
 
             plt.plot(scheduler_data["xs"], scheduler_data["ys"], linewidth=2,
-                     label=label,
+                     label=plot_config["label"],
+                     color=plot_config["color"],
                      zorder=3,
                      marker = plot_config["marker"])
 

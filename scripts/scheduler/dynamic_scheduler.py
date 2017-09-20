@@ -6,6 +6,8 @@ import matplotlib
 import numpy as np
 from itertools import cycle
 from scipy.stats import linregress
+sys.path.append("scripts/util")
+import plot_util
 
 
 matplotlib.use('Agg')
@@ -33,7 +35,7 @@ def plot(csv_file, plot_dir):
     labels = []
 
     # Plot accuracy on the y axis
-    cycol = cycle('bgrcmyk').next
+    colors = plot_util.COLORLISTS[4]
     markers = ["o", "h", "D", "p", "8", "x", "1"]
 
     Xs = data[thresholds[0]]["xs"]
@@ -42,12 +44,15 @@ def plot(csv_file, plot_dir):
     labels.append("Max sharing")
 
     count = 0
+    color_index = 0
     for threshold, vals in reversed(sorted(data.iteritems())):
+        color = colors[color_index]
         Xs = vals["xs"]
         Ys = vals["ys"]
-        plt.plot(Xs, Ys, color=cycol(), lw=2, marker=markers[count], markersize=10)
+        plt.plot(Xs, Ys, color=color, lw=2, marker=markers[count], markersize=10)
         labels.append(str(int(threshold)) + " fps")
         count += 1
+        color_index += 1
 
     plt.legend(labels, loc=0)
 
@@ -59,9 +64,10 @@ def plot(csv_file, plot_dir):
     plt.xlim(1,10)
     plt.xlabel("Number of applications", fontsize=25)
     plt.ylabel("Image-level Accuracy Loss", fontsize=25)
-    plt.grid()
     plt.tight_layout()
-    plt.savefig(plot_dir + "/dynamic-scheduler-uniform-flipped.pdf")
+    plt.gca().xaxis.grid(True)
+    plt.gca().yaxis.grid(True)
+    plt.savefig(plot_dir + "/dynamic-scheduler-uniform.pdf")
     plt.clf()
 
 if __name__ == "__main__":

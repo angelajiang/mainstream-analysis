@@ -107,13 +107,14 @@ def plot(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotated
             plt.tick_params(axis='x', which='major', labelsize=28)
             plt.tick_params(axis='x', which='minor', labelsize=20)
 
-            plt.title(title, fontsize=28)
-            plt.xlabel("Number of applications", fontsize=35)
+            plt.title(title, fontsize=35)
+            plt.xlabel("Number of applications", fontsize=30)
             plt.xlim(2, max(xs1))
             plt.ylim(0, 1)
-            plt.ylabel("False negative rate", fontsize=35)
+            plt.ylabel("False negative rate", fontsize=30)
             plt.tight_layout()
-            plt.grid()
+            plt.gca().xaxis.grid(True)
+            plt.gca().yaxis.grid(True)
             plt.savefig(plot_dir + "/" + plot_file + ".pdf")
             plt.clf()
 

@@ -201,7 +201,8 @@ def plot_processor_latency(processors_file, plot_dir):
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
             plt.legend(loc=0, fontsize=20, ncol=2)
-            plt.grid()
+            plt.gca().xaxis.grid(True)
+            plt.gca().yaxis.grid(True)
             plt.title(str(num_NN) + " NNs", fontsize=30)
             plt.tight_layout()
             plot_file = plot_dir + "/latency-" + str(num_NN) + "-NN.pdf"
