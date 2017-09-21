@@ -124,12 +124,13 @@ def plot_dependence(files, labels, event_lengths, plot_file):
     plt.tick_params(axis='y', which='minor', labelsize=20)
     plt.tick_params(axis='x', which='major', labelsize=28)
     plt.tick_params(axis='x', which='minor', labelsize=20)
-    plt.xlabel("Sample rate", fontsize=28)
-    plt.ylabel("False negative rate", fontsize=28)
+    plt.xlabel("Sample rate", fontsize=35)
+    plt.ylabel("False negative rate", fontsize=35)
     plt.xticks(xs, xlabels)
     plt.xscale('log')
     plt.xlim(0,1)
     plt.ylim(0, max_y)
+    plt.gca().yaxis.grid(True)
     plt.legend(loc=0, fontsize=20)
     plt.tight_layout()
 
@@ -189,11 +190,12 @@ if __name__ == "__main__":
     labels = ["Dependent", "Independent", "Empirical"]
     plot_dependence(files, labels, event_lengths, plot_file)
 
-    plot_file = "plots/frame-rate/frame-rate-afn-dependences2.pdf"
-    dependent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent"
-    independent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent"
+    plot_file = "plots/frame-rate/frame-rate-afn-dependences-with-correlation.pdf"
+    dependent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-whole"
+    independent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-whole"
     empirical_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
-    files = [dependent_file, independent_file, empirical_file]
-    labels = ["Dependent", "Independent", "Empirical"]
+    correlation_file  = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-correlation"
+    files = [dependent_file, independent_file, empirical_file, correlation_file]
+    labels = ["Dependent", "Independent", "Empirical", "Correlation"]
     plot_dependence(files, labels, event_lengths, plot_file)
 

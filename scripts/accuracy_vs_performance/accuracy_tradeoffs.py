@@ -73,7 +73,7 @@ def get_accuracy_data(architecture, csv_file):
             data[layer] = acc
     return data
 
-def plot_accuracy_vs_ms(arch, latency_files, accuracy_files, labels, plot_dir):
+def plot_accuracy_vs_fps(arch, latency_files, accuracy_files, labels, plot_dir):
     num_NNs = get_num_NNs(latency_files[0])
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN in num_NNs:
@@ -91,15 +91,15 @@ def plot_accuracy_vs_ms(arch, latency_files, accuracy_files, labels, plot_dir):
 
                 plt.scatter(xs, ys, s=60, marker=cymark(), color=cycol(), edgecolor='black', label=label)
 
-                plt.tick_params(axis='y', which='major', labelsize=24)
-                plt.tick_params(axis='y', which='minor', labelsize=20)
-                plt.tick_params(axis='x', which='major', labelsize=24)
-                plt.tick_params(axis='x', which='minor', labelsize=20)
+                plt.tick_params(axis='y', which='major', labelsize=28)
+                plt.tick_params(axis='y', which='minor', labelsize=24)
+                plt.tick_params(axis='x', which='major', labelsize=28)
+                plt.tick_params(axis='x', which='minor', labelsize=24)
 
                 plt.ylim(0, 1)
 
-                plt.xlabel("Throughput (FPS)", fontsize=25)
-                plt.ylabel("Top-1 Accuracy", fontsize=25)
+                plt.xlabel("Throughput (FPS)", fontsize=30)
+                plt.ylabel("Top-1 Accuracy", fontsize=30)
                 plt.legend(loc=4, fontsize=20)
                 #plt.title(str(num_NN) + " applications", fontsize=30)
                 plt.grid()
@@ -129,5 +129,5 @@ if __name__ == "__main__":
 
     plot_dir = "plots/tradeoffs/flowers"
 
-    plot_accuracy_vs_ms(arches, latency_files, accuracy_files, labels, plot_dir)
+    plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir)
 

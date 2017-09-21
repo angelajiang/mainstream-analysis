@@ -51,11 +51,14 @@ def print_and_plot_latencies(csv_file, layer_names, label, plot_dir):
         errs.append(err)
 
         # Data for print
+        ls= [name for num, name in layer_names.iteritems()]
         layer_number = [num for num, name in layer_names.iteritems() if name == layer][0]
-        arr = [avg_latency] * (layer_number - last_layer_number)
+        layers_in_seg = layer_number - last_layer_number
+
+        arr = [avg_latency / float(layers_in_seg)] * (layers_in_seg)
         layer_latencies += arr
 
-        last_avg_latency = avg_latency
+        last_avg_latency += avg_latency
         last_layer_number = layer_number
 
     max_latency = max(layer_latencies)
@@ -64,19 +67,21 @@ def print_and_plot_latencies(csv_file, layer_names, label, plot_dir):
     width = 0.75
     plt.clf()
     xs = range(len(ys))
-    plt.bar(xs[1:], ys[1:], width, yerr=err,
+    plt.bar(xs, ys, width, yerr=err,
             color=plot_util.NO_SHARING["color"],
             hatch=plot_util.NO_SHARING["pattern"],
-            label=label,
+            zorder=3,
             error_kw={'ecolor':'green', 'linewidth':3})
+
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
     plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
-    plt.legend(loc=0, fontsize=25)
-    plt.ylim(0, max(ys)+10)
+    plt.xlim(0, max(xs))
+    plt.ylim(0, 25)
     plt.gca().yaxis.grid(True)
-    plt.xlabel("Layer", fontsize=28)
-    plt.ylabel("Forward-pass latency (ms)", fontsize=28)
+    plt.xlabel("NN-cell", fontsize=30)
+    plt.ylabel("Forward-pass latency (ms)", fontsize=25)
+    plt.tight_layout()
     plt.savefig(plot_dir + "/latency-by-layer-" + label + ".pdf")
 
     print normalized_latencies
