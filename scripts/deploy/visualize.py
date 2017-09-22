@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 
 import seaborn as sns
-sns.set()
+sns.set_style("whitegrid")
 
 def visualize_deployment(files, objects, plot_dir):
     start = 50
@@ -38,7 +38,7 @@ def visualize_deployment(files, objects, plot_dir):
         plt.scatter(xs1, ys1,
                     label=obj["label"] + " hit",
                     color=obj["color"],
-                    s=70,
+                    s=90,
                     marker = "x")
         plt.scatter(xs2, ys2,
                     label=obj["label"] + " miss",
