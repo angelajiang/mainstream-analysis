@@ -7,12 +7,14 @@ import dynamic_scheduler
 import scheduler
 sys.path.append("scripts/goodness")
 import accuracy_vs_layer
+import false_neg_by_stride
 sys.path.append("scripts/accuracy_vs_performance")
 import accuracy_tradeoffs
 
 import seaborn as sns
 
-sns.set()
+#sns.set()
+sns.set_style("whitegrid")
 
 if __name__ == "__main__":
 
@@ -65,6 +67,44 @@ if __name__ == "__main__":
               ]
     plot_file = "plots/accuracy/accuracy-by-layer.pdf"
     accuracy_vs_layer.plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
+
+    # Accuracy vs throughput
+    print "Accuracy vs throughput..."
+
+    arch1 = "iv3"
+    arch2 = "r50"
+    arch3 = "mnets"
+
+    latency_file1 = "output/streamer/latency/inception/basic/latency-processors-iv3.csv"
+    latency_file2 = "output/streamer/latency/resnet/basic/latency-processors-r50.csv"
+    latency_file3 = "output/streamer/latency/mobilenets/basic/latency.csv"
+
+    accuracy_file1 = "output/mainstream/accuracy/flowers/inception/flowers-40-0.0001-dropout"
+    accuracy_file2 = "output/mainstream/accuracy/flowers/resnet/flowers-40-0.0001-chokepoints"
+    accuracy_file3 = "output/mainstream/accuracy/flowers/mobilenets/flowers-40-0.0001"
+
+    arches = [arch1, arch2, arch3]
+    latency_files = [latency_file1, latency_file2, latency_file3]
+    accuracy_files = [accuracy_file1, accuracy_file2, accuracy_file3]
+    labels = ["InceptionV3", "ResNet50", "MobileNets-224"]
+
+    plot_dir = "plots/tradeoffs/flowers"
+
+    accuracy_tradeoffs.plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir)
+
+    # False negative rate by stride
+    print "Plotting false negative rate by stride..."
+
+    event_lengths = [286, 77, 92, 437, 274, 255, 251, 153]
+    plot_file = "plots/frame-rate/frame-rate-afn-dependences-with-correlation.pdf"
+    dependent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-whole"
+    independent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-whole"
+    empirical_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
+    correlation_file  = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-correlation"
+
+    files = [dependent_file, independent_file, empirical_file, correlation_file]
+    labels = ["Dependent", "Independent", "Empirical", "Correlation"]
+    false_neg_by_stride.plot_dependence(files, labels, event_lengths, plot_file)
 
     # Image level accuracy scheduler
     print "Plotting dynamic uniform scheduler..."
@@ -244,27 +284,4 @@ if __name__ == "__main__":
 
     scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
     scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
-
-    # Accuracy vs throughput
-
-    arch1 = "iv3"
-    arch2 = "r50"
-    arch3 = "mnets"
-
-    latency_file1 = "output/streamer/latency/inception/basic/latency-processors-iv3.csv"
-    latency_file2 = "output/streamer/latency/resnet/basic/latency-processors-r50.csv"
-    latency_file3 = "output/streamer/latency/mobilenets/basic/latency.csv"
-
-    accuracy_file1 = "output/mainstream/accuracy/flowers/inception/flowers-40-0.0001-dropout"
-    accuracy_file2 = "output/mainstream/accuracy/flowers/resnet/flowers-40-0.0001-chokepoints"
-    accuracy_file3 = "output/mainstream/accuracy/flowers/mobilenets/flowers-40-0.0001"
-
-    arches = [arch1, arch2, arch3]
-    latency_files = [latency_file1, latency_file2, latency_file3]
-    accuracy_files = [accuracy_file1, accuracy_file2, accuracy_file3]
-    labels = ["InceptionV3", "ResNet50", "MobileNets-224"]
-
-    plot_dir = "plots/tradeoffs/flowers"
-
-    accuracy_tradeoffs.plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir)
 
