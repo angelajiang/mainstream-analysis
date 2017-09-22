@@ -1,23 +1,31 @@
-
-import pprint as pp
+# -*- coding: utf8 -*-
 import sys
-import matplotlib
-import numpy as np
-
+from PIL import Image
+import matplotlib.pyplot as plt
+import seaborn as sns
 sys.path.append("scripts/util")
 import plot_util
-from matplotlib.pyplot import text
 
-import matplotlib.pyplot as plt
-import matplotlib
 
-import seaborn as sns
-sns.set_style("whitegrid")
+sns.set_style("white")
 
-def visualize_deployment(files, objects, plot_dir):
-    start = 50
-    #end = 114
-    for csv_file, obj in zip(files, objects):
+
+def visualize_deployment(files, objects, plot_dir, thumbnail):
+    # TODO: Remove magic value of 20 (to compensate for startup time.)
+    start = 50 + 20
+    fps = 15.
+    # end = 114
+
+    # Use up and down arrow for hit/miss
+    # settings = {'marker_hit': 6, 'marker_miss': 7, 'y_hit_m': .08, 'y_hit_c': .015, 'y_miss_c': .015, 'line': True}
+    # settings = {'marker_hit': '^', 'marker_miss': 'v', 'y_hit_m': .08, 'y_hit_c': .015, 'line': True}
+    settings = {'marker_hit': u'$\u2191$', 'marker_miss': 'v', 'y_hit_m': .08, 'y_hit_c': -.008 + .003, 'y_miss_c': .015 - .003, 'line': True}
+    # settings = {'marker_hit': u'$\u2191$', 'marker_miss': u'$\u2193$', 'y_hit_m': .08, 'y_hit_c': -.008, 'y_miss_c': .016, 'line': True}
+    # settings = {'marker_hit': '.', 'marker_miss': 'x', 'y_hit_m': .08, 'y_hit_c': .03, 'line': False}
+
+    _, ax = plt.subplots(1)
+
+    for i, (csv_file, obj) in enumerate(zip(files, objects)):
         xs1 = []
         xs2 = []
         ys1 = []
@@ -30,41 +38,52 @@ def visualize_deployment(files, objects, plot_dir):
                 if is_analyzed == -1 or frame_id <= start:
                     continue
                 if is_analyzed == 1:
-                    xs1.append(frame_id)
-                    ys1.append(1)
+                    xs1.append((frame_id - start) / fps)
+                    ys1.append(i * settings['y_hit_m'] + settings['y_hit_c'])
                 else:
-                    xs2.append(frame_id)
-                    ys2.append(1)
+                    xs2.append((frame_id - start) / fps)
+                    ys2.append(i * settings['y_hit_m'] + settings['y_miss_c'])
         plt.scatter(xs1, ys1,
                     label=obj["label"] + " hit",
                     color=obj["color"],
-                    s=90,
-                    marker = "x")
+                    s=70,
+                    marker=settings['marker_hit'])
         plt.scatter(xs2, ys2,
                     label=obj["label"] + " miss",
                     color=obj["color"],
                     s=70,
-                    marker = ">")
-    train_front = 114
-    plt.axvline(x= train_front, linestyle="--", color="black", alpha=0.5)
-    plot_file = plot_dir + "/deploy-time-series.pdf"
-    plt.title("Train detector w/ 9 apps", fontsize=30)
+                    marker=settings['marker_miss']),
+        if settings['line']:
+            plt.axhline(y=i * settings['y_hit_m'] + 0.003, linestyle="--", color=obj["color"])
 
-    plt.annotate("Train front",
-                 xy=(train_front, 0.9),
-                 xytext=(100, -90),
+    train_front = (114 - start) / fps
+    plt.axvline(x=train_front, linestyle="--", color="black", alpha=0.8)
+    plot_file = plot_dir + "/deploy-time-series.pdf"
+    plt.title("Train detector with 9 apps", fontsize=20)
+
+    plt.annotate("Train comes\ninto full view",
+                 xy=(train_front, -.095),
+                 xytext=(20, 12),
                  xycoords='data',
-                 fontsize=30,
+                 fontsize=15,
                  textcoords='offset points',
                  arrowprops=dict(arrowstyle="->"))
 
-    plt.xlim(start, max(xs1))
-    plt.ylim(.8, 1.1)
-    plt.xlabel("Time ->", fontsize=28)
-    plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
+    # TODO(wonglkd): Fix this. Works with plt.show() but not with plt.savefig().
+    im = Image.open(thumbnail)
+    im.thumbnail((400, 400))
+    plt.figimage(im, xo=train_front + 500, yo=83 + 52, zorder=1)
+
+    plt.xlim(0, max(xs1))
+    plt.ylim(-.3, .15)
+    plt.xlabel(u"Time elapsed (s)", fontsize=20)
+    plt.xticks()
     plt.tick_params(axis='y', which='both', left='off', top='off', labelleft='off')
-    plt.legend(loc=7, fontsize=15, ncol=1, frameon=True)
+    # Fix legend order to match line appearance order
+    handles, labels = ax.get_legend_handles_labels()
+    plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=15, ncol=1, frameon=False)
     plt.savefig(plot_file)
+
 
 if __name__ == "__main__":
     # Data created by mainstream analyze_deployment
@@ -72,7 +91,8 @@ if __name__ == "__main__":
     f0 = "output/streamer/deploy/train/train2-10apps-nosharing"
     f1 = "output/streamer/deploy/train/train2-10apps-mainstream"
     f2 = "output/streamer/deploy/train/train2-10apps-maxsharing"
+    thumbnail = "output/train-example.jpg"
     plot_dir = "plots/deploy"
     files = [f0, f1]
     objs = [plot_util.NO_SHARING, plot_util.MAINSTREAM]
-    visualize_deployment(files, objs, plot_dir)
+    visualize_deployment(files, objs, plot_dir, thumbnail)
