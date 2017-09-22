@@ -13,13 +13,14 @@ import plot_util
 sns.set_style("white")
 
 def visualize_deployment(files, objects, plot_dir, thumbnail):
-    start = 50
+    # TODO: Remove magic value of 20 (to compensate for startup time.)
+    start = 50 + 20
     #end = 114
 
     # Use up and down arrow for hit/miss
     # settings = {'marker_hit': 6, 'marker_miss': 7, 'y_hit_m': .08, 'y_hit_c': .015, 'y_miss_c': .015, 'line': True}
     # settings = {'marker_hit': '^', 'marker_miss': 'v', 'y_hit_m': .08, 'y_hit_c': .015, 'line': True}
-    settings = {'marker_hit': u'$\u2191$', 'marker_miss': 'v', 'y_hit_m': .08, 'y_hit_c': -.008, 'y_miss_c': .015, 'line': True}
+    settings = {'marker_hit': u'$\u2191$', 'marker_miss': 'v', 'y_hit_m': .08, 'y_hit_c': -.008 + .003, 'y_miss_c': .015 - .003, 'line': True}
     # settings = {'marker_hit': u'$\u2191$', 'marker_miss': u'$\u2193$', 'y_hit_m': .08, 'y_hit_c': -.008, 'y_miss_c': .016, 'line': True}
     # settings = {'marker_hit': '.', 'marker_miss': 'x', 'y_hit_m': .08, 'y_hit_c': .03, 'line': False}
 
@@ -38,10 +39,10 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
                 if is_analyzed == -1 or frame_id <= start:
                     continue
                 if is_analyzed == 1:
-                    xs1.append(frame_id)
+                    xs1.append(frame_id - start)
                     ys1.append(i * settings['y_hit_m'] + settings['y_hit_c'])
                 else:
-                    xs2.append(frame_id)
+                    xs2.append(frame_id - start)
                     ys2.append(i * settings['y_hit_m'] + settings['y_miss_c'])
         plt.scatter(xs1, ys1,
                     label=obj["label"] + " hit",
@@ -56,14 +57,14 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
         if settings['line']:
             plt.axhline(y=i*settings['y_hit_m']+0.003, linestyle="--", color=obj["color"])
 
-    train_front = 114
+    train_front = 114 - start
     plt.axvline(x= train_front, linestyle="--", color="black", alpha=0.8)
     plot_file = plot_dir + "/deploy-time-series.pdf"
     plt.title("Train detector with 9 apps", fontsize=20)
 
-    plt.annotate("Train front",
-                 xy=(train_front, -.1),
-                 xytext=(-84, 12),
+    plt.annotate("Train comes\ninto full view",
+                 xy=(train_front, -.095),
+                 xytext=(20, 12),
                  xycoords='data',
                  fontsize=15,
                  textcoords='offset points',
@@ -71,10 +72,10 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
 
     # TODO(wonglkd): Fix this. Works with plt.show() but not with plt.savefig().
     im = Image.open(thumbnail)
-    im.thumbnail((200, 200))
-    plt.figimage(im, xo=40, yo=52, zorder=1)
+    im.thumbnail((400, 400))
+    plt.figimage(im, xo=train_front+500, yo=83+52, zorder=1)
 
-    plt.xlim(start, max(xs1))
+    plt.xlim(0, max(xs1))
     plt.ylim(-.3, .15)
     plt.xlabel(u"Time (frames) →", fontsize=20)
     plt.xticks()
@@ -82,7 +83,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     # Fix legend order to match line appearance order
     handles, labels = ax.get_legend_handles_labels()
     plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=15, ncol=1, frameon=False)
-    plt.savefig(plot_file, dpi=300)
+    plt.savefig(plot_file)
 
 
 if __name__ == "__main__":
