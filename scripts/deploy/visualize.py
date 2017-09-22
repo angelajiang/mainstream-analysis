@@ -13,6 +13,7 @@ sns.set_style("white")
 def visualize_deployment(files, objects, plot_dir, thumbnail):
     # TODO: Remove magic value of 20 (to compensate for startup time.)
     start = 50 + 20
+    fps = 15.
     # end = 114
 
     # Use up and down arrow for hit/miss
@@ -37,10 +38,10 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
                 if is_analyzed == -1 or frame_id <= start:
                     continue
                 if is_analyzed == 1:
-                    xs1.append(frame_id - start)
+                    xs1.append((frame_id - start) / fps)
                     ys1.append(i * settings['y_hit_m'] + settings['y_hit_c'])
                 else:
-                    xs2.append(frame_id - start)
+                    xs2.append((frame_id - start) / fps)
                     ys2.append(i * settings['y_hit_m'] + settings['y_miss_c'])
         plt.scatter(xs1, ys1,
                     label=obj["label"] + " hit",
@@ -55,7 +56,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
         if settings['line']:
             plt.axhline(y=i * settings['y_hit_m'] + 0.003, linestyle="--", color=obj["color"])
 
-    train_front = 114 - start
+    train_front = (114 - start) / fps
     plt.axvline(x=train_front, linestyle="--", color="black", alpha=0.8)
     plot_file = plot_dir + "/deploy-time-series.pdf"
     plt.title("Train detector with 9 apps", fontsize=20)
@@ -75,7 +76,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
 
     plt.xlim(0, max(xs1))
     plt.ylim(-.3, .15)
-    plt.xlabel(u"Time (frames) →", fontsize=20)
+    plt.xlabel(u"Time elapsed (s)", fontsize=20)
     plt.xticks()
     plt.tick_params(axis='y', which='both', left='off', top='off', labelleft='off')
     # Fix legend order to match line appearance order
