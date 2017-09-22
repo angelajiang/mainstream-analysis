@@ -1,9 +1,6 @@
 # -*- coding: utf8 -*-
-import pprint as pp
 import sys
-import numpy as np
 from PIL import Image
-from matplotlib.pyplot import text
 import matplotlib.pyplot as plt
 import seaborn as sns
 sys.path.append("scripts/util")
@@ -12,10 +9,11 @@ import plot_util
 
 sns.set_style("white")
 
+
 def visualize_deployment(files, objects, plot_dir, thumbnail):
     # TODO: Remove magic value of 20 (to compensate for startup time.)
     start = 50 + 20
-    #end = 114
+    # end = 114
 
     # Use up and down arrow for hit/miss
     # settings = {'marker_hit': 6, 'marker_miss': 7, 'y_hit_m': .08, 'y_hit_c': .015, 'y_miss_c': .015, 'line': True}
@@ -55,10 +53,10 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
                     s=70,
                     marker=settings['marker_miss']),
         if settings['line']:
-            plt.axhline(y=i*settings['y_hit_m']+0.003, linestyle="--", color=obj["color"])
+            plt.axhline(y=i * settings['y_hit_m'] + 0.003, linestyle="--", color=obj["color"])
 
     train_front = 114 - start
-    plt.axvline(x= train_front, linestyle="--", color="black", alpha=0.8)
+    plt.axvline(x=train_front, linestyle="--", color="black", alpha=0.8)
     plot_file = plot_dir + "/deploy-time-series.pdf"
     plt.title("Train detector with 9 apps", fontsize=20)
 
@@ -73,7 +71,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     # TODO(wonglkd): Fix this. Works with plt.show() but not with plt.savefig().
     im = Image.open(thumbnail)
     im.thumbnail((400, 400))
-    plt.figimage(im, xo=train_front+500, yo=83+52, zorder=1)
+    plt.figimage(im, xo=train_front + 500, yo=83 + 52, zorder=1)
 
     plt.xlim(0, max(xs1))
     plt.ylim(-.3, .15)
