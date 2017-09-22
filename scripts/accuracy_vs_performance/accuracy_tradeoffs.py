@@ -73,7 +73,7 @@ def get_accuracy_data(architecture, csv_file):
             data[layer] = acc
     return data
 
-def plot_accuracy_vs_fps(arch, latency_files, accuracy_files, labels, plot_dir):
+def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir):
     num_NNs = get_num_NNs(latency_files[0])
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN in num_NNs:
