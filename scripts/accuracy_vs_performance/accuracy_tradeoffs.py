@@ -4,6 +4,7 @@ sys.path.append('include/')
 import matplotlib
 import numpy as np
 from itertools import cycle
+from scipy.interpolate import UnivariateSpline
 
 import layers_info
 
@@ -81,6 +82,7 @@ def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir
         for num_NN in num_NNs:
             cycol = cycle('rcmkbg').next
             cymark= cycle('ovDxh1*').next
+            all_pts = []
             for arch, latency_file, accuracy_file, label in \
                     zip(arches, latency_files, accuracy_files, labels):
                 layers = get_layers(latency_file, 0)
@@ -91,7 +93,23 @@ def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir
                 xs  = [latency_data[num_NN][layer]["total"] for layer in layers]
                 ys  = [acc_data[layer] for layer in layers]
 
+                all_pts += list(zip(xs, ys))
+
                 plt.scatter(xs, ys, s=60, marker=cymark(), color=cycol(), edgecolor='black', label=label)
+
+            pts = []
+            highest = -1
+            for x, y in sorted(all_pts, reverse=True):
+                if y > highest:
+                    highest = y
+                    if y > .5:
+                        pts.append((x, y))
+
+            all_xs = [pt[0] for pt in all_pts]
+            xs, ys = zip(*pts)
+            spl = UnivariateSpline(xs, ys, k=2)
+            xs = np.linspace(min(all_xs), max(all_xs), 1000)
+            plt.plot(xs, spl(xs) + .05, '--')
 
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=24)
