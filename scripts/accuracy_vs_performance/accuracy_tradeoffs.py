@@ -18,6 +18,7 @@ def op_to_layer(op_full):
     layer = tensor_name.split("/")[0]
     return layer
 
+
 def get_layers(csv_file, layers_index):
     layers = []
     with open(csv_file) as f:
@@ -29,6 +30,7 @@ def get_layers(csv_file, layers_index):
                 layers.append(layer)
     return layers
 
+
 def get_num_NNs(csv_file):
     num_NNs = []
     with open(csv_file) as f:
@@ -38,6 +40,7 @@ def get_num_NNs(csv_file):
             if num_NN not in num_NNs:
                 num_NNs.append(num_NN)
     return num_NNs
+
 
 def get_max_fps_data(csv_file):
     data = {}
@@ -54,8 +57,9 @@ def get_max_fps_data(csv_file):
             if layer not in data[num_NN].keys():
                 data[num_NN][layer] = {}
 
-            data[num_NN][layer]["total"] = 1/(float(task + base) / 1000)
+            data[num_NN][layer]["total"] = 1 / (float(task + base) / 1000)
     return data
+
 
 def get_accuracy_data(architecture, csv_file):
     if architecture == "iv3":
@@ -75,13 +79,14 @@ def get_accuracy_data(architecture, csv_file):
             data[layer] = acc
     return data
 
+
 def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir):
     num_NNs = get_num_NNs(latency_files[0])
 
-    for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
+    for i in range(2):  # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN in num_NNs:
             cycol = cycle('rcmkbg').next
-            cymark= cycle('ovDxh1*').next
+            cymark = cycle('ovDxh1*').next
             all_pts = []
             for arch, latency_file, accuracy_file, label in \
                     zip(arches, latency_files, accuracy_files, labels):
@@ -90,8 +95,8 @@ def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir
                 latency_data = get_max_fps_data(latency_file)
                 acc_data = get_accuracy_data(arch, accuracy_file)
 
-                xs  = [latency_data[num_NN][layer]["total"] for layer in layers]
-                ys  = [acc_data[layer] for layer in layers]
+                xs = [latency_data[num_NN][layer]["total"] for layer in layers]
+                ys = [acc_data[layer] for layer in layers]
 
                 all_pts += list(zip(xs, ys))
 
@@ -129,7 +134,7 @@ def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir
             plt.gca().xaxis.grid(True)
             plt.gca().yaxis.grid(True)
             plt.tight_layout()
-            plt.savefig(plot_dir +"/acc-fps-"+str(num_NN)+"-NN.pdf")
+            plt.savefig(plot_dir + "/acc-fps-" + str(num_NN) + "-NN.pdf")
             plt.clf()
 
 
@@ -155,4 +160,3 @@ if __name__ == "__main__":
     plot_dir = "plots/tradeoffs/flowers"
 
     plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir)
-
