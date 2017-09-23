@@ -8,7 +8,7 @@ from matplotlib.pyplot import cm
 from matplotlib import ticker
 
 import seaborn as sns
-sns.set_style("white")
+sns.set_style("ticks")
 
 
 def get_data_by_stride_and_slo(csv_file):
@@ -42,7 +42,7 @@ def fraction_log_fmt(x, _):
     if x >= 1:
         return '{:g}'.format(x)
     else:
-        return '1/{:g}'.format(1./x)
+        return '$\\frac{{1}}{{{:g}}}$'.format(1./x)
 
 
 def plot_models(rate_files, labels, plot_file, slo=None):
