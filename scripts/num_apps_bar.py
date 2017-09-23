@@ -59,13 +59,15 @@ def plot(plot_file, slos, ys_mainstream, ys_nosharing):
     #ax.set_xticks((ind + bar_width * 2) / 2)
     xs = [i + (bar_width * (3 / 2)) for i in np.arange(len(slos))]
     ax.set_xticks(xs)
-    labels = [str(int(slo)) + " FPS" for slo in slos]
+    labels = ["{:g} ms".format(round((1. / slo) * 1000.)) for slo in slos]
+    # labels = map("{} FPS".format, slos)
     ax.set_xticklabels(labels)
     ax.tick_params(axis='both', which='major', labelsize=25)
     ax.tick_params(axis='both', which='minor', labelsize=20)
     ax.tick_params(axis='y', which='major', labelsize=25)
     ax.tick_params(axis='y', which='minor', labelsize=20)
-    plt.xlabel("Throughput", fontsize=28)
+    # plt.xlabel("Throughput", fontsize=28)
+    plt.xlabel("Target max event length", fontsize=28)
     plt.ylabel('Number of concurrent applications', fontsize=28)
     plt.title('W/in 99% relative accuracy', fontsize=30)
     plt.legend(loc=0, fontsize=25)
