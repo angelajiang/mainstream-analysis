@@ -109,7 +109,7 @@ def plot_max_throughput(csv_file, plot_file):
     plt.tick_params(axis='x', which='minor', labelsize=20)
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
-    plt.xlabel("Number of applications", fontsize=28)
+    plt.xlabel("Number of concurrent applications", fontsize=28)
     plt.ylabel("Throughput (FPS)", fontsize=28)
     plt.xlim(1, 30)
     plt.ylim(0, 20)

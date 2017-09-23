@@ -66,7 +66,7 @@ def plot(plot_file, slos, ys_mainstream, ys_nosharing):
     ax.tick_params(axis='y', which='major', labelsize=25)
     ax.tick_params(axis='y', which='minor', labelsize=20)
     plt.xlabel("Throughput", fontsize=28)
-    plt.ylabel('Number of applications', fontsize=28)
+    plt.ylabel('Number of concurrent applications', fontsize=28)
     plt.title('W/in 99% relative accuracy', fontsize=30)
     plt.legend(loc=0, fontsize=25)
     plt.gca().yaxis.grid(True)
