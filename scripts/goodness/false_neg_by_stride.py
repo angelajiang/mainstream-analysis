@@ -9,6 +9,7 @@ from matplotlib.pyplot import cm
 import seaborn as sns
 sns.set_style("white")
 
+
 def get_data_by_stride_and_slo(csv_file):
     data_by_slo = {}
     with open(csv_file) as f:
@@ -23,6 +24,7 @@ def get_data_by_stride_and_slo(csv_file):
             data_by_slo[slo]["ys"].append(prob)
     return data_by_slo
 
+
 def get_data(csv_file):
     data = {"strides": [], "ys": []}
     with open(csv_file) as f:
@@ -34,12 +36,13 @@ def get_data(csv_file):
             data["ys"].append(prob)
     return data
 
+
 def plot_models(rate_files, labels, plot_file, slo=None):
     # xs: stride
     # ys: probability
     # Each line is a model
 
-    colors=cm.rainbow(np.linspace(0,1,len(labels)))
+    colors = cm.rainbow(np.linspace(0, 1, len(labels)))
 
     for rate_file, label, color in zip(rate_files, labels, colors):
         data_by_slo = get_data_by_stride_and_slo(rate_file)
@@ -50,7 +53,7 @@ def plot_models(rate_files, labels, plot_file, slo=None):
             sys.exit()
         xs = data_by_slo[slo]["xs"]
         ys = data_by_slo[slo]["ys"]
-        plt.plot(xs, ys, label=label+" frozen", lw=2, color=color)
+        plt.plot(xs, ys, label=label + " frozen", lw=2, color=color)
 
     plt.title("Detection within " + str(slo) + " frames")
     plt.tick_params(axis='y', which='major', labelsize=28)
@@ -67,6 +70,7 @@ def plot_models(rate_files, labels, plot_file, slo=None):
     plt.savefig(plot_file)
     plt.clf()
 
+
 def plot_slos(rate_file, plot_file):
     # xs: stride
     # ys: probability
@@ -75,14 +79,14 @@ def plot_slos(rate_file, plot_file):
     fps = 1
 
     data_by_slo = get_data_by_stride_and_slo(rate_file)
-    colors=cm.rainbow(np.linspace(0,1,len(data_by_slo.keys())))
+    colors = cm.rainbow(np.linspace(0, 1, len(data_by_slo.keys())))
 
     slos = sorted(data_by_slo.keys())
     for slo in slos:
         data = data_by_slo[slo]
         xs = data["xs"]
         ys = data["ys"]
-        label = "W/in " + str(slo) + " frames (" + str(round(float(slo)/fps,2)) +" sec)"
+        label = "W/in " + str(slo) + " frames (" + str(round(float(slo) / fps, 2)) + " sec)"
         plt.plot(xs, ys, label=label, lw=2)
 
     plt.tick_params(axis='y', which='major', labelsize=28)
@@ -92,12 +96,13 @@ def plot_slos(rate_file, plot_file):
     plt.xlabel("Stride", fontsize=25)
     plt.ylabel("False negative rate", fontsize=25)
     plt.xlim(0, 30)
-    plt.ylim(0,1)
+    plt.ylim(0, 1)
     plt.legend(loc=0, fontsize=13)
     plt.tight_layout()
 
     plt.savefig(plot_file)
     plt.clf()
+
 
 def plot_dependence(files, labels, event_lengths, plot_file):
     # strides: strides
@@ -120,7 +125,7 @@ def plot_dependence(files, labels, event_lengths, plot_file):
     max_y = 0.4
 
     for length in event_lengths:
-        plt.axvline(x= 1.0 / length, linestyle="--", color="black", alpha=0.3)
+        plt.axvline(x=1.0 / length, linestyle="--", color="black", alpha=0.3)
 
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
@@ -130,7 +135,7 @@ def plot_dependence(files, labels, event_lengths, plot_file):
     plt.ylabel("False negative rate", fontsize=35)
     plt.xticks(xs, xlabels)
     plt.xscale('log')
-    plt.xlim(0,1)
+    plt.xlim(0, 1)
     plt.ylim(0, max_y)
     plt.gca().yaxis.grid(True)
     plt.legend(loc=0, fontsize=20)
@@ -138,6 +143,7 @@ def plot_dependence(files, labels, event_lengths, plot_file):
 
     plt.savefig(plot_file)
     plt.clf()
+
 
 if __name__ == "__main__":
 
@@ -196,8 +202,7 @@ if __name__ == "__main__":
     dependent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-whole"
     independent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-whole"
     empirical_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
-    correlation_file  = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-correlation"
+    correlation_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-correlation"
     files = [dependent_file, independent_file, empirical_file, correlation_file]
     labels = ["Dependent", "Independent", "Empirical", "Correlation"]
     plot_dependence(files, labels, event_lengths, plot_file)
-
