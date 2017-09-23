@@ -4,7 +4,7 @@ sys.path.append('include/')
 import matplotlib
 import numpy as np
 from itertools import cycle
-from scipy.interpolate import UnivariateSpline
+from scipy.interpolate import PchipInterpolator
 
 import layers_info
 
@@ -102,14 +102,18 @@ def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir
             for x, y in sorted(all_pts, reverse=True):
                 if y > highest:
                     highest = y
-                    if y > .5:
-                        pts.append((x, y))
+                    pts.append((x, y))
+            pts = sorted(pts)
+            xs, ys = zip(*pts)
 
             all_xs = [pt[0] for pt in all_pts]
-            xs, ys = zip(*pts)
-            spl = UnivariateSpline(xs, ys, k=2)
-            xs = np.linspace(min(all_xs) - 1, max(all_xs) + 1, 1000)
-            plt.plot(xs, spl(xs) + .05, '--', label='Frontier')
+
+            xss = np.linspace(min(all_xs), max(all_xs), 100)
+
+            spl = PchipInterpolator(xs, ys)
+            ys = spl(xss)
+
+            plt.plot(xss, ys, '--', label='Frontier')
 
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=24)
