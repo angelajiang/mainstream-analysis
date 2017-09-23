@@ -141,19 +141,19 @@ def plot_dependence(files, labels, event_lengths, plot_file):
 
 if __name__ == "__main__":
 
-    f1 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/7"
-    f2 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/10"
-    f3 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/14"
-    f4 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/18"
-    f5 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/41"
-    f6 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/64"
-    f7 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/87"
-    f8 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/133"
-    f9 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/165"
-    f10 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/197"
-    f11 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/249"
-    f12 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/280"
-    f13 = "/Users/angela/src/private/mainstream/log/frame-rate/flowers/synthetic/311"
+    f1 = "../mainstream/log/frame-rate/flowers/synthetic/7"
+    f2 = "../mainstream/log/frame-rate/flowers/synthetic/10"
+    f3 = "../mainstream/log/frame-rate/flowers/synthetic/14"
+    f4 = "../mainstream/log/frame-rate/flowers/synthetic/18"
+    f5 = "../mainstream/log/frame-rate/flowers/synthetic/41"
+    f6 = "../mainstream/log/frame-rate/flowers/synthetic/64"
+    f7 = "../mainstream/log/frame-rate/flowers/synthetic/87"
+    f8 = "../mainstream/log/frame-rate/flowers/synthetic/133"
+    f9 = "../mainstream/log/frame-rate/flowers/synthetic/165"
+    f10 = "../mainstream/log/frame-rate/flowers/synthetic/197"
+    f11 = "../mainstream/log/frame-rate/flowers/synthetic/249"
+    f12 = "../mainstream/log/frame-rate/flowers/synthetic/280"
+    f13 = "../mainstream/log/frame-rate/flowers/synthetic/311"
     plot_file = "plots/frame-rate/frame-rate-flowers-models.pdf"
     '''
     plot_models([f1, f3, f5, f7, f8, f9, f10, f11, f12, f13],
@@ -162,19 +162,19 @@ if __name__ == "__main__":
                 40)
     '''
 
-    f1 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-0"
-    f2 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-4"
-    f3 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-17"
-    f4 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-18"
-    f5 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-41"
-    f6 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-87"
-    f7 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-165"
-    f8 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-197"
-    f9 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-229"
-    f10 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-249"
-    f11 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-280"
-    f12 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-311"
-    f13 = "/Users/angela/src/private/mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-313"
+    f1 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-0"
+    f2 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-4"
+    f3 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-17"
+    f4 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-18"
+    f5 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-41"
+    f6 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-87"
+    f7 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-165"
+    f8 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-197"
+    f9 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-229"
+    f10 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-249"
+    f11 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-280"
+    f12 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-311"
+    f13 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-313"
     plot_file = "plots/frame-rate/frame-rate-afn-models.pdf"
    # plot_models([f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13],
    #      ["0", "4", "17", "18", "41", "87", "165", "197", "229", "249", "280", "311", "313"], plot_file)
@@ -185,18 +185,18 @@ if __name__ == "__main__":
     event_lengths = [286, 77, 92, 437, 274, 255, 251, 153]
 
     plot_file = "plots/frame-rate/frame-rate-afn-dependences.pdf"
-    dependent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-whole"
-    independent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-whole"
-    empirical_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
+    dependent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-whole"
+    independent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-whole"
+    empirical_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
     files = [dependent_file, independent_file, empirical_file]
     labels = ["Dependent", "Independent", "Empirical"]
     plot_dependence(files, labels, event_lengths, plot_file)
 
     plot_file = "plots/frame-rate/frame-rate-afn-dependences-with-correlation.pdf"
-    dependent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-whole"
-    independent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-whole"
-    empirical_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
-    correlation_file  = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-correlation"
+    dependent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-whole"
+    independent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-whole"
+    empirical_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
+    correlation_file  = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-correlation"
     files = [dependent_file, independent_file, empirical_file, correlation_file]
     labels = ["Dependent", "Independent", "Empirical", "Correlation"]
     plot_dependence(files, labels, event_lengths, plot_file)
