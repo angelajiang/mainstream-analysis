@@ -108,8 +108,8 @@ def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir
             all_xs = [pt[0] for pt in all_pts]
             xs, ys = zip(*pts)
             spl = UnivariateSpline(xs, ys, k=2)
-            xs = np.linspace(min(all_xs), max(all_xs), 1000)
-            plt.plot(xs, spl(xs) + .05, '--')
+            xs = np.linspace(min(all_xs) - 1, max(all_xs) + 1, 1000)
+            plt.plot(xs, spl(xs) + .05, '--', label='Frontier')
 
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=24)
