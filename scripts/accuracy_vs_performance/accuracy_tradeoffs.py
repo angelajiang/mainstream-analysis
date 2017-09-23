@@ -11,6 +11,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 
+
 def op_to_layer(op_full):
     tensor_name = (op_full.split(":"))[0]
     layer = tensor_name.split("/")[0]
@@ -75,6 +76,7 @@ def get_accuracy_data(architecture, csv_file):
 
 def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir):
     num_NNs = get_num_NNs(latency_files[0])
+
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN in num_NNs:
             cycol = cycle('rcmkbg').next
@@ -91,21 +93,21 @@ def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir
 
                 plt.scatter(xs, ys, s=60, marker=cymark(), color=cycol(), edgecolor='black', label=label)
 
-                plt.tick_params(axis='y', which='major', labelsize=28)
-                plt.tick_params(axis='y', which='minor', labelsize=24)
-                plt.tick_params(axis='x', which='major', labelsize=28)
-                plt.tick_params(axis='x', which='minor', labelsize=24)
+            plt.tick_params(axis='y', which='major', labelsize=28)
+            plt.tick_params(axis='y', which='minor', labelsize=24)
+            plt.tick_params(axis='x', which='major', labelsize=28)
+            plt.tick_params(axis='x', which='minor', labelsize=24)
 
-                plt.ylim(0, 1)
+            plt.ylim(0, 1)
 
-                plt.xlabel("Throughput (FPS)", fontsize=30)
-                plt.ylabel("Top-1 Accuracy", fontsize=30)
-                plt.legend(loc=4, fontsize=20)
-                #plt.title(str(num_NN) + " applications", fontsize=30)
-                plt.gca().xaxis.grid(True)
-                plt.gca().yaxis.grid(True)
-                plt.tight_layout()
-                plt.savefig(plot_dir +"/acc-fps-"+str(num_NN)+"-NN.pdf")
+            plt.xlabel("Throughput (FPS)", fontsize=30)
+            plt.ylabel("Top-1 Accuracy", fontsize=30)
+            plt.legend(loc=4, fontsize=20)
+            #plt.title(str(num_NN) + " applications", fontsize=30)
+            plt.gca().xaxis.grid(True)
+            plt.gca().yaxis.grid(True)
+            plt.tight_layout()
+            plt.savefig(plot_dir +"/acc-fps-"+str(num_NN)+"-NN.pdf")
             plt.clf()
 
 
