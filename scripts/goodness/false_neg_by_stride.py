@@ -5,6 +5,7 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
+from matplotlib import ticker
 
 import seaborn as sns
 sns.set_style("white")
@@ -35,6 +36,13 @@ def get_data(csv_file):
             data["strides"].append(stride)
             data["ys"].append(prob)
     return data
+
+
+def fraction_log_fmt(x, _):
+    if x >= 1:
+        return '{:g}'.format(x)
+    else:
+        return '1/{:g}'.format(1./x)
 
 
 def plot_models(rate_files, labels, plot_file, slo=None):
@@ -109,6 +117,8 @@ def plot_dependence(files, labels, event_lengths, plot_file):
     # xs: sample rate
     # ys: probability
 
+    _, ax = plt.subplots()
+
     fps = 1
 
     for filename, label in zip(files, labels):
@@ -133,10 +143,13 @@ def plot_dependence(files, labels, event_lengths, plot_file):
     plt.tick_params(axis='x', which='minor', labelsize=20)
     plt.xlabel("Sample rate", fontsize=35)
     plt.ylabel("False negative rate", fontsize=35)
-    plt.xticks(xs, xlabels)
+
     plt.xscale('log')
+    ax.xaxis.set_major_formatter(ticker.FuncFormatter(fraction_log_fmt))
+
     plt.xlim(0, 1)
     plt.ylim(0, max_y)
+
     plt.gca().yaxis.grid(True)
     plt.legend(loc=0, fontsize=20)
     plt.tight_layout()
