@@ -73,10 +73,10 @@ def plot(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotated
                          label=plot_util.MAINSTREAM['label'])
 
             if annotated:
-                for x1, y1, loss, fps in zip(xs1[0::4], ys1[0::4], losses1[0::4], fpses1[0::4]):
+                for x1, y1, loss, fps in zip(xs1[0::5], ys1[0::5], losses1[0::5], fpses1[0::5]):
                     plt.annotate("Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                                  xy=(x1, y1),
-                                 xytext=(-90, 25),
+                                 xytext=(25, 50),
                                  xycoords='data',
                                  fontsize=15,
                                  textcoords='offset points',
@@ -85,16 +85,16 @@ def plot(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotated
                 for x2, y2, loss, fps in zip(xs2[2::4], ys2[2::4], losses2[2::4], fpses2[2::4]):
                     plt.annotate("Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                                  xy=(x2, y2),
-                                 xytext=(-15, 25),
+                                 xytext=(-25, -50),
                                  xycoords='data',
                                  fontsize=15,
                                  textcoords='offset points',
                                  arrowprops=dict(arrowstyle="->"))
 
-                for x3, y3, loss, fps in zip(xs3[3::4], ys3[3::4], losses3[3::4], fpses3[3::4]):
+                for x3, y3, loss, fps in zip(xs3[2::4], ys3[2::4], losses3[2::4], fpses3[2::4]):
                     plt.annotate("Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                                  xy=(x3, y3),
-                                 xytext=(-10, -25),
+                                 xytext=(-15, -25),
                                  xycoords='data',
                                  fontsize=15,
                                  textcoords='offset points',
@@ -108,7 +108,7 @@ def plot(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotated
             plt.tick_params(axis='x', which='minor', labelsize=20)
 
             plt.title(title, fontsize=35)
-            plt.xlabel("Number of applications", fontsize=30)
+            plt.xlabel("Number of concurrent apps", fontsize=30)
             plt.xlim(2, max(xs1))
             plt.ylim(0, 1)
             plt.ylabel("False negative rate", fontsize=30)
@@ -117,4 +117,23 @@ def plot(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotated
             plt.gca().yaxis.grid(True)
             plt.savefig(plot_dir + "/" + plot_file + ".pdf")
             plt.clf()
+
+if __name__ == "__main__":
+
+    ms1 = "output/streamer/scheduler/correlation/scheduler-correlation-mainstream-c0.1664-ll0" 
+    max1 = "output/streamer/scheduler/correlation/scheduler-correlation-maxsharing-c0.1664" 
+    min1 = "output/streamer/scheduler/correlation/scheduler-correlation-nosharing-c0.1664" 
+    f1 ="scheduler-false-neg-rate"
+    t1 = ""
+    plot_dir = "plots/scheduler"
+
+    ms_files = [ms1]
+    max_files = [max1]
+    min_files = [min1]
+    f_files = [f1]
+    f_files_annotated = [f + "-annotated" for f in f_files]
+    titles = [t1]
+
+    plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 

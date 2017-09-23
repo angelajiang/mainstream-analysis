@@ -195,7 +195,7 @@ def plot_processor_latency(processors_file, plot_dir):
                     error_kw={'ecolor':'green', 'linewidth':3})
 
             plt.xlabel("More sharing ->", fontsize=28)
-            plt.ylabel("Processor Latency (ms)", fontsize=28)
+            plt.ylabel("CPU per frame (ms)", fontsize=28)
             plt.ylim(0, 300)
             plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
             plt.tick_params(axis='y', which='major', labelsize=28)

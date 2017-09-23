@@ -8,12 +8,11 @@ import scheduler
 sys.path.append("scripts/goodness")
 import accuracy_vs_layer
 import false_neg_by_stride
+import false_pos_by_stride
 sys.path.append("scripts/accuracy_vs_performance")
 import accuracy_tradeoffs
 
 import seaborn as sns
-
-#sns.set()
 sns.set_style("whitegrid")
 
 if __name__ == "__main__":
@@ -92,33 +91,23 @@ if __name__ == "__main__":
 
     accuracy_tradeoffs.plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir)
 
-    # False negative rate by stride
-    print "Plotting false negative rate by stride..."
-
-    event_lengths = [286, 77, 92, 437, 274, 255, 251, 153]
-    plot_file = "plots/frame-rate/frame-rate-afn-dependences-with-correlation.pdf"
-    dependent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-whole"
-    independent_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-whole"
-    empirical_file = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
-    correlation_file  = "/Users/angela/src/private/mainstream-analysis/output/mainstream/frame-rate/no-afn/train/v2/trains-313-correlation"
-
-    files = [dependent_file, independent_file, empirical_file, correlation_file]
-    labels = ["Dependent", "Independent", "Empirical", "Correlation"]
-    false_neg_by_stride.plot_dependence(files, labels, event_lengths, plot_file)
-
     # Image level accuracy scheduler
     print "Plotting dynamic uniform scheduler..."
     plot_dir = "plots/scheduler/"
     csv_file = "output/streamer/scheduler/dynamic-uniform.csv" 
     dynamic_scheduler.plot(csv_file, plot_dir)
 
-    accuracy_vs_layer.plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
 
     # Image-level accuracy - Mainstream vs No sharing
     print "Plotting num apps bar..."
     xs, ys = num_apps_bar.get_data("output/streamer/scheduler/dynamic-uniform.csv", 0.015)
     ys2 = [5, 3, 2, 1, 1]
     num_apps_bar.plot("plots/num_apps_bar.pdf", xs, ys, ys2)
+
+    # False positive frequency
+    print "Plotting false positive frequency..."
+    plot_file = "plots/goodness/vid4"
+    false_pos_by_stride.plot_fpf_by_stride(0.028,  0.0011, 0.015, plot_file)
 
     # Scheduler
 
@@ -132,7 +121,8 @@ if __name__ == "__main__":
     f1 ="scheduler-s0-100"
     t1 = "Within 100ms (1.4 Frames)"
 
-    ms2 = "output/streamer/scheduler/scheduler-s0-500-ms.csv" 
+    #ms2 = "output/streamer/scheduler/scheduler-s0-500-ms.csv" 
+    ms2= "output/streamer/scheduler/correlation/scheduler-correlation-mainstream-c0-ll0" 
     max2 = "output/streamer/scheduler/scheduler-s0-500-max.csv" 
     min2 = "output/streamer/scheduler/scheduler-s0-500-min.csv" 
     f2 ="scheduler-s0-500"
@@ -204,43 +194,12 @@ if __name__ == "__main__":
     scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
     ## Independence versus dependence
-    ms1 = "output/streamer/scheduler/scheduler-s0-250-dependence-mainstream" 
-    max1 = "output/streamer/scheduler/scheduler-s0-250-dependence-maxsharing" 
-    min1 = "output/streamer/scheduler/scheduler-s0-250-dependence-nosharing" 
-    f1 ="scheduler-s0-250-flowers-dependent"
-    t1 = "Dependent accuracy"
-
-    ms_files = [ms1]
-    max_files = [max1]
-    min_files = [min1]
-    f_files = [f1]
-    f_files_annotated = [f + "-annotated" for f in f_files]
-    titles = [t1]
-
-    scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
-
-    ms2 = "output/streamer/scheduler/scheduler-s0-250-mainstream" 
-    max2 = "output/streamer/scheduler/scheduler-s0-250ms-independent-maxsharing" 
-    min2 = "output/streamer/scheduler/scheduler-s0-250-nosharing" 
-    f2 ="scheduler-s0-250-flowers-independent"
-    t2 = "Independent accuracy"
-
-    ms_files = [ms2]
-    max_files = [max2]
-    min_files = [min2]
-    f_files = [f2]
-    f_files_annotated = [f + "-annotated" for f in f_files]
-    titles = [t2]
-
-    scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
     ms1 = "output/streamer/scheduler/scheduler-s0-500-dependence-mainstream" 
     max1 = "output/streamer/scheduler/scheduler-s0-500-dependence-maxsharing" 
     min1 = "output/streamer/scheduler/scheduler-s0-500-dependence-nosharing" 
     f1 ="scheduler-s0-500-flowers-dependent"
-    t1 = "Dependent accuracy"
+    t1 = "Correlation = 1"
 
     ms_files = [ms1]
     max_files = [max1]
@@ -252,11 +211,12 @@ if __name__ == "__main__":
     scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
     scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
-    ms2 = "output/streamer/scheduler/scheduler-s0-500-ms.csv" 
+    #ms2 = "output/streamer/scheduler/scheduler-s0-500-ms.csv" 
+    ms2= "output/streamer/scheduler/correlation/scheduler-correlation-mainstream-c0-ll0" 
     max2 = "output/streamer/scheduler/scheduler-s0-500-max.csv" 
     min2 = "output/streamer/scheduler/scheduler-s0-500-min.csv" 
     f2 ="scheduler-s0-500-flowers-independent"
-    t2 = "Independent accuracy"
+    t2 = "Correlation = 0"
 
     ms_files = [ms2]
     max_files = [max2]
@@ -264,6 +224,24 @@ if __name__ == "__main__":
     f_files = [f2]
     f_files_annotated = [f + "-annotated" for f in f_files]
     titles = [t2]
+
+    scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+
+    ## Multiple applications
+    ms1 = "output/streamer/scheduler/correlation/scheduler-correlation-mainstream-c0.1664-ll0" 
+    max1 = "output/streamer/scheduler/correlation/scheduler-correlation-maxsharing-c0.1664" 
+    min1 = "output/streamer/scheduler/correlation/scheduler-correlation-nosharing-c0.1664" 
+    f1 ="scheduler-s0-500-c0.1664"
+    t1 = "Correlation = 0.17"
+    plot_dir = "plots/scheduler"
+
+    ms_files = [ms1]
+    max_files = [max1]
+    min_files = [min1]
+    f_files = [f1]
+    f_files_annotated = [f + "-annotated" for f in f_files]
+    titles = [t1]
 
     scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
     scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)

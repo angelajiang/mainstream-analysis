@@ -4,8 +4,10 @@ import matplotlib
 import numpy as np
 
 import matplotlib.pyplot as plt
-
 from matplotlib.pyplot import cm
+
+import seaborn as sns
+sns.set_style("white")
 
 def get_data_by_stride_and_slo(csv_file):
     data_by_slo = {}
