@@ -107,7 +107,7 @@ if __name__ == "__main__":
     # False positive frequency
     print "Plotting false positive frequency..."
     plot_file = "plots/goodness/vid4"
-    false_pos_by_stride.plot_fpf_by_stride(0.028,  0.0011, 0.015, plot_file)
+    false_pos_by_stride.plot_fpf_by_stride(15, 0.028,  0.0011, 0.015, 0.00056, 1.3, 7, plot_file)
 
     # Scheduler
 

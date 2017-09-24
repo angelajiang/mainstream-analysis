@@ -10,7 +10,7 @@ import seaborn as sns
 
 sns.set_style("whitegrid")
 
-def plot_fpf_by_stride(avg_fpf, ns_fpf, ms_fpf, plot_file):
+def plot_fpf_by_stride(stream_fps, avg_fpf, ns_fpf, ms_fpf, msv_fpf, ns_fps, ms_fps, plot_file):
     # strides: strides
     # xs: sample rate
     # ys: false positive frequency
@@ -23,13 +23,17 @@ def plot_fpf_by_stride(avg_fpf, ns_fpf, ms_fpf, plot_file):
         fpf = avg_fpf * rate
         ys.append(fpf)
 
-    ns_intercept = ns_fpf / avg_fpf
-    ms_intercept = ms_fpf / avg_fpf
-
-    plt.axhline(y= ns_fpf, linestyle="--", color="black", alpha=0.4, linewidth=2)
-    plt.axhline(y= ms_fpf, linestyle="--", color="black", alpha=0.4, linewidth=2)
+    ns_sample_rate = float(ns_fps) / stream_fps
+    ms_sample_rate = float(ms_fps) / stream_fps
+    msv_sample_rate = float(ms_fps) / stream_fps
 
     plt.plot(xs, ys, linewidth=2)
+
+    plt.plot([xs[-1]], [ys[-1]], marker='o', markersize=7, color="red")
+    plt.plot([ns_sample_rate], [ns_fpf], marker='o', markersize=7, color="blue")
+    plt.plot([ns_sample_rate], [ns_fpf], marker='o', markersize=7, color="green")
+    plt.plot([ms_sample_rate], [ms_fpf], marker='*', markersize=10, color="black")
+    plt.plot([msv_sample_rate], [msv_fpf], marker='*', markersize=10, color="magenta")
 
     plt.annotate("False positive rate", 
                  xy=(xs[-1], ys[-1]),
@@ -39,17 +43,25 @@ def plot_fpf_by_stride(avg_fpf, ns_fpf, ms_fpf, plot_file):
                  textcoords='offset points',
                  arrowprops=dict(arrowstyle="->"))
 
-    plt.annotate("No Sharing FPF", 
-                 xy=(ns_intercept, ns_fpf),
-                 xytext=(100, 20),
+    plt.annotate("NS FPF", 
+                 xy=(ns_sample_rate, ns_fpf),
+                 xytext=(0, 70),
                  xycoords='data',
                  fontsize=21,
                  textcoords='offset points',
                  arrowprops=dict(arrowstyle="->"))
 
-    plt.annotate("Mainstream FPF", 
-                 xy=(ms_intercept, ms_fpf),
-                 xytext=(-200, 20),
+    plt.annotate("MS FPF", 
+                 xy=(ms_sample_rate, ms_fpf),
+                 xytext=(-20, 30),
+                 xycoords='data',
+                 fontsize=21,
+                 textcoords='offset points',
+                 arrowprops=dict(arrowstyle="->"))
+
+    plt.annotate("MS 2-voting FPF", 
+                 xy=(msv_sample_rate, msv_fpf),
+                 xytext=(0, 50),
                  xycoords='data',
                  fontsize=21,
                  textcoords='offset points',
@@ -71,6 +83,5 @@ def plot_fpf_by_stride(avg_fpf, ns_fpf, ms_fpf, plot_file):
 
 if __name__ == "__main__":
     plot_file = "plots/goodness/vid4"
-    plot_fpf_by_stride(0.028,  0.0011, 0.015, plot_file)
-
+    plot_fpf_by_stride(15, 0.028,  0.0011, 0.015, 0.00056, 1.3, 7, plot_file)
 
