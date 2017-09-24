@@ -80,7 +80,7 @@ def print_and_plot_latencies(csv_file, layer_names, label, plot_dir):
     plt.xlim(0, max(xs))
     plt.ylim(0, 25)
     plt.gca().yaxis.grid(True)
-    plt.xlabel("NN-cell", fontsize=30)
+    plt.xlabel("Subgraph", fontsize=30)
     plt.ylabel("Forward-pass latency (ms)", fontsize=25)
     plt.tight_layout()
     plt.savefig(plot_dir + "/latency-by-layer-" + label + ".pdf")
