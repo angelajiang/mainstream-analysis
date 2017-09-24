@@ -22,6 +22,7 @@ sys.path.append('util/include')
 import layers_info
 sys.path.append('scripts/deploy')
 import visualize
+import fairness
 
 import seaborn as sns
 sns.set_style("whitegrid")
@@ -322,3 +323,15 @@ if __name__ == "__main__":
     files = [f0, f1]
     objs = [plot_util.NO_SHARING, plot_util.MAINSTREAM]
     visualize.visualize_deployment(files, objs, plot_dir, thumbnail)
+
+    print "Plot app fairness..."
+    prefix = "output/streamer/scheduler/combinations"
+
+    f1 = "scheduler-apps-fairness"
+    t1 = ""
+    plot_dir = "plots/scheduler"
+
+    f_files = [f1]
+    titles = [t1]
+
+    fairness.plot(prefix, f_files, titles, plot_dir)
