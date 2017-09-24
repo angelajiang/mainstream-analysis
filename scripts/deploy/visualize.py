@@ -78,8 +78,8 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     imagebox = OffsetImage(im)
     imagebox.image.axes = ax
 
-    ab = AnnotationBbox(imagebox, (picture_loc, 0),
-                        xybox=(-30, -117),
+    ab = AnnotationBbox(imagebox, (picture_loc, settings['y_hit_m'] + settings['y_hit_c'] - .004),
+                        xybox=(-30, -168),
                         xycoords='data',
                         boxcoords='offset points',
                         pad=0,
