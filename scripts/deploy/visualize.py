@@ -61,7 +61,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     train_front = (114 - start) / fps
     plt.axvline(x=train_front, linestyle="--", color="black", alpha=0.8)
     plot_file = plot_dir + "/deploy-time-series.pdf"
-    plt.title("Train detector with 9 apps", fontsize=20)
+    plt.title("Train detector with 9 concurrent apps", fontsize=20)
 
     plt.annotate("Train comes\ninto full view",
                  xy=(train_front, -.095),

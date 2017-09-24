@@ -69,7 +69,7 @@ def plot(plot_file, slos, ys_mainstream, ys_nosharing):
     ax.tick_params(axis='y', which='minor', labelsize=20)
     # plt.xlabel("Throughput", fontsize=28)
     plt.xlabel("Inter-frame time", fontsize=28)
-    plt.ylabel('Number of concurrent applications', fontsize=24)
+    plt.ylabel('Number of concurrent apps', fontsize=30)
     plt.title('W/in 99% relative accuracy', fontsize=30)
     plt.legend(loc=0, fontsize=25)
     plt.gca().yaxis.grid(True)
