@@ -24,10 +24,13 @@ sys.path.append('scripts/deploy')
 import visualize
 import fairness
 
+
 import seaborn as sns
 sns.set_style("whitegrid")
 
 if __name__ == "__main__":
+    mpl.rc('font', **{'sans-serif' : 'Arial',
+                      'family' : 'sans-serif'})
 
     # Max throughput
     print "Plotting max throughput..."
