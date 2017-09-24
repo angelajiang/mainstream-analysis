@@ -4,10 +4,10 @@ from PIL import Image
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 # mpl.style.use("classic")
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import seaborn as sns
 sys.path.append("scripts/util")
 import plot_util
-
 
 sns.set_style("white")
 
@@ -58,7 +58,8 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
         if settings['line']:
             plt.axhline(y=i * settings['y_hit_m'] + 0.003, linestyle="--", color=obj["color"])
 
-    train_front = (114 - start) / fps
+    picture_loc = (104 - start) / float(fps)
+    train_front = (114 - start) / float(fps)
     plt.axvline(x=train_front, linestyle="--", color="black", alpha=0.8)
     plot_file = plot_dir + "/deploy-time-series.pdf"
     # plt.title("Train detector with 9 concurrent apps", fontsize=20)
@@ -72,8 +73,21 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
                  arrowprops=dict(arrowstyle="->"))
 
     im = Image.open(thumbnail)
-    im.thumbnail((215, 215))
-    plt.figimage(im, xo=train_front + 165, yo=83 - 58, zorder=1)
+    im.thumbnail((190, 190))
+
+    imagebox = OffsetImage(im)
+    imagebox.image.axes = ax
+
+    ab = AnnotationBbox(imagebox, (picture_loc, 0),
+                        xybox=(-30, -117),
+                        xycoords='data',
+                        boxcoords='offset points',
+                        pad=0,
+                        frameon=False,
+                        arrowprops=dict(arrowstyle='->'))
+
+    ax.add_artist(ab)
+    # plt.figimage(im, xo=picture_loc * 72 - 150, yo=83 - 58, zorder=1)
 
     plt.xlim(0, max(xs1))
     plt.ylim(-.3, .15)
