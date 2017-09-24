@@ -1,7 +1,9 @@
 # -*- coding: utf8 -*-
 import sys
 from PIL import Image
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+# mpl.style.use("classic")
 import seaborn as sns
 sys.path.append("scripts/util")
 import plot_util
@@ -69,10 +71,9 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
                  textcoords='offset points',
                  arrowprops=dict(arrowstyle="->"))
 
-    # TODO(wonglkd): Fix this. Works with plt.show() but not with plt.savefig().
     im = Image.open(thumbnail)
-    im.thumbnail((400, 400))
-    plt.figimage(im, xo=train_front + 500, yo=83 + 52, zorder=1)
+    im.thumbnail((220, 220))
+    plt.figimage(im, xo=train_front + 200, yo=83 - 90, zorder=1)
 
     plt.xlim(0, max(xs1))
     plt.ylim(-.3, .15)
