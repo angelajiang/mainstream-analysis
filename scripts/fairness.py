@@ -41,16 +41,17 @@ def plot(prefix, f_files, titles, plot_dir, annotated=False):
     colors = [plot_util.COLORS["red"], plot_util.COLORS["blue"]]
     for x, label, ls, color in zip(agg, labels, lss, colors):
         data = grp[x + ' FNR Loss'].mean()
-        errs = grp[x + ' FNR Loss'].std()
+        # errs = grp[x + ' FNR Loss'].std()
         xs, ys = data.index, data.values
         # plt.plot(xs, ys, ls, label=x + ' FNR Loss amongst applications')
-        plt.errorbar(xs, ys, yerr=errs, lw=2,
-                     # linestyle=ls,
-                     marker='o',
-                     color=color,
-                     label=label + ' FNR Loss amongst concurrent apps')
+        # plt.errorbar(xs, ys, yerr=errs, lw=2,
+        #              # linestyle=ls,
+        #              marker='o',
+        #              color=color,
+        #              label=label + ' FNR Loss amongst concurrent apps')
+        plt.plot(xs, ys, lw=2, marker='o', color=color, label=label + ' FNR Loss amongst concurrent apps')
 
-    plt.legend(loc=0, fontsize=15)
+    plt.legend(loc=0, fontsize=16)
 
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
