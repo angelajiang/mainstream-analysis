@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pprint as pp
 import sys
 import matplotlib
@@ -148,7 +149,7 @@ def plot_processor_latency(processors_file, plot_dir):
             plt.tick_params(axis='y', which='minor', labelsize=20)
             plt.legend(loc=0, fontsize=20, ncol=2)
             plt.ylim(0,750)
-            plt.xlabel("More sharing ->", fontsize=28)
+            plt.xlabel(u"More sharing →", fontsize=28)
             plt.ylabel("Processor Latency (ms)", fontsize=25)
             plt.grid()
             plt.title(str(num_NN) + " DNNs", fontsize=30)
