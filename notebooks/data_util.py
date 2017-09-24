@@ -22,7 +22,6 @@ def proc_dfs(df_all):
     df_all['Rel Acc Losss'] = df_all[4].str.split('_')
 
     baselines = {i: df_all[df_all[0] == 'mean={}'.format(i)] for i in range(N_CURVES)}
-    print(baselines)
     baselines_fnr = {k: float(v['Avg FNR']) for k, v in baselines.items()}
 
     def aa(x):

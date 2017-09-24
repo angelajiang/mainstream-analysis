@@ -73,7 +73,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
 
     im = Image.open(thumbnail)
     im.thumbnail((215, 215))
-    plt.figimage(im, xo=train_front + 165, yo=83 - 71, zorder=1)
+    plt.figimage(im, xo=train_front + 165, yo=83 - 58, zorder=1)
 
     plt.xlim(0, max(xs1))
     plt.ylim(-.3, .15)
