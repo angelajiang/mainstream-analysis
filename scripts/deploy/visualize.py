@@ -61,7 +61,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     train_front = (114 - start) / fps
     plt.axvline(x=train_front, linestyle="--", color="black", alpha=0.8)
     plot_file = plot_dir + "/deploy-time-series.pdf"
-    plt.title("Train detector with 9 concurrent apps", fontsize=20)
+    # plt.title("Train detector with 9 concurrent apps", fontsize=20)
 
     plt.annotate("Smoke stack\nleaves view",
                  xy=(train_front, -.095),
@@ -77,7 +77,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
 
     plt.xlim(0, max(xs1))
     plt.ylim(-.3, .15)
-    plt.xlabel(u"Time elapsed (s)", fontsize=20)
+    plt.xlabel(u"Time elapsed (s)", fontsize=30)
     plt.xticks()
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
