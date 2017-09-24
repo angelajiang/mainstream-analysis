@@ -10,7 +10,7 @@ import numpy as np
 
 #matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-matplotlib.style.use('classic')
+# matplotlib.style.use('classic')
 #plt.ioff()
 
 def op_to_layer(op_full):
