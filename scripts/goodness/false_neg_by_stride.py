@@ -141,7 +141,7 @@ def plot_dependence(files, labels, event_lengths, plot_file):
     plt.tick_params(axis='y', which='minor', labelsize=20)
     plt.tick_params(axis='x', which='major', labelsize=28)
     plt.tick_params(axis='x', which='minor', labelsize=20)
-    plt.xlabel("Sample rate", fontsize=35)
+    plt.xlabel("Frame sample rate (Hz)", fontsize=35)
     plt.ylabel("False negative rate", fontsize=35)
 
     plt.xscale('log')
