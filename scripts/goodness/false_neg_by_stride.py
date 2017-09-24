@@ -119,43 +119,44 @@ def plot_dependence(files, labels, event_lengths, plot_file):
 
     _, ax = plt.subplots()
 
-    fps = 1
+    with sns.axes_style('ticks'):
+        fps = 1
 
-    for filename, label in zip(files, labels):
+        for filename, label in zip(files, labels):
 
-        data = get_data(filename)
-        strides = sorted(data.keys())
+            data = get_data(filename)
+            strides = sorted(data.keys())
 
-        strides = data["strides"]
-        xs = [1 / float(s) for s in strides]
-        xlabels = ["1/" + str(s) for s in strides]
-        ys = data["ys"]
-        plt.plot(xs, ys, label=label, lw=2)
+            strides = data["strides"]
+            xs = [1 / float(s) for s in strides]
+            xlabels = ["1/" + str(s) for s in strides]
+            ys = data["ys"]
+            plt.plot(xs, ys, label=label, lw=2)
 
-    max_y = 0.4
+        max_y = 0.4
 
-    for length in event_lengths:
-        plt.axvline(x=1.0 / length, linestyle="--", color="black", alpha=0.3)
+        for length in event_lengths:
+            plt.axvline(x=1.0 / length, linestyle="--", color="black", alpha=0.3)
 
-    plt.tick_params(axis='y', which='major', labelsize=28)
-    plt.tick_params(axis='y', which='minor', labelsize=20)
-    plt.tick_params(axis='x', which='major', labelsize=28)
-    plt.tick_params(axis='x', which='minor', labelsize=20)
-    plt.xlabel("Frame sample rate (Hz)", fontsize=35)
-    plt.ylabel("False negative rate", fontsize=35)
+        plt.tick_params(axis='y', which='major', labelsize=28)
+        plt.tick_params(axis='y', which='minor', labelsize=20)
+        plt.tick_params(axis='x', which='major', labelsize=28)
+        plt.tick_params(axis='x', which='minor', labelsize=20)
+        plt.xlabel("Frame sample rate (Hz)", fontsize=35)
+        plt.ylabel("False negative rate", fontsize=35)
 
-    plt.xscale('log')
-    ax.xaxis.set_major_formatter(ticker.FuncFormatter(fraction_log_fmt))
+        plt.xscale('log')
+        ax.xaxis.set_major_formatter(ticker.FuncFormatter(fraction_log_fmt))
 
-    plt.xlim(0, 1)
-    plt.ylim(0, max_y)
+        plt.xlim(0, 1)
+        plt.ylim(0, max_y)
 
-    plt.gca().yaxis.grid(True)
-    plt.legend(loc=0, fontsize=20)
-    plt.tight_layout()
+        plt.gca().yaxis.grid(True)
+        plt.legend(loc=0, fontsize=20)
+        plt.tight_layout()
 
-    plt.savefig(plot_file)
-    plt.clf()
+        plt.savefig(plot_file)
+        plt.clf()
 
 
 if __name__ == "__main__":
