@@ -63,7 +63,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     plot_file = plot_dir + "/deploy-time-series.pdf"
     plt.title("Train detector with 9 concurrent apps", fontsize=20)
 
-    plt.annotate("Train comes\ninto full view",
+    plt.annotate("Smoke stack\nleaves view",
                  xy=(train_front, -.095),
                  xytext=(20, 12),
                  xycoords='data',
@@ -72,18 +72,26 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
                  arrowprops=dict(arrowstyle="->"))
 
     im = Image.open(thumbnail)
-    im.thumbnail((220, 220))
-    plt.figimage(im, xo=train_front + 200, yo=83 - 90, zorder=1)
+    im.thumbnail((215, 215))
+    plt.figimage(im, xo=train_front + 165, yo=83 - 71, zorder=1)
 
     plt.xlim(0, max(xs1))
     plt.ylim(-.3, .15)
     plt.xlabel(u"Time elapsed (s)", fontsize=20)
     plt.xticks()
+    plt.tick_params(axis='y', which='major', labelsize=28)
+    plt.tick_params(axis='y', which='minor', labelsize=20)
+    plt.tick_params(axis='x', which='major', labelsize=28)
+    plt.tick_params(axis='x', which='minor', labelsize=20)
     plt.tick_params(axis='y', which='both', left='off', top='off', labelleft='off')
     # Fix legend order to match line appearance order
     handles, labels = ax.get_legend_handles_labels()
     plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=15, ncol=1, frameon=False)
+    plt.tight_layout()
+    plt.gca().xaxis.grid(True)
+    plt.gca().yaxis.grid(True)
     plt.savefig(plot_file)
+    plt.clf()
 
 
 if __name__ == "__main__":
