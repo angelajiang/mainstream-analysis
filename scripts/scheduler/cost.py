@@ -49,7 +49,7 @@ def plot(ms_file, plot_dir):
     plt.tick_params(axis='x', which='major', labelsize=28)
     plt.tick_params(axis='x', which='minor', labelsize=20)
 
-    plt.xlabel("Number of applications", fontsize=35)
+    plt.xlabel("Number of concurrent applications", fontsize=35)
     plt.xlim(2, max(xs))
     plt.ylim(0, max(ys))
     plt.ylabel("Cost achieved", fontsize=35)

@@ -1,5 +1,9 @@
 import sys
 sys.path.append("scripts")
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
+# mpl.style.use('classic')
 import num_apps_bar
 import layer_sweep
 sys.path.append("scripts/scheduler")
@@ -11,6 +15,14 @@ import false_neg_by_stride
 import false_pos_by_stride
 sys.path.append("scripts/accuracy_vs_performance")
 import accuracy_tradeoffs
+sys.path.append("util")
+import layer_latencies
+import plot_util
+sys.path.append('util/include')
+import layers_info
+sys.path.append('scripts/deploy')
+import visualize
+import fairness
 
 import seaborn as sns
 sns.set_style("whitegrid")
@@ -263,3 +275,63 @@ if __name__ == "__main__":
     scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
     scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
+    # FNR
+    ms1 = "output/streamer/scheduler/correlation/scheduler-correlation-mainstream-c0.1664-ll0" 
+    max1 = "output/streamer/scheduler/correlation/scheduler-correlation-maxsharing-c0.1664" 
+    min1 = "output/streamer/scheduler/correlation/scheduler-correlation-nosharing-c0.1664" 
+    f1 ="scheduler-false-neg-rate"
+    t1 = ""
+    plot_dir = "plots/scheduler"
+
+    ms_files = [ms1]
+    max_files = [max1]
+    min_files = [min1]
+    f_files = [f1]
+    f_files_annotated = [f + "-annotated" for f in f_files]
+    titles = [t1]
+
+    scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+
+
+
+    print "Plot layer latencies..."
+    # Layer latencies
+    csv_file = "output/streamer/latency/inception/basic/latency-by-layer.csv"
+    layer_names = layers_info.InceptionV3_Layer_Names
+    plot_dir = "plots/performance/latency/inception/basic/"
+    layer_latencies.print_and_plot_latencies(csv_file, layer_names, "InceptionV3", plot_dir)
+
+    csv_file = "output/streamer/latency/mobilenets/basic/latency-by-layer.csv"
+    layer_names = layers_info.MobileNets_Layer_Names
+    plot_dir = "plots/performance/latency/mobilenets/basic/"
+    layer_latencies.print_and_plot_latencies(csv_file, layer_names, "MobileNets-224", plot_dir)
+
+    csv_file = "output/streamer/latency/resnet/basic/latency-by-layer.csv"
+    layer_names = layers_info.ResNet50_Layer_Names
+    plot_dir = "plots/performance/latency/resnet/basic/"
+    layer_latencies.print_and_plot_latencies(csv_file, layer_names, "ResNet-50", plot_dir)
+
+    print "Plot deploy time series..."
+    # Data created by mainstream analyze_deployment
+    # Format: frame_id, is_analyzed
+    f0 = "output/streamer/deploy/train/train2-10apps-nosharing"
+    f1 = "output/streamer/deploy/train/train2-10apps-mainstream"
+    f2 = "output/streamer/deploy/train/train2-10apps-maxsharing"
+    thumbnail = "output/train-example.jpg"
+    plot_dir = "plots/deploy"
+    files = [f0, f1]
+    objs = [plot_util.NO_SHARING, plot_util.MAINSTREAM]
+    visualize.visualize_deployment(files, objs, plot_dir, thumbnail)
+
+    print "Plot app fairness..."
+    prefix = "output/streamer/scheduler/combinations"
+
+    f1 = "scheduler-apps-fairness"
+    t1 = ""
+    plot_dir = "plots/scheduler"
+
+    f_files = [f1]
+    titles = [t1]
+
+    fairness.plot(prefix, f_files, titles, plot_dir)

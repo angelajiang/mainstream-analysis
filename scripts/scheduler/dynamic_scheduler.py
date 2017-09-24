@@ -62,7 +62,7 @@ def plot(csv_file, plot_dir):
     plt.tick_params(axis='x', which='minor', labelsize=20)
 
     plt.xlim(1,10)
-    plt.xlabel("Number of applications", fontsize=25)
+    plt.xlabel("Number of concurrent applications", fontsize=25)
     plt.ylabel("Image-level Accuracy Loss", fontsize=25)
     plt.tight_layout()
     plt.gca().xaxis.grid(True)

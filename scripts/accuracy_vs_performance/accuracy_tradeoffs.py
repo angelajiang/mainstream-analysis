@@ -88,6 +88,7 @@ def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir
             cycol = cycle('rcmkbg').next
             cymark = cycle('ovDxh1*').next
             all_pts = []
+            pts_by_net = {}
             for arch, latency_file, accuracy_file, label in \
                     zip(arches, latency_files, accuracy_files, labels):
                 layers = get_layers(latency_file, 0)
@@ -99,6 +100,7 @@ def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir
                 ys = [acc_data[layer] for layer in layers]
 
                 all_pts += list(zip(xs, ys))
+                pts_by_net[label] = list(zip(xs, ys))
 
                 plt.scatter(xs, ys, s=60, marker=cymark(), color=cycol(), edgecolor='black', label=label)
 
@@ -120,6 +122,27 @@ def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir
 
             plt.plot(xss, ys, '--', label='Frontier')
 
+            pt_a = sorted(pts_by_net['MobileNets-224'])[0]
+            # B: Closest point on Inception curve above A.
+            pt_b = sorted(pts_by_net["InceptionV3"], key=lambda x: abs(pt_a[0] - x[0]))[0]
+
+            print(pt_a, pt_b)
+            plt.annotate("A: Run 4 full MobileNets-224",
+                         xy=pt_a,
+                         xytext=(-20, -90),
+                         xycoords='data',
+                         fontsize=20,
+                         textcoords='offset points',
+                         arrowprops=dict(arrowstyle="->", connectionstyle="angle3,angleA=105,angleB=10", relpos=(.02, .5)))
+
+            plt.annotate("B: Share partial InceptionV3s",
+                         xy=pt_b,
+                         xytext=(+30, 10),
+                         xycoords='data',
+                         fontsize=20,
+                         textcoords='offset points',
+                         arrowprops=dict(arrowstyle="->", connectionstyle="angle3,angleA=0,angleB=55", relpos=(0, .5)))
+            
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=24)
             plt.tick_params(axis='x', which='major', labelsize=28)

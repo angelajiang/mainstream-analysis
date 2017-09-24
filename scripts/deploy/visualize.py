@@ -1,11 +1,13 @@
 # -*- coding: utf8 -*-
 import sys
 from PIL import Image
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+# mpl.style.use("classic")
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import seaborn as sns
 sys.path.append("scripts/util")
 import plot_util
-
 
 sns.set_style("white")
 
@@ -56,12 +58,13 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
         if settings['line']:
             plt.axhline(y=i * settings['y_hit_m'] + 0.003, linestyle="--", color=obj["color"])
 
-    train_front = (114 - start) / fps
+    picture_loc = (104 - start) / float(fps)
+    train_front = (114 - start) / float(fps)
     plt.axvline(x=train_front, linestyle="--", color="black", alpha=0.8)
     plot_file = plot_dir + "/deploy-time-series.pdf"
-    plt.title("Train detector with 9 apps", fontsize=20)
+    # plt.title("Train detector with 9 concurrent apps", fontsize=20)
 
-    plt.annotate("Train comes\ninto full view",
+    plt.annotate("Smoke stack\nleaves view",
                  xy=(train_front, -.095),
                  xytext=(20, 12),
                  xycoords='data',
@@ -69,20 +72,40 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
                  textcoords='offset points',
                  arrowprops=dict(arrowstyle="->"))
 
-    # TODO(wonglkd): Fix this. Works with plt.show() but not with plt.savefig().
     im = Image.open(thumbnail)
-    im.thumbnail((400, 400))
-    plt.figimage(im, xo=train_front + 500, yo=83 + 52, zorder=1)
+    im.thumbnail((190, 190))
+
+    imagebox = OffsetImage(im)
+    imagebox.image.axes = ax
+
+    ab = AnnotationBbox(imagebox, (picture_loc, settings['y_hit_m'] + settings['y_hit_c'] - .004),
+                        xybox=(-30, -168),
+                        xycoords='data',
+                        boxcoords='offset points',
+                        pad=0,
+                        frameon=False,
+                        arrowprops=dict(arrowstyle='->'))
+
+    ax.add_artist(ab)
+    # plt.figimage(im, xo=picture_loc * 72 - 150, yo=83 - 58, zorder=1)
 
     plt.xlim(0, max(xs1))
     plt.ylim(-.3, .15)
-    plt.xlabel(u"Time elapsed (s)", fontsize=20)
+    plt.xlabel(u"Time elapsed (s)", fontsize=30)
     plt.xticks()
+    plt.tick_params(axis='y', which='major', labelsize=28)
+    plt.tick_params(axis='y', which='minor', labelsize=20)
+    plt.tick_params(axis='x', which='major', labelsize=28)
+    plt.tick_params(axis='x', which='minor', labelsize=20)
     plt.tick_params(axis='y', which='both', left='off', top='off', labelleft='off')
     # Fix legend order to match line appearance order
     handles, labels = ax.get_legend_handles_labels()
     plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=15, ncol=1, frameon=False)
+    plt.tight_layout()
+    plt.gca().xaxis.grid(True)
+    plt.gca().yaxis.grid(True)
     plt.savefig(plot_file)
+    plt.clf()
 
 
 if __name__ == "__main__":

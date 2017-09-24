@@ -10,6 +10,8 @@ import plot_util
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
+import seaborn as sns
+sns.set_style("whitegrid")
 
 
 def get_data(csv_file):
