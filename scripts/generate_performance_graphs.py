@@ -1,5 +1,9 @@
 import sys
 sys.path.append("scripts")
+import matplotlib as mpl
+mpl.use('Agg')
+import matplotlib.pyplot as plt
+mpl.style.use('classic')
 import num_apps_bar
 import layer_sweep
 sys.path.append("scripts/scheduler")
