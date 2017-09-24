@@ -43,7 +43,7 @@ def plot_fpf_by_stride(stream_fps, avg_fpf, ns_fpf, ms_fpf, msv_fpf, ns_fps, ms_
                  textcoords='offset points',
                  arrowprops=dict(arrowstyle="->"))
 
-    plt.annotate("NS FPF", 
+    plt.annotate("Mainstream FPF", 
                  xy=(ns_sample_rate, ns_fpf),
                  xytext=(0, 70),
                  xycoords='data',
@@ -51,7 +51,7 @@ def plot_fpf_by_stride(stream_fps, avg_fpf, ns_fpf, ms_fpf, msv_fpf, ns_fps, ms_
                  textcoords='offset points',
                  arrowprops=dict(arrowstyle="->"))
 
-    plt.annotate("MS FPF", 
+    plt.annotate("Mainstream FPF", 
                  xy=(ms_sample_rate, ms_fpf),
                  xytext=(-20, 30),
                  xycoords='data',
@@ -59,7 +59,7 @@ def plot_fpf_by_stride(stream_fps, avg_fpf, ns_fpf, ms_fpf, msv_fpf, ns_fps, ms_
                  textcoords='offset points',
                  arrowprops=dict(arrowstyle="->"))
 
-    plt.annotate("MS 2-voting FPF", 
+    plt.annotate("Mainstream 2-voting FPF", 
                  xy=(msv_sample_rate, msv_fpf),
                  xytext=(0, 50),
                  xycoords='data',
