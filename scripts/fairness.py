@@ -33,12 +33,13 @@ def plot(prefix, f_files, titles, plot_dir, annotated=False):
     title = titles[0]
     plot_file = f_files[0]
 
-
     # sns.set_style('ticks')
     grp = df_all.groupby('No of applications')
+    agg = ['Max', 'Avg']
+    labels = ['Worst', 'Average']
     lss = ['o-', 'X--']
     colors = [plot_util.COLORS["red"], plot_util.COLORS["blue"]]
-    for x, ls, color in zip(['Max', 'Avg'], lss, colors):
+    for x, label, ls, color in zip(agg, labels, lss, colors):
         data = grp[x + ' FNR Loss'].mean()
         errs = grp[x + ' FNR Loss'].std()
         xs, ys = data.index, data.values
@@ -47,52 +48,7 @@ def plot(prefix, f_files, titles, plot_dir, annotated=False):
                      # linestyle=ls,
                      marker='o',
                      color=color,
-                     label=x.replace('Avg', 'Average') + ' FNR Loss amongst applications')
-
-        # xs1, ys1, errs1, losses1, fpses1 = get_data(ms_file)
-        # xs2, ys2, errs2, losses2, fpses2 = get_data(max_file)
-        # xs3, ys3, errs3, losses3, fpses3 = get_data(min_file)
-
-        # plt.errorbar(xs3, ys3, yerr=errs3, lw=2,
-        #              marker=plot_util.NO_SHARING['marker'],
-        #              color=plot_util.NO_SHARING['color'],
-        #              label=plot_util.NO_SHARING['label'])
-        # plt.errorbar(xs2, ys2, yerr=errs2, lw=2,
-        #              marker=plot_util.MAX_SHARING['marker'],
-        #              color=plot_util.MAX_SHARING['color'],
-        #              label=plot_util.MAX_SHARING['label'])
-        # plt.errorbar(xs1, ys1, yerr=errs1, lw=2,
-        #              marker=plot_util.MAINSTREAM['marker'],
-        #              color=plot_util.MAINSTREAM['color'],
-        #              label=plot_util.MAINSTREAM['label'])
-
-        # if annotated:
-        #     for x1, y1, loss, fps in zip(xs1[0::5], ys1[0::5], losses1[0::5], fpses1[0::5]):
-        #         plt.annotate("Acc:" + str(1-loss) + ", FPS:" + str(fps), 
-        #                      xy=(x1, y1),
-        #                      xytext=(25, 50),
-        #                      xycoords='data',
-        #                      fontsize=15,
-        #                      textcoords='offset points',
-        #                      arrowprops=dict(arrowstyle="->"))
-
-        #     for x2, y2, loss, fps in zip(xs2[2::4], ys2[2::4], losses2[2::4], fpses2[2::4]):
-        #         plt.annotate("Acc:" + str(1-loss) + ", FPS:" + str(fps), 
-        #                      xy=(x2, y2),
-        #                      xytext=(-25, -50),
-        #                      xycoords='data',
-        #                      fontsize=15,
-        #                      textcoords='offset points',
-        #                      arrowprops=dict(arrowstyle="->"))
-
-        #     for x3, y3, loss, fps in zip(xs3[2::4], ys3[2::4], losses3[2::4], fpses3[2::4]):
-        #         plt.annotate("Acc:" + str(1-loss) + ", FPS:" + str(fps), 
-        #                      xy=(x3, y3),
-        #                      xytext=(-15, -25),
-        #                      xycoords='data',
-        #                      fontsize=15,
-        #                      textcoords='offset points',
-        #                      arrowprops=dict(arrowstyle="->"))
+                     label=label + ' FNR Loss amongst concurrent apps')
 
     plt.legend(loc=0, fontsize=15)
 
@@ -126,4 +82,3 @@ if __name__ == "__main__":
     titles = [t1]
 
     plot(prefix, f_files, titles, plot_dir)
-
