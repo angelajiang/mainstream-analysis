@@ -155,7 +155,7 @@ def plot_throughput(csv_file, plot_dir):
         plt.tick_params(axis='x', which='minor', labelsize=20)
         plt.ylim(0,20)
         if do_norm:
-            plt.xlim(0, 120)
+            plt.xlim(0, 115)
         else:
             plt.xlim(1, len(layers) + 4)
 
