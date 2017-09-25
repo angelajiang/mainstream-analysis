@@ -131,7 +131,7 @@ def plot_false_negative_rate(arch, latency_file, accuracy_file, sigma, num_event
     num_NNs = preprocess.get_num_NNs(latency_file)
     shapes = ["o", "h", "D", "x", "1", "*", "P", "8"]
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
-        for num_NN in [4]:
+        for num_NN in [1, 2, 4]:
             cycol = cycle('crmkbgy').next
             #for num_NN, marker in zip(num_NNs[3:7], shapes):
             marker = "h"
@@ -178,10 +178,11 @@ def plot_false_negative_rate(arch, latency_file, accuracy_file, sigma, num_event
 
             plt.annotate("Best: Share "+str(percent_frozen) +"% layers @ " + str(fps) + " FPS",
                          xy=(x, min_y),
-                         xytext=(-300, 170),
+                         xytext=(.5, .7),
+                         horizontalalignment='center',
                          xycoords='data',
                          fontsize=22,
-                         textcoords='offset points',
+                         textcoords='axes fraction',
                          arrowprops=dict(arrowstyle="->"))
 
             plt.xlabel(u"More sharing →\n(increasing FPS, decreasing accuracy)", fontsize=28)
