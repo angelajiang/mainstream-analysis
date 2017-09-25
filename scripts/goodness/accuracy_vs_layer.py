@@ -53,8 +53,10 @@ def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
             ys  = [acc_data[index] for index in indices]
 
             #plt.scatter(indices, ys, s=35, color=cycol(), edgecolor='black', label=label)
+            num_layers = max(indices) + 1
             if do_norm:
-                indices = [int(round(x*100. / max(indices))) for x in indices]
+
+                indices = [int(round(x * 100. / num_layers)) for x in indices]
             else:
                 indices = [num_layers - x for x in indices]
             plt.plot(indices, ys, linestyle="--", marker=markers[mindex], color=cs[ci], lw=2, label=label)
