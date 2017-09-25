@@ -37,23 +37,23 @@ def plot_fpf_by_stride(stream_fps, avg_fpf, ns_fpf, ms_fpf, msv_fpf, ns_fps, ms_
 
     plt.annotate("False positive rate", 
                  xy=(xs[-1], ys[-1]),
-                 xytext=(-250, -20),
+                 xytext=(-250, -10),
                  xycoords='data',
                  fontsize=21,
                  textcoords='offset points',
-                 arrowprops=dict(arrowstyle="->"))
+                 arrowprops=dict(arrowstyle="->", relpos=(1, .6)))
 
-    plt.annotate("Mainstream FPF", 
+    plt.annotate("No Sharing FPF", 
                  xy=(ns_sample_rate, ns_fpf),
-                 xytext=(0, 70),
+                 xytext=(130, 70),
                  xycoords='data',
                  fontsize=21,
                  textcoords='offset points',
-                 arrowprops=dict(arrowstyle="->"))
+                 arrowprops=dict(arrowstyle="->", relpos=(0, 0)))
 
     plt.annotate("Mainstream FPF", 
                  xy=(ms_sample_rate, ms_fpf),
-                 xytext=(-20, 30),
+                 xytext=(-130, 30),
                  xycoords='data',
                  fontsize=21,
                  textcoords='offset points',
@@ -61,11 +61,11 @@ def plot_fpf_by_stride(stream_fps, avg_fpf, ns_fpf, ms_fpf, msv_fpf, ns_fps, ms_
 
     plt.annotate("Mainstream 2-voting FPF", 
                  xy=(msv_sample_rate, msv_fpf),
-                 xytext=(0, 50),
+                 xytext=(-14, 30),
                  xycoords='data',
                  fontsize=21,
                  textcoords='offset points',
-                 arrowprops=dict(arrowstyle="->"))
+                 arrowprops=dict(arrowstyle="->", relpos=(.2, 0)))
 
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
