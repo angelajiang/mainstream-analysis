@@ -3,6 +3,7 @@ sys.path.append("scripts")
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
+assert mpl.__version__ < '2.0.0'
 # mpl.style.use('classic')
 import num_apps_bar
 import layer_sweep
