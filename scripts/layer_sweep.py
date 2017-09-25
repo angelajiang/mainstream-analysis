@@ -17,7 +17,8 @@ if do_flip:
     more_sharing_label = "No. of unspecialized layers"
 else:
     # more_sharing_label = u"More sharing →"
-    more_sharing_label = u"Fraction of unspecialized (shared) layers"
+    more_sharing_label = u"% of layers that are unspecialized (shared)"
+do_norm = True
 
 # CSV file needs to be of format
 # layer1,camera_fps,transformer_fps,base_fps,task_fps
@@ -135,6 +136,8 @@ def plot_throughput(csv_file, plot_dir):
     xs = range(len(layers))
     if do_flip:
         xs = list(reversed(xs))
+    if do_norm:
+        xs = [int(round(x*100. / len(layers))) for x in xs]
 
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN, marker in zip(num_NNs, MARKERS):
@@ -143,13 +146,18 @@ def plot_throughput(csv_file, plot_dir):
 
         # Format plot
         plt.xlabel(more_sharing_label, fontsize=25)
-        plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
+        # plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
         plt.ylabel("Throughput (FPS)", fontsize=28)
 
         plt.tick_params(axis='y', which='major', labelsize=28)
         plt.tick_params(axis='y', which='minor', labelsize=20)
+        plt.tick_params(axis='x', which='major', labelsize=28)
+        plt.tick_params(axis='x', which='minor', labelsize=20)
         plt.ylim(0,20)
-        plt.xlim(1, len(layers) + 4)
+        if do_norm:
+            plt.xlim(0, 120)
+        else:
+            plt.xlim(1, len(layers) + 4)
 
         if do_flip:
             plt.legend(loc=0, fontsize=15, frameon=True)

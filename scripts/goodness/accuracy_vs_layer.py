@@ -54,7 +54,7 @@ def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
 
             #plt.scatter(indices, ys, s=35, color=cycol(), edgecolor='black', label=label)
             if do_norm:
-                indices = [x / float(max(indices)) for x in indices]
+                indices = [int(round(x*100. / max(indices))) for x in indices]
             else:
                 indices = [num_layers - x for x in indices]
             plt.plot(indices, ys, linestyle="--", marker=markers[mindex], color=cs[ci], lw=2, label=label)
@@ -67,13 +67,13 @@ def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
             if not do_norm:
                 plt.xlim(0, 350)
             else:
-                plt.xlim(0, 1.01)
-            plt.ylim(.2, 1)
+                plt.xlim(0, 102)
+            plt.ylim(0, 1)
 
             # plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
 
             if do_norm:
-                plt.xlabel("Fraction of unspecialized layers", fontsize=30)
+                plt.xlabel("% of layers that are unspecialized", fontsize=30)
             elif do_flip:
                 plt.xlabel("No. of unspecialized layers", fontsize=30)
             else:
