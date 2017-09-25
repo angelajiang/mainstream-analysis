@@ -12,6 +12,7 @@ import scheduler
 sys.path.append("scripts/goodness")
 import accuracy_vs_layer
 import false_neg_by_stride
+import false_neg_by_layer
 import false_pos_by_stride
 sys.path.append("scripts/accuracy_vs_performance")
 import accuracy_tradeoffs
@@ -116,6 +117,16 @@ if __name__ == "__main__":
     xs, ys = num_apps_bar.get_data("output/streamer/scheduler/dynamic-uniform.csv", 0.015)
     ys2 = [5, 3, 2, 1, 1]
     num_apps_bar.plot("plots/num_apps_bar.pdf", xs, ys, ys2)
+
+    print "Plotting false neg by layer..."
+    arch1 = "iv3"
+    latency_file1 = "output/streamer/throughput/inception/flow_control/multi-app"
+    accuracy_file1 = "output/mainstream/accuracy/flowers/inception/flowers-40-0.0001-dropout"
+
+    plot_dir = "plots/goodness/"
+
+    #plot_false_negative_rate_nosharing(arch1, latency_file1, accuracy_file1, 0.2, 10000, 500, 13, plot_dir, "/tmp/out")
+    false_neg_by_layer.plot_false_negative_rate(arch1, latency_file1, accuracy_file1, 0.2, 10000, 250, 14, plot_dir)
 
     # False neg by stride
     print "Plotting false neg by stride"
