@@ -52,34 +52,32 @@ if __name__ == "__main__":
 
     # Training accuracy
     print "Plotting training accuracy..."
-    accuracy_file1 = "output/mainstream/accuracy/flowers/inception/flowers-40-0.0001-dropout"
-    accuracy_file2 = "output/mainstream/accuracy/flowers/resnet/flowers-40-0.0001-chokepoints"
-    accuracy_file3 = "output/mainstream/accuracy/flowers/mobilenets/flowers-40-0.0001"
-    accuracy_file4 = "output/mainstream/accuracy/paris/resnet/paris-40-0.0001-chokepoints"
-    accuracy_file5 = "output/mainstream/accuracy/paris/inception/paris-40-0.0001-dropout"
-    accuracy_file6 = "output/mainstream/accuracy/paris/mobilenets/paris-40-0.0001"
-    accuracy_file7 = "output/mainstream/accuracy/cats/cats-inception-accuracy"
 
-    accuracy_files = [
-                      accuracy_file2,
-                      accuracy_file5,
-                      accuracy_file4,
-                      accuracy_file1,
-                      #accuracy_file7,
-                      accuracy_file6,
-                      accuracy_file3
-                      ]
+    fi = "output/mainstream/accuracy/flowers/inception/flowers-40-0.0001-dropout"
+    fr = "output/mainstream/accuracy/flowers/resnet/flowers-40-0.0001-chokepoints"
+    fm = "output/mainstream/accuracy/flowers/mobilenets/flowers-40-0.0001"
+    pr = "output/mainstream/accuracy/paris/resnet/paris-40-0.0001-chokepoints"
+    pi = "output/mainstream/accuracy/paris/inception/paris-40-0.0001-dropout"
+    pm = "output/mainstream/accuracy/paris/mobilenets/paris-40-0.0001"
+    ci = "output/mainstream/accuracy/cats/cats-inception-accuracy"
+    cm = "output/mainstream/accuracy/cats/cats-mobilenets-accuracy"
+    cr = "output/mainstream/accuracy/cats/cats-resnet-accuracy"
+
+    accuracy_files = [fr, pr, cr, fi, pi, ci, fm, pm, cm]
 
     labels = [
               "Flowers-ResNet50",
-              "Paris-InceptionV3",
               "Paris-ResNet50",
+              "Cats-ResNet50",
               "Flowers-InceptionV3",
-              #"Cats-InceptionV3",
+              "Paris-InceptionV3",
+              "Cats-InceptionV3",
+              "Flowers-MobileNets-224",
               "Paris-MobileNets-224",
-              "Flowers-MobileNets-224"
+              "Cats-MobileNets-224",
               ]
     plot_file = "plots/accuracy/accuracy-by-layer.pdf"
+
     accuracy_vs_layer.plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
 
     # Accuracy vs throughput

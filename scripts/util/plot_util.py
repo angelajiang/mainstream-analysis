@@ -17,6 +17,20 @@ COLORLISTS = {4: [
                 colors.colorConverter.to_rgb("#abdda4"),
                 colors.colorConverter.to_rgb("#66c2a5"),
                 colors.colorConverter.to_rgb("#3288bd")
+                ],
+              12: [
+                colors.colorConverter.to_rgb("#a6cee3"),
+                colors.colorConverter.to_rgb("#1f78b4"),
+                colors.colorConverter.to_rgb("#b2df8a"),
+                colors.colorConverter.to_rgb("#33a02c"),
+                colors.colorConverter.to_rgb("#fb9a99"),
+                colors.colorConverter.to_rgb("#e31a1c"),
+                colors.colorConverter.to_rgb("#fdbf6f"),
+                colors.colorConverter.to_rgb("#ff7f00"),
+                colors.colorConverter.to_rgb("#cab2d6"),
+                colors.colorConverter.to_rgb("#6a3d9a"),
+                colors.colorConverter.to_rgb("#ffff99"),
+                colors.colorConverter.to_rgb("#b15928")
                 ]
               }
 

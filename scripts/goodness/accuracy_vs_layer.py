@@ -6,6 +6,8 @@ import matplotlib
 import numpy as np
 from itertools import cycle
 import layers_info
+sys.path.append('scripts/util/')
+import plot_util as util
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -35,15 +37,20 @@ def get_accuracy_data(csv_file):
     return data, indices
 
 def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
+    cs = util.COLORLISTS[12]
+    markers = ["o", "h", "D"]
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
-        cycol = cycle('rcgmbrk').next
+        ci = 0
+        mi = 0
         for accuracy_file, label in \
                 zip(accuracy_files, labels):
 
+            mindex = mi % len(markers)
             acc_data, indices = get_accuracy_data(accuracy_file)
             ys  = [acc_data[index] for index in indices]
 
-            plt.scatter(indices, ys, s=35, color=cycol(), edgecolor='black', label=label)
+            #plt.scatter(indices, ys, s=35, color=cycol(), edgecolor='black', label=label)
+            plt.plot(indices, ys, linestyle="--", marker=markers[mindex], color=cs[ci], lw=2, label=label)
 
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
@@ -56,14 +63,15 @@ def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
             plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
             plt.xlabel(u"Fewer specialized layers →", fontsize=30)
             plt.ylabel("Top-1 Accuracy", fontsize=30)
-            plt.legend(loc=4, fontsize=20)
+            plt.legend(loc=0, fontsize=13, frameon=True)
             #plt.gca().invert_xaxis()
             plt.gca().xaxis.grid(True)
             plt.gca().yaxis.grid(True)
             plt.tight_layout()
+            ci += 1
+            mi += 1
 
-            plt.savefig(plot_file)
-
+        plt.savefig(plot_file)
         plt.clf()
 
 if __name__ == "__main__":
@@ -78,32 +86,28 @@ if __name__ == "__main__":
 
     plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
 
-    accuracy_file1 = "output/mainstream/accuracy/flowers/inception/flowers-40-0.0001-dropout"
-    accuracy_file2 = "output/mainstream/accuracy/flowers/resnet/flowers-40-0.0001-chokepoints"
-    accuracy_file3 = "output/mainstream/accuracy/flowers/mobilenets/flowers-40-0.0001"
-    accuracy_file4 = "output/mainstream/accuracy/paris/resnet/paris-40-0.0001-chokepoints"
-    accuracy_file5 = "output/mainstream/accuracy/paris/inception/paris-40-0.0001-dropout"
-    accuracy_file6 = "output/mainstream/accuracy/paris/mobilenets/paris-40-0.0001"
-    accuracy_file7 = "output/mainstream/accuracy/cats/cats-inception-accuracy"
+    fi = "output/mainstream/accuracy/flowers/inception/flowers-40-0.0001-dropout"
+    fr = "output/mainstream/accuracy/flowers/resnet/flowers-40-0.0001-chokepoints"
+    fm = "output/mainstream/accuracy/flowers/mobilenets/flowers-40-0.0001"
+    pr = "output/mainstream/accuracy/paris/resnet/paris-40-0.0001-chokepoints"
+    pi = "output/mainstream/accuracy/paris/inception/paris-40-0.0001-dropout"
+    pm = "output/mainstream/accuracy/paris/mobilenets/paris-40-0.0001"
+    ci = "output/mainstream/accuracy/cats/cats-inception-accuracy"
+    cm = "output/mainstream/accuracy/cats/cats-mobilenets-accuracy"
+    cr = "output/mainstream/accuracy/cats/cats-resnet-accuracy"
 
-    accuracy_files = [
-                      accuracy_file2,
-                      accuracy_file5,
-                      accuracy_file4,
-                      accuracy_file1,
-                      #accuracy_file7,
-                      accuracy_file6,
-                      accuracy_file3
-                      ]
+    accuracy_files = [fr, pr, cr, fi, pi, ci, fm, pm, cm]
 
     labels = [
               "Flowers-ResNet50",
-              "Paris-InceptionV3",
               "Paris-ResNet50",
+              "Cats-ResNet50",
               "Flowers-InceptionV3",
-              #"Cats-InceptionV3",
+              "Paris-InceptionV3",
+              "Cats-InceptionV3",
+              "Flowers-MobileNets-224",
               "Paris-MobileNets-224",
-              "Flowers-MobileNets-224"
+              "Cats-MobileNets-224",
               ]
     plot_file = "plots/accuracy/accuracy-by-layer.pdf"
 
