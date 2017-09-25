@@ -79,7 +79,7 @@ def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
             else:
                 plt.xlabel(u"Fewer specialized layers →", fontsize=30)
             plt.ylabel("Top-1 Accuracy", fontsize=30)
-            plt.legend(loc=0, fontsize=13, frameon=not do_norm)
+            plt.legend(loc=0, fontsize=15, frameon=not do_norm)
             #plt.gca().invert_xaxis()
             plt.gca().xaxis.grid(True)
             plt.gca().yaxis.grid(True)
