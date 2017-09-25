@@ -49,9 +49,9 @@ def plot(prefix, f_files, titles, plot_dir, annotated=False):
         #              marker='o',
         #              color=color,
         #              label=label + ' FNR Loss amongst concurrent apps')
-        plt.plot(xs, ys, lw=2, marker='o', color=color, label=label + ' FNR Loss amongst concurrent apps')
+        plt.plot(xs, ys, lw=2, marker='o', color=color, label=label + ' FNR Loss\namongst concurrent apps')
 
-    plt.legend(loc=0, fontsize=16)
+    plt.legend(loc=0, fontsize=20)
 
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
