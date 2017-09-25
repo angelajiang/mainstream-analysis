@@ -12,6 +12,13 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 
+do_flip = False
+if do_flip:
+    more_sharing_label = "No. of unspecialized layers"
+else:
+    # more_sharing_label = u"More sharing →"
+    more_sharing_label = u"Fraction of unspecialized (shared) layers"
+
 # CSV file needs to be of format
 # layer1,camera_fps,transformer_fps,base_fps,task_fps
 # layer2,camera_fps,transformer_fps,base_fps,task_fps
@@ -126,6 +133,8 @@ def plot_throughput(csv_file, plot_dir):
     data = get_data(csv_file, "throughput")
 
     xs = range(len(layers))
+    if do_flip:
+        xs = list(reversed(xs))
 
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN, marker in zip(num_NNs, MARKERS):
@@ -133,15 +142,19 @@ def plot_throughput(csv_file, plot_dir):
             plt.plot(xs, task_fps, marker=marker, label=str(num_NN)+" apps", lw=2)
 
         # Format plot
-        plt.xlabel(u"More sharing →", fontsize=28)
+        plt.xlabel(more_sharing_label, fontsize=25)
         plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
         plt.ylabel("Throughput (FPS)", fontsize=28)
 
         plt.tick_params(axis='y', which='major', labelsize=28)
         plt.tick_params(axis='y', which='minor', labelsize=20)
         plt.ylim(0,20)
+        plt.xlim(1, len(layers) + 4)
 
-        plt.legend(loc=0, fontsize=15)
+        if do_flip:
+            plt.legend(loc=0, fontsize=15, frameon=True)
+        else:
+            plt.legend(loc=4, fontsize=15)
         plt.gca().xaxis.grid(True)
         plt.gca().yaxis.grid(True)
         plt.tight_layout()
@@ -158,7 +171,7 @@ def plot_throughput(csv_file, plot_dir):
             plt.plot(xs, task_fps, label="Task-"+str(num_NN))
 
             # Format plot
-            plt.xlabel(u"More sharing →", fontsize=28)
+            plt.xlabel(more_sharing_label, fontsize=28)
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
             plt.ylabel("Throughput (FPS)", fontsize=28)
@@ -195,7 +208,7 @@ def plot_processor_latency(processors_file, plot_dir):
                     hatch=plot_util.MAINSTREAM["pattern"],
                     error_kw={'ecolor':'green', 'linewidth':3})
 
-            plt.xlabel(u"More sharing →", fontsize=28)
+            plt.xlabel(more_sharing_label, fontsize=28)
             plt.ylabel("CPU per frame (ms)", fontsize=28)
             plt.ylim(0, 300)
             plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
