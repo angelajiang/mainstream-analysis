@@ -85,7 +85,7 @@ def print_and_plot_latencies(csv_file, layer_names, label, plot_dir):
     plt.tight_layout()
     plt.savefig(plot_dir + "/latency-by-layer-" + label + ".pdf")
 
-    print normalized_latencies
+    # print normalized_latencies
 
 if __name__ == "__main__":
     csv_file = "output/streamer/latency/inception/basic/latency-by-layer.csv"
