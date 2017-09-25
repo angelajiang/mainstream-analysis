@@ -107,7 +107,7 @@ def plot_false_negative_rate_nosharing(arch, latency_file, accuracy_file, sigma,
 
         plt.scatter(xs, ys, s=50, marker=marker, edgecolor='black', label=str(num_NN)+" apps")
 
-        plt.xlabel(u"More sharing →\n(inc fps, dec acc)", fontsize=28)
+        plt.xlabel(u"More sharing →\n(increasing FPS, decreasing accuracy)", fontsize=28)
         plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
         plt.tick_params(axis='y', which='major', labelsize=24)
         plt.tick_params(axis='y', which='minor', labelsize=20)
@@ -184,7 +184,7 @@ def plot_false_negative_rate(arch, latency_file, accuracy_file, sigma, num_event
                          textcoords='offset points',
                          arrowprops=dict(arrowstyle="->"))
 
-            plt.xlabel(u"More sharing →\n(inc fps, dec acc)", fontsize=28)
+            plt.xlabel(u"More sharing →\n(increasing FPS, decreasing accuracy)", fontsize=28)
             plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
             plt.tick_params(axis='y', which='major', labelsize=24)
             plt.tick_params(axis='y', which='minor', labelsize=20)
