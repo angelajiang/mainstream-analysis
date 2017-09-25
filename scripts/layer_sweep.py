@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pprint as pp
 import sys
 import matplotlib
@@ -109,7 +110,7 @@ def plot_max_throughput(csv_file, plot_file):
     plt.tick_params(axis='x', which='minor', labelsize=20)
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
-    plt.xlabel("Number of applications", fontsize=28)
+    plt.xlabel("Number of concurrent applications", fontsize=28)
     plt.ylabel("Throughput (FPS)", fontsize=28)
     plt.xlim(1, 30)
     plt.ylim(0, 20)
@@ -132,7 +133,7 @@ def plot_throughput(csv_file, plot_dir):
             plt.plot(xs, task_fps, marker=marker, label=str(num_NN)+" apps", lw=2)
 
         # Format plot
-        plt.xlabel("More sharing ->", fontsize=28)
+        plt.xlabel(u"More sharing →", fontsize=28)
         plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
         plt.ylabel("Throughput (FPS)", fontsize=28)
 
@@ -157,7 +158,7 @@ def plot_throughput(csv_file, plot_dir):
             plt.plot(xs, task_fps, label="Task-"+str(num_NN))
 
             # Format plot
-            plt.xlabel("More sharing ->", fontsize=28)
+            plt.xlabel(u"More sharing →", fontsize=28)
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
             plt.ylabel("Throughput (FPS)", fontsize=28)
@@ -194,8 +195,8 @@ def plot_processor_latency(processors_file, plot_dir):
                     hatch=plot_util.MAINSTREAM["pattern"],
                     error_kw={'ecolor':'green', 'linewidth':3})
 
-            plt.xlabel("More sharing ->", fontsize=28)
-            plt.ylabel("Processor Latency (ms)", fontsize=28)
+            plt.xlabel(u"More sharing →", fontsize=28)
+            plt.ylabel("CPU per frame (ms)", fontsize=28)
             plt.ylim(0, 300)
             plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
             plt.tick_params(axis='y', which='major', labelsize=28)

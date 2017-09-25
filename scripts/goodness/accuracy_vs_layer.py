@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pprint as pp
 import sys
 sys.path.append('include/')
@@ -53,7 +54,7 @@ def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
             plt.ylim(.2, 1)
 
             plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
-            plt.xlabel("More frozen NN-cells ->", fontsize=30)
+            plt.xlabel(u"Fewer specialized layers →", fontsize=30)
             plt.ylabel("Top-1 Accuracy", fontsize=30)
             plt.legend(loc=4, fontsize=20)
             #plt.gca().invert_xaxis()
