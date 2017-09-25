@@ -11,6 +11,11 @@ import plot_util
 
 sns.set_style("white")
 
+sizes = {
+    'label': 30,
+    'legend': 20,
+}
+
 
 def visualize_deployment(files, objects, plot_dir, thumbnail):
     # TODO: Remove magic value of 20 (to compensate for startup time.)
@@ -91,7 +96,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
 
     plt.xlim(0, max(xs1))
     plt.ylim(-.3, .15)
-    plt.xlabel(u"Time elapsed (s)", fontsize=30)
+    plt.xlabel(u"Time elapsed (s)", fontsize=sizes['label'])
     plt.xticks()
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
@@ -100,7 +105,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     plt.tick_params(axis='y', which='both', left='off', top='off', labelleft='off')
     # Fix legend order to match line appearance order
     handles, labels = ax.get_legend_handles_labels()
-    plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=20, ncol=1, frameon=False)
+    plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=sizes['legend'], ncol=1, frameon=False)
     plt.tight_layout()
     plt.gca().xaxis.grid(True)
     plt.gca().yaxis.grid(True)
