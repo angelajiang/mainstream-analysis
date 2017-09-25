@@ -11,7 +11,7 @@ import seaborn as sns
 sns.set_style("whitegrid")
 
 sizes = {
-    'label': 35,
+    'label': 30,
     'legend': 20,
 }
 

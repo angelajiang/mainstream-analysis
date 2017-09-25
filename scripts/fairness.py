@@ -18,7 +18,7 @@ plt.ioff()
 
 
 sizes = {
-    'label': 30,
+    'label': 26,
     'legend': 20,
     'title': 35,
 }

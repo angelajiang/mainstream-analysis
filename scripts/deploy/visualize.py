@@ -12,7 +12,7 @@ import plot_util
 sns.set_style("white")
 
 sizes = {
-    'label': 30,
+    'label': 28,
     'legend': 20,
 }
 
