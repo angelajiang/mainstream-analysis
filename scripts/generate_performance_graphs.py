@@ -3,6 +3,7 @@ sys.path.append("scripts")
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
+assert mpl.__version__ < '2.0.0'
 # mpl.style.use('classic')
 import num_apps_bar
 import layer_sweep
@@ -12,6 +13,7 @@ import scheduler
 sys.path.append("scripts/goodness")
 import accuracy_vs_layer
 import false_neg_by_stride
+import false_neg_by_layer
 import false_pos_by_stride
 sys.path.append("scripts/accuracy_vs_performance")
 import accuracy_tradeoffs
@@ -116,6 +118,79 @@ if __name__ == "__main__":
     xs, ys = num_apps_bar.get_data("output/streamer/scheduler/dynamic-uniform.csv", 0.015)
     ys2 = [5, 3, 2, 1, 1]
     num_apps_bar.plot("plots/num_apps_bar.pdf", xs, ys, ys2)
+
+    print "Plotting false neg by layer..."
+    arch1 = "iv3"
+    latency_file1 = "output/streamer/throughput/inception/flow_control/multi-app"
+    accuracy_file1 = "output/mainstream/accuracy/flowers/inception/flowers-40-0.0001-dropout"
+
+    plot_dir = "plots/goodness/"
+
+    #plot_false_negative_rate_nosharing(arch1, latency_file1, accuracy_file1, 0.2, 10000, 500, 13, plot_dir, "/tmp/out")
+    false_neg_by_layer.plot_false_negative_rate(arch1, latency_file1, accuracy_file1, 0.2, 10000, 250, 14, plot_dir)
+
+    # False neg by stride
+    print "Plotting false neg by stride"
+    f1 = "../mainstream/log/frame-rate/flowers/synthetic/7"
+    f2 = "../mainstream/log/frame-rate/flowers/synthetic/10"
+    f3 = "../mainstream/log/frame-rate/flowers/synthetic/14"
+    f4 = "../mainstream/log/frame-rate/flowers/synthetic/18"
+    f5 = "../mainstream/log/frame-rate/flowers/synthetic/41"
+    f6 = "../mainstream/log/frame-rate/flowers/synthetic/64"
+    f7 = "../mainstream/log/frame-rate/flowers/synthetic/87"
+    f8 = "../mainstream/log/frame-rate/flowers/synthetic/133"
+    f9 = "../mainstream/log/frame-rate/flowers/synthetic/165"
+    f10 = "../mainstream/log/frame-rate/flowers/synthetic/197"
+    f11 = "../mainstream/log/frame-rate/flowers/synthetic/249"
+    f12 = "../mainstream/log/frame-rate/flowers/synthetic/280"
+    f13 = "../mainstream/log/frame-rate/flowers/synthetic/311"
+    plot_file = "plots/frame-rate/frame-rate-flowers-models.pdf"
+    '''
+    plot_models([f1, f3, f5, f7, f8, f9, f10, f11, f12, f13],
+                ["7", "14", "41", "87", "133", "165", "197", "249", "280", "311"],
+                plot_file,
+                40)
+    '''
+
+    f1 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-0"
+    f2 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-4"
+    f3 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-17"
+    f4 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-18"
+    f5 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-41"
+    f6 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-87"
+    f7 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-165"
+    f8 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-197"
+    f9 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-229"
+    f10 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-249"
+    f11 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-280"
+    f12 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-311"
+    f13 = "../mainstream/log/frame-rate/no-afn/train/frame-rate-trains-no-afn-313"
+    plot_file = "plots/frame-rate/frame-rate-afn-models.pdf"
+    # plot_models([f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13],
+    #      ["0", "4", "17", "18", "41", "87", "165", "197", "229", "249", "280", "311", "313"], plot_file)
+
+    plot_file = "plots/frame-rate/frame-rate-afn-slo.pdf"
+    #plot_slos(f13, plot_file)
+
+    event_lengths = [286, 77, 92, 437, 274, 255, 251, 153]
+
+    plot_file = "plots/frame-rate/frame-rate-afn-dependences.pdf"
+    dependent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-whole"
+    independent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-whole"
+    empirical_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
+    files = [dependent_file, independent_file, empirical_file]
+    labels = ["Dependent", "Independent", "Empirical"]
+    false_neg_by_stride.plot_dependence(files, labels, event_lengths, plot_file)
+
+    plot_file = "plots/frame-rate/frame-rate-afn-dependences-with-correlation.pdf"
+    dependent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-whole"
+    independent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-whole"
+    empirical_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
+    correlation_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-correlation"
+    files = [dependent_file, independent_file, empirical_file, correlation_file]
+    labels = ["Dependent", "Independent", "Empirical", "Correlation"]
+    false_neg_by_stride.plot_dependence(files, labels, event_lengths, plot_file)
+
 
     # False positive frequency
     print "Plotting false positive frequency..."

@@ -13,6 +13,9 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 
+do_flip = False
+num_layers = 314
+do_norm = True
 
 def get_num_NNs(csv_file):
     num_NNs = []
@@ -50,20 +53,35 @@ def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
             ys  = [acc_data[index] for index in indices]
 
             #plt.scatter(indices, ys, s=35, color=cycol(), edgecolor='black', label=label)
+            num_layers = max(indices) + 1
+            if do_norm:
+
+                indices = [int(round(x * 100. / num_layers)) for x in indices]
+            else:
+                indices = [num_layers - x for x in indices]
             plt.plot(indices, ys, linestyle="--", marker=markers[mindex], color=cs[ci], lw=2, label=label)
 
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
-            #plt.tick_params(axis='x', which='major', labelsize=28)
-            #plt.tick_params(axis='x', which='minor', labelsize=20)
+            plt.tick_params(axis='x', which='major', labelsize=28)
+            plt.tick_params(axis='x', which='minor', labelsize=20)
 
-            plt.xlim(0, 350)
-            plt.ylim(.2, 1)
+            if not do_norm:
+                plt.xlim(0, 350)
+            else:
+                plt.xlim(0, 102)
+            plt.ylim(0, 1)
 
-            plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
-            plt.xlabel(u"Fewer specialized layers →", fontsize=30)
+            # plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
+
+            if do_norm:
+                plt.xlabel("% of layers that are unspecialized", fontsize=30)
+            elif do_flip:
+                plt.xlabel("No. of unspecialized layers", fontsize=30)
+            else:
+                plt.xlabel(u"Fewer specialized layers →", fontsize=30)
             plt.ylabel("Top-1 Accuracy", fontsize=30)
-            plt.legend(loc=0, fontsize=13, frameon=True)
+            plt.legend(loc=0, fontsize=15, frameon=not do_norm)
             #plt.gca().invert_xaxis()
             plt.gca().xaxis.grid(True)
             plt.gca().yaxis.grid(True)

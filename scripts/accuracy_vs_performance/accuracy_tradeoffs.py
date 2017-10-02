@@ -126,7 +126,7 @@ def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir
             # B: Closest point on Inception curve above A.
             pt_b = sorted(pts_by_net["InceptionV3"], key=lambda x: abs(pt_a[0] - x[0]))[0]
 
-            print(pt_a, pt_b)
+            # print(pt_a, pt_b)
             plt.annotate("A: Run 4 full MobileNets-224",
                          xy=pt_a,
                          xytext=(-20, -90),
