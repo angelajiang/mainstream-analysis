@@ -10,6 +10,12 @@ import seaborn as sns
 
 sns.set_style("whitegrid")
 
+sizes = {
+    'label': 30,
+    'legend': 20,
+}
+
+
 def plot_fpf_by_stride(stream_fps, avg_fpf, ns_fpf, ms_fpf, msv_fpf, ns_fps, ms_fps, plot_file):
     # strides: strides
     # xs: sample rate
@@ -71,11 +77,11 @@ def plot_fpf_by_stride(stream_fps, avg_fpf, ns_fpf, ms_fpf, msv_fpf, ns_fps, ms_
     plt.tick_params(axis='y', which='minor', labelsize=20)
     plt.tick_params(axis='x', which='major', labelsize=28)
     plt.tick_params(axis='x', which='minor', labelsize=20)
-    plt.xlabel("Sample rate", fontsize=35)
-    plt.ylabel("False Positive Freq", fontsize=35)
+    plt.xlabel("Sample rate", fontsize=sizes['label'])
+    plt.ylabel("False Positive Freq", fontsize=sizes['label'])
     plt.xlim(0,1)
     plt.gca().xaxis.grid(True)
-    plt.legend(loc=0, fontsize=20)
+    plt.legend(loc=0, fontsize=sizes['legend'])
     plt.tight_layout()
 
     plt.savefig(plot_file + "-fpf-by-stride.pdf")

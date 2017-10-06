@@ -17,6 +17,13 @@ import matplotlib.pyplot as plt
 plt.ioff()
 
 
+sizes = {
+    'label': 26,
+    'legend': 20,
+    'title': 35,
+}
+
+
 def load_data(prefix):
     df_all, baselines_fnr = load_dfs(prefix)
 
@@ -49,20 +56,20 @@ def plot(prefix, f_files, titles, plot_dir, annotated=False):
         #              marker='o',
         #              color=color,
         #              label=label + ' FNR Loss amongst concurrent apps')
-        plt.plot(xs, ys, lw=2, marker='o', color=color, label=label + ' FNR Loss amongst concurrent apps')
+        plt.plot(xs, ys, lw=2, marker='o', color=color, label=label + ' FNR Loss\namongst concurrent apps')
 
-    plt.legend(loc=0, fontsize=16)
+    plt.legend(loc=0, fontsize=sizes['legend'])
 
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
     plt.tick_params(axis='x', which='major', labelsize=28)
     plt.tick_params(axis='x', which='minor', labelsize=20)
 
-    plt.title(title, fontsize=35)
-    plt.xlabel("Number of concurrent apps", fontsize=30)
+    plt.title(title, fontsize=sizes['title'])
+    plt.xlabel("Number of concurrent apps", fontsize=sizes['label'])
     plt.xlim(2, max(xs))
     plt.ylim(0, None)
-    plt.ylabel("False negative rate loss", fontsize=30)
+    plt.ylabel("False negative rate loss", fontsize=sizes['label'])
     plt.tight_layout()
     plt.gca().xaxis.grid(True)
     plt.gca().yaxis.grid(True)

@@ -11,6 +11,11 @@ import plot_util
 
 sns.set_style("white")
 
+sizes = {
+    'label': 28,
+    'legend': 20,
+}
+
 
 def visualize_deployment(files, objects, plot_dir, thumbnail):
     # TODO: Remove magic value of 20 (to compensate for startup time.)
@@ -68,18 +73,18 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
                  xy=(train_front, -.095),
                  xytext=(20, 12),
                  xycoords='data',
-                 fontsize=15,
+                 fontsize=20,
                  textcoords='offset points',
                  arrowprops=dict(arrowstyle="->"))
 
     im = Image.open(thumbnail)
-    im.thumbnail((190, 190))
+    im.thumbnail((185, 185))
 
     imagebox = OffsetImage(im)
     imagebox.image.axes = ax
 
     ab = AnnotationBbox(imagebox, (picture_loc, settings['y_hit_m'] + settings['y_hit_c'] - .004),
-                        xybox=(-30, -168),
+                        xybox=(-30, -153),
                         xycoords='data',
                         boxcoords='offset points',
                         pad=0,
@@ -91,7 +96,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
 
     plt.xlim(0, max(xs1))
     plt.ylim(-.3, .15)
-    plt.xlabel(u"Time elapsed (s)", fontsize=30)
+    plt.xlabel(u"Time elapsed (s)", fontsize=sizes['label'])
     plt.xticks()
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
@@ -100,7 +105,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     plt.tick_params(axis='y', which='both', left='off', top='off', labelleft='off')
     # Fix legend order to match line appearance order
     handles, labels = ax.get_legend_handles_labels()
-    plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=15, ncol=1, frameon=False)
+    plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=sizes['legend'], ncol=1, frameon=False)
     plt.tight_layout()
     plt.gca().xaxis.grid(True)
     plt.gca().yaxis.grid(True)

@@ -52,19 +52,19 @@ COLORS = {"grey": colors.colorConverter.to_rgb("#4D4D4D"),
           "grey5": colors.colorConverter.to_rgb("#bfbfbf"),
           }
 
-MAINSTREAM = {"color": COLORS["orange"],
+MAINSTREAM = {"color": COLORLISTS[8][0],
               "marker": "h",
               "pattern": "---",
               "label": "Mainstream"
               }
 
-NO_SHARING = {"color": COLORS["blue"],
+NO_SHARING = {"color": COLORLISTS[8][5],
               "marker": "o",
               "pattern": "\\\\",
               "label": "No Sharing"
               }
 
-MAX_SHARING = {"color": COLORS["red"],
+MAX_SHARING = {"color": COLORLISTS[8][7],
               "marker": "d",
               "pattern": "xxxxx",
               "label": "Max Sharing"
