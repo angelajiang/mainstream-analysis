@@ -59,15 +59,15 @@ def plot(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotated
             xs2, ys2, errs2, losses2, fpses2 = get_data(max_file)
             xs3, ys3, errs3, losses3, fpses3 = get_data(min_file)
 
-            plt.errorbar(xs3, ys3, yerr=errs3, lw=2,
+            plt.errorbar(xs3, ys3, yerr=errs3, lw=3,
                          marker=plot_util.NO_SHARING['marker'],
                          color=plot_util.NO_SHARING['color'],
                          label=plot_util.NO_SHARING['label'])
-            plt.errorbar(xs2, ys2, yerr=errs2, lw=2,
+            plt.errorbar(xs2, ys2, yerr=errs2, lw=3,
                          marker=plot_util.MAX_SHARING['marker'],
                          color=plot_util.MAX_SHARING['color'],
                          label=plot_util.MAX_SHARING['label'])
-            plt.errorbar(xs1, ys1, yerr=errs1, lw=2,
+            plt.errorbar(xs1, ys1, yerr=errs1, lw=3,
                          marker=plot_util.MAINSTREAM['marker'],
                          color=plot_util.MAINSTREAM['color'],
                          label=plot_util.MAINSTREAM['label'])

@@ -140,9 +140,9 @@ def plot_throughput(csv_file, plot_dir):
         xs = [int(round(x*100. / len(layers))) for x in xs]
 
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
-        for num_NN, marker in zip(num_NNs, MARKERS):
+        for num_NN, marker, c in zip(num_NNs, MARKERS, plot_util.COLORLISTS[8]):
             task_fps = [np.average(data[num_NN][layer]["task"]) for layer in layers]
-            plt.plot(xs, task_fps, marker=marker, label=str(num_NN)+" apps", lw=2)
+            plt.plot(xs, task_fps, marker=marker, label=str(num_NN)+" apps", lw=2, color=c)
 
         # Format plot
         plt.xlabel(more_sharing_label, fontsize=25)
@@ -169,26 +169,6 @@ def plot_throughput(csv_file, plot_dir):
         plt.savefig(plot_dir + "/task-throughput.pdf")
 
         plt.clf()
-
-    for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
-        for num_NN in num_NNs:
-
-            base_fps = [np.average(data[num_NN][layer]["base"]) for layer in layers]
-            task_fps = [np.average(data[num_NN][layer]["task"]) for layer in layers]
-            plt.plot(xs, base_fps, label="Base-"+str(num_NN))
-            plt.plot(xs, task_fps, label="Task-"+str(num_NN))
-
-            # Format plot
-            plt.xlabel(more_sharing_label, fontsize=28)
-            plt.tick_params(axis='y', which='major', labelsize=28)
-            plt.tick_params(axis='y', which='minor', labelsize=20)
-            plt.ylabel("Throughput (FPS)", fontsize=28)
-            plt.ylim(0,20)
-            plt.legend(loc=0, fontsize=15)
-            plt.title(str(num_NN)+" split NN", fontsize=30)
-            plt.tight_layout()
-            plt.savefig(plot_dir + "/throughput-"+str(num_NN)+"-NN.pdf")
-            plt.clf()
 
 def plot_processor_latency(processors_file, plot_dir):
     layers = preprocess.get_layers(processors_file, 0)
