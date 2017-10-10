@@ -15,7 +15,9 @@ import matplotlib.pyplot as plt
 plt.ioff()
 
 
-def get_data(csv_file):
+def get_fnr_data(csv_file, version):
+    # Version 0: num_apps,fnr,acc_loss,fps_list...,frozen_list...
+    # Version 1: num_apps,fnr,fpr,acc_loss,fps_list...,frozen_list...
     metrics = {}
     fpses = {}
     acc_losses = {}
@@ -28,19 +30,27 @@ def get_data(csv_file):
         for line in f:
             vals = line.split(',')
             num_apps = int(vals[0])
-            acc_loss = round(float(vals[2]),2)
-            fps_start = num_apps + 4
-            fps_end = (2 *num_apps) + 3
-            fps_list = [float(v) for v in vals[fps_start:fps_end]]
-            average_fps = round(np.average(fps_list),2)
+            if version == 0:
+                acc_loss = round(float(vals[2]),2)
+                fps_start = num_apps + 4
+                fps_end = (2 *num_apps) + 3
+                fps_list = [float(v) for v in vals[fps_start:fps_end]]
+                average_fps = round(np.average(fps_list),2)
+            if version == 1:
+                acc_loss = round(float(vals[3]),2)
+                fps_start = num_apps + 5
+                fps_end = (2 *num_apps) + 4
+                fps_list = [float(v) for v in vals[fps_start:fps_end]]
+                average_fps = round(np.average(fps_list), 2)
 
             if num_apps not in metrics.keys():
                 xs.append(num_apps)
                 metrics[num_apps] = []
                 acc_losses[num_apps] = []
                 fpses[num_apps] = []
-            metric = float(vals[1])
-            metrics[num_apps].append(metric)
+
+            fnr = float(vals[1])
+            metrics[num_apps].append(fnr)
             acc_losses[num_apps].append(acc_loss)
             fpses[num_apps].append(average_fps)
 
@@ -51,23 +61,23 @@ def get_data(csv_file):
         as2.append(round(np.average(fpses[x]), 2))
     return xs, ys, errs, as1, as2
 
-def plot(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotated=False):
+def plot_fnr(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotated=False, version=0):
     for i in range(2):
         for ms_file, max_file, min_file, plot_file, title \
                 in zip(ms_files, max_files, min_files, plot_files, titles):
-            xs1, ys1, errs1, losses1, fpses1 = get_data(ms_file)
-            xs2, ys2, errs2, losses2, fpses2 = get_data(max_file)
-            xs3, ys3, errs3, losses3, fpses3 = get_data(min_file)
+            xs1, ys1, errs1, losses1, fpses1 = get_fnr_data(ms_file, version)
+            xs2, ys2, errs2, losses2, fpses2 = get_fnr_data(max_file, version)
+            xs3, ys3, errs3, losses3, fpses3 = get_fnr_data(min_file, version)
 
-            plt.errorbar(xs3, ys3, yerr=errs3, lw=3,
+            plt.errorbar(xs3, ys3, yerr=errs3, lw=4, markersize=8,
                          marker=plot_util.NO_SHARING['marker'],
                          color=plot_util.NO_SHARING['color'],
                          label=plot_util.NO_SHARING['label'])
-            plt.errorbar(xs2, ys2, yerr=errs2, lw=3,
+            plt.errorbar(xs2, ys2, yerr=errs2, lw=4, markersize=8,
                          marker=plot_util.MAX_SHARING['marker'],
                          color=plot_util.MAX_SHARING['color'],
                          label=plot_util.MAX_SHARING['label'])
-            plt.errorbar(xs1, ys1, yerr=errs1, lw=3,
+            plt.errorbar(xs1, ys1, yerr=errs1, lw=4, markersize=8,
                          marker=plot_util.MAINSTREAM['marker'],
                          color=plot_util.MAINSTREAM['color'],
                          label=plot_util.MAINSTREAM['label'])
@@ -107,7 +117,7 @@ def plot(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotated
             plt.tick_params(axis='x', which='major', labelsize=28)
             plt.tick_params(axis='x', which='minor', labelsize=20)
 
-            plt.title(title, fontsize=35)
+            #plt.title(title, fontsize=35)
             plt.xlabel("Number of concurrent apps", fontsize=30)
             plt.xlim(2, max(xs1))
             plt.ylim(0, 1)
@@ -134,6 +144,6 @@ if __name__ == "__main__":
     f_files_annotated = [f + "-annotated" for f in f_files]
     titles = [t1]
 
-    plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+    plot_fnr(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    plot_fnr(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 

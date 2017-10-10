@@ -229,8 +229,8 @@ if __name__ == "__main__":
     f_files_annotated = [f + "-annotated" for f in f_files]
     titles = [t1, t2, t3]
 
-    scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
     ## Different applications
     ms1 = "output/streamer/scheduler/scheduler-s0-250-mainstream" 
@@ -246,8 +246,8 @@ if __name__ == "__main__":
     f_files_annotated = [f + "-annotated" for f in f_files]
     titles = [t1]
 
-    scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
     ms2 = "output/streamer/scheduler/scheduler-s0-250-paris-mainstream" 
     max2 = "output/streamer/scheduler/scheduler-s0-250-paris-maxsharing" 
@@ -262,8 +262,8 @@ if __name__ == "__main__":
     f_files_annotated = [f + "-annotated" for f in f_files]
     titles = [t2]
 
-    scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
     ms3 = "output/streamer/scheduler/scheduler-s0-250-cats-mainstream" 
     max3 = "output/streamer/scheduler/scheduler-s0-250-cats-maxsharing" 
@@ -278,8 +278,8 @@ if __name__ == "__main__":
     f_files_annotated = [f + "-annotated" for f in f_files]
     titles = [t1, t2, t3]
 
-    scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
     ## Independence versus dependence
 
@@ -296,8 +296,8 @@ if __name__ == "__main__":
     f_files_annotated = [f + "-annotated" for f in f_files]
     titles = [t1]
 
-    scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
     #ms2 = "output/streamer/scheduler/scheduler-s0-500-ms.csv" 
     ms2= "output/streamer/scheduler/correlation/scheduler-correlation-mainstream-c0-ll0" 
@@ -313,8 +313,8 @@ if __name__ == "__main__":
     f_files_annotated = [f + "-annotated" for f in f_files]
     titles = [t2]
 
-    scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
     ## Multiple applications
     ms1 = "output/streamer/scheduler/correlation/scheduler-correlation-mainstream-c0.1664-ll0" 
@@ -331,8 +331,8 @@ if __name__ == "__main__":
     f_files_annotated = [f + "-annotated" for f in f_files]
     titles = [t1]
 
-    scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
     ## Multiple applications
     ms1 = "output/streamer/scheduler/cost/scheduler-s0-250-multiapp-mainstream" 
@@ -348,8 +348,8 @@ if __name__ == "__main__":
     f_files_annotated = [f + "-annotated" for f in f_files]
     titles = [t1]
 
-    scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
     # FNR
     ms1 = "output/streamer/scheduler/correlation/scheduler-correlation-mainstream-c0.1664-ll0" 
@@ -366,8 +366,8 @@ if __name__ == "__main__":
     f_files_annotated = [f + "-annotated" for f in f_files]
     titles = [t1]
 
-    scheduler.plot(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    scheduler.plot(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    scheduler.plot_fnr(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
 
 
