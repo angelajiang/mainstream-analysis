@@ -2,7 +2,12 @@
 from matplotlib import colors
 
 # http://colorbrewer2.org/#type=diverging&scheme=Spectral&n=4
-COLORLISTS = {4: [
+COLORLISTS = {3: [
+                colors.colorConverter.to_rgb("#a6cee3"),
+                colors.colorConverter.to_rgb("#1f78b4"),
+                colors.colorConverter.to_rgb("#b2df8a"),
+              ],
+              4: [
                 colors.colorConverter.to_rgb("#d53e4f"),
                 colors.colorConverter.to_rgb("#fdae61"),
                 colors.colorConverter.to_rgb("#abdda4"),
@@ -58,8 +63,8 @@ MAINSTREAM = {"color": COLORLISTS[8][0],
               "label": "Mainstream"
               }
 
-NO_SHARING = {"color": COLORLISTS[8][5],
-              "marker": "o",
+NO_SHARING = {"color": colors.colorConverter.to_rgb("#7fbf7b"),
+              "marker": "<",
               "pattern": "\\\\",
               "label": "No Sharing"
               }
