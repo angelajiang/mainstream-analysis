@@ -50,7 +50,7 @@ def get_fnr_data(csv_file, version):
                 fpses[num_apps] = []
 
             fnr = float(vals[1])
-            metrics[num_apps].append(fnr)
+            metrics[num_apps].append(1 - fnr)
             acc_losses[num_apps].append(acc_loss)
             fpses[num_apps].append(average_fps)
 
@@ -79,7 +79,7 @@ def get_fpr_data(csv_file):
 
             fnr = float(vals[1])
             fpr = float(vals[2])
-            metrics[num_apps].append(fpr)
+            metrics[num_apps].append(1 - fpr)
 
     for x in xs:
         ys.append(np.average(metrics[x]))
@@ -114,7 +114,7 @@ def get_f1_data(csv_file):
     return xs, ys, errs
 
 
-def plot_fnr(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotated=False, version=0):
+def plot_recall(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotated=False, version=0):
     for i in range(2):
         for ms_file, max_file, min_file, plot_file, title \
                 in zip(ms_files, max_files, min_files, plot_files, titles):
@@ -139,7 +139,7 @@ def plot_fnr(ms_files, max_files, min_files, plot_files, titles, plot_dir, annot
                 for x1, y1, loss, fps in zip(xs1[0::5], ys1[0::5], losses1[0::5], fpses1[0::5]):
                     plt.annotate("Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                                  xy=(x1, y1),
-                                 xytext=(25, 50),
+                                 xytext=(25, -50),
                                  xycoords='data',
                                  fontsize=15,
                                  textcoords='offset points',
@@ -148,7 +148,7 @@ def plot_fnr(ms_files, max_files, min_files, plot_files, titles, plot_dir, annot
                 for x2, y2, loss, fps in zip(xs2[2::4], ys2[2::4], losses2[2::4], fpses2[2::4]):
                     plt.annotate("Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                                  xy=(x2, y2),
-                                 xytext=(-25, -50),
+                                 xytext=(-25, 50),
                                  xycoords='data',
                                  fontsize=15,
                                  textcoords='offset points',
@@ -157,7 +157,7 @@ def plot_fnr(ms_files, max_files, min_files, plot_files, titles, plot_dir, annot
                 for x3, y3, loss, fps in zip(xs3[2::4], ys3[2::4], losses3[2::4], fpses3[2::4]):
                     plt.annotate("Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                                  xy=(x3, y3),
-                                 xytext=(-15, -25),
+                                 xytext=(-15, 25),
                                  xycoords='data',
                                  fontsize=15,
                                  textcoords='offset points',
@@ -174,14 +174,14 @@ def plot_fnr(ms_files, max_files, min_files, plot_files, titles, plot_dir, annot
             plt.xlabel("Number of concurrent apps", fontsize=30)
             plt.xlim(2, max(xs1))
             plt.ylim(0, 1)
-            plt.ylabel("False negative rate", fontsize=30)
+            plt.ylabel("Recall", fontsize=30)
             plt.tight_layout()
             plt.gca().xaxis.grid(True)
             plt.gca().yaxis.grid(True)
-            plt.savefig(plot_dir + "/" + plot_file + "-fnr.pdf")
+            plt.savefig(plot_dir + "/" + plot_file + "-recall.pdf")
             plt.clf()
 
-def plot_fpr(ms_files, max_files, min_files, plot_files, titles, plot_dir):
+def plot_precision(ms_files, max_files, min_files, plot_files, titles, plot_dir):
     for i in range(2):
         for ms_file, max_file, min_file, plot_file, title \
                 in zip(ms_files, max_files, min_files, plot_files, titles):
@@ -213,11 +213,11 @@ def plot_fpr(ms_files, max_files, min_files, plot_files, titles, plot_dir):
             plt.xlabel("Number of concurrent apps", fontsize=30)
             plt.xlim(2, max(xs1))
             plt.ylim(0, 1)
-            plt.ylabel("False Positive Rate", fontsize=30)
+            plt.ylabel("Precision", fontsize=30)
             plt.tight_layout()
             plt.gca().xaxis.grid(True)
             plt.gca().yaxis.grid(True)
-            plt.savefig(plot_dir + "/" + plot_file + "-fpr.pdf")
+            plt.savefig(plot_dir + "/" + plot_file + "-precision.pdf")
             plt.clf()
 
 def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir):
@@ -275,8 +275,8 @@ if __name__ == "__main__":
     f_files_annotated = [f + "-annotated" for f in f_files]
     titles = [t1]
 
-    plot_fnr(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    plot_fnr(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+    plot_recall(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    plot_recall(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
 
     ms1 = "output/streamer/scheduler/v1/scheduler-v1-500-c0.1664-mainstream"
     max1 = "output/streamer/scheduler/v1/scheduler-v1-500-c0.1664-maxsharing"
@@ -292,6 +292,6 @@ if __name__ == "__main__":
     f_files_annotated = [f + "-annotated" for f in f_files]
     titles = [t1]
 
-    plot_fnr(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    plot_fpr(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    plot_recall(ms_files, max_files, min_files, f_files, titles, plot_dir, False, 1)
+    plot_precision(ms_files, max_files, min_files, f_files, titles, plot_dir)
     plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
