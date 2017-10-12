@@ -13,6 +13,9 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 
+import seaborn as sns
+sns.set_style("whitegrid")
+
 do_flip = False
 num_layers = 314
 do_norm = True
@@ -40,8 +43,9 @@ def get_accuracy_data(csv_file):
     return data, indices
 
 def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
-    cs = util.COLORLISTS[12]
-    markers = ["o", "h", "D"]
+    cs = [util.MAINSTREAM["color"], util.NO_SHARING["color"], util.MAX_SHARING["color"]]
+    #cs = util.COLORLISTS[12]
+    markers = ["<", "h", "D"]
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
         ci = 0
         mi = 0
@@ -129,5 +133,19 @@ if __name__ == "__main__":
               ]
     plot_file = "plots/accuracy/accuracy-by-layer.pdf"
 
+    accuracy_files = [fr]
+    labels = [
+              "Flowers-ResNet50"
+              ]
+    plot_file = "plots/accuracy/accuracy-by-layer-flowers-1.pdf"
+    plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
+
+    accuracy_files = [fr, fi, fm]
+    labels = [
+              "Flowers-ResNet50",
+              "Flowers-InceptionV3",
+              "Flowers-MobileNets-224",
+              ]
+    plot_file = "plots/accuracy/accuracy-by-layer-flowers-2.pdf"
     plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
 
