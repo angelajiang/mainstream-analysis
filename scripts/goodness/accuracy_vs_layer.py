@@ -133,19 +133,3 @@ if __name__ == "__main__":
               ]
     plot_file = "plots/accuracy/accuracy-by-layer.pdf"
 
-    accuracy_files = [fr]
-    labels = [
-              "Flowers-ResNet50"
-              ]
-    plot_file = "plots/accuracy/accuracy-by-layer-flowers-1.pdf"
-    plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
-
-    accuracy_files = [fr, fi, fm]
-    labels = [
-              "Flowers-ResNet50",
-              "Flowers-InceptionV3",
-              "Flowers-MobileNets-224",
-              ]
-    plot_file = "plots/accuracy/accuracy-by-layer-flowers-2.pdf"
-    plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
-
