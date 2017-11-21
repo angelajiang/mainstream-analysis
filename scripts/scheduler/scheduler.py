@@ -14,7 +14,6 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 
-
 def get_fnr_data(csv_file, version):
     # Version 0: num_apps,fnr,acc_loss,fps_list...,frozen_list...
     # Version 1: num_apps,fnr,fpr,acc_loss,fps_list...,frozen_list...
@@ -171,10 +170,10 @@ def plot_recall(ms_files, max_files, min_files, plot_files, titles, plot_dir, an
             plt.tick_params(axis='x', which='minor', labelsize=20)
 
             #plt.title(title, fontsize=35)
-            plt.xlabel("Number of concurrent apps", fontsize=30)
+            plt.xlabel("Number of concurrent apps", fontsize=35)
             plt.xlim(2, max(xs1))
             plt.ylim(0, 1)
-            plt.ylabel("Recall", fontsize=30)
+            plt.ylabel("Recall", fontsize=35)
             plt.tight_layout()
             plt.gca().xaxis.grid(True)
             plt.gca().yaxis.grid(True)
@@ -210,6 +209,7 @@ def plot_precision(ms_files, max_files, min_files, plot_files, titles, plot_dir)
             plt.tick_params(axis='x', which='minor', labelsize=20)
 
             #plt.title(title, fontsize=35)
+            plt.rcParams["axes.labelsize"] = 35
             plt.xlabel("Number of concurrent apps", fontsize=30)
             plt.xlim(2, max(xs1))
             plt.ylim(0, 1)
@@ -277,21 +277,3 @@ if __name__ == "__main__":
 
     plot_recall(ms_files, max_files, min_files, f_files, titles, plot_dir)
     plot_recall(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
-
-    ms1 = "output/streamer/scheduler/v1/scheduler-v1-500-c0.1664-mainstream"
-    max1 = "output/streamer/scheduler/v1/scheduler-v1-500-c0.1664-maxsharing"
-    min1 = "output/streamer/scheduler/v1/scheduler-v1-500-c0.1664-nosharing"
-    f1 ="scheduler-500-c0.1664-ll2"
-    t1 = ""
-    plot_dir = "plots/scheduler/v1/"
-
-    ms_files = [ms1]
-    max_files = [max1]
-    min_files = [min1]
-    f_files = [f1]
-    f_files_annotated = [f + "-annotated" for f in f_files]
-    titles = [t1]
-
-    plot_recall(ms_files, max_files, min_files, f_files, titles, plot_dir, False, 1)
-    plot_precision(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)

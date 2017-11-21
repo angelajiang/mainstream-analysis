@@ -63,7 +63,7 @@ def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
                 indices = [int(round(x * 100. / num_layers)) for x in indices]
             else:
                 indices = [num_layers - x for x in indices]
-            plt.plot(indices, ys, linestyle="--", marker=markers[mindex], color=cs[ci], lw=2, label=label)
+            plt.plot(indices, ys, marker=markers[mindex], color=cs[ci], lw=4, markersize=8, label=label)
 
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)

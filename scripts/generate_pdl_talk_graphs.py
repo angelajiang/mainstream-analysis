@@ -27,11 +27,16 @@ sys.path.append('scripts/deploy')
 import visualize
 import fairness
 
-
 import seaborn as sns
 sns.set_style("whitegrid")
 
 if __name__ == "__main__":
+
+    # Task throughput by split point
+    print "Plotting throughput by split point..."
+    plot_dir = "plots/performance/throughput/inception/flow_control"
+    csv_file = "output/streamer/throughput/inception/flow_control/multi-app"
+    layer_sweep.plot_throughput(csv_file, plot_dir)
 
     # Accuracy vs layer
     fi = "output/mainstream/accuracy/flowers/inception/flowers-40-0.0001-dropout"
@@ -84,3 +89,21 @@ if __name__ == "__main__":
     labels = ["InceptionV3"]
 
     accuracy_tradeoffs.plot_accuracy_vs_fps_partial(arches, latency_files, accuracy_files, labels, plot_dir, "1")
+
+    ms1 = "output/streamer/scheduler/v1/scheduler-v1-500-c0.1664-mainstream"
+    max1 = "output/streamer/scheduler/v1/scheduler-v1-500-c0.1664-maxsharing"
+    min1 = "output/streamer/scheduler/v1/scheduler-v1-500-c0.1664-nosharing"
+    f1 ="scheduler-500-c0.1664-ll2"
+    t1 = ""
+    plot_dir = "plots/scheduler/v1/"
+
+    ms_files = [ms1]
+    max_files = [max1]
+    min_files = [min1]
+    f_files = [f1]
+    f_files_annotated = [f + "-annotated" for f in f_files]
+    titles = [t1]
+
+    scheduler.plot_recall(ms_files, max_files, min_files, f_files, titles, plot_dir, False, 1)
+    scheduler.plot_precision(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)

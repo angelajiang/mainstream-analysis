@@ -12,10 +12,9 @@ import plot_util
 sns.set_style("white")
 
 sizes = {
-    'label': 28,
+    'label': 30,
     'legend': 20,
 }
-
 
 def visualize_deployment(files, objects, plot_dir, thumbnail):
     # TODO: Remove magic value of 20 (to compensate for startup time.)
@@ -100,8 +99,8 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     plt.xticks()
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
-    plt.tick_params(axis='x', which='major', labelsize=28)
-    plt.tick_params(axis='x', which='minor', labelsize=20)
+    plt.tick_params(axis='x', which='major', labelsize=35)
+    plt.tick_params(axis='x', which='minor', labelsize=30)
     plt.tick_params(axis='y', which='both', left='off', top='off', labelleft='off')
     # Fix legend order to match line appearance order
     handles, labels = ax.get_legend_handles_labels()
