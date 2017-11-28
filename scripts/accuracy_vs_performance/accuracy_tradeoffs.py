@@ -12,6 +12,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 
+import seaborn as sns
+sns.set_style("whitegrid")
 
 def op_to_layer(op_full):
     tensor_name = (op_full.split(":"))[0]
@@ -78,7 +80,6 @@ def get_accuracy_data(architecture, csv_file):
             layer = layer_names[frozen_index]
             data[layer] = acc
     return data
-
 
 def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir):
     num_NNs = get_num_NNs(latency_files[0])
@@ -160,6 +161,47 @@ def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir
             plt.savefig(plot_dir + "/acc-fps-" + str(num_NN) + "-NN.pdf")
             plt.clf()
 
+def plot_accuracy_vs_fps_partial(arches, latency_files, accuracy_files, labels, plot_dir, suffix):
+    num_NNs = get_num_NNs(latency_files[0])
+
+    for i in range(2):  # Hack to get dimensions to match between 1st and 2nd graph
+        for num_NN in num_NNs:
+            cycol = cycle('rcmkbg').next
+            cymark = cycle('ovDxh1*').next
+            all_pts = []
+            pts_by_net = {}
+            for arch, latency_file, accuracy_file, label in \
+                    zip(arches, latency_files, accuracy_files, labels):
+                layers = get_layers(latency_file, 0)
+
+                latency_data = get_max_fps_data(latency_file)
+                acc_data = get_accuracy_data(arch, accuracy_file)
+
+                xs = [latency_data[num_NN][layer]["total"] for layer in layers]
+                ys = [acc_data[layer] for layer in layers]
+
+                all_pts += list(zip(xs, ys))
+                pts_by_net[label] = list(zip(xs, ys))
+
+                plt.scatter(xs, ys, s=60, marker=cymark(), color=cycol(), edgecolor='black', label=label)
+
+            plt.tick_params(axis='y', which='major', labelsize=28)
+            plt.tick_params(axis='y', which='minor', labelsize=24)
+            plt.tick_params(axis='x', which='major', labelsize=28)
+            plt.tick_params(axis='x', which='minor', labelsize=24)
+
+            plt.ylim(0, 1)
+
+            plt.xlim(0,18)
+            plt.xlabel("Throughput (FPS)", fontsize=30)
+            plt.ylabel("Top-1 Accuracy", fontsize=30)
+            plt.legend(loc=4, fontsize=20)
+            #plt.title(str(num_NN) + " applications", fontsize=30)
+            plt.gca().xaxis.grid(True)
+            plt.gca().yaxis.grid(True)
+            plt.tight_layout()
+            plt.savefig(plot_dir + "/acc-fps-" + str(num_NN) + "-NN-" + suffix + ".pdf")
+            plt.clf()
 
 if __name__ == "__main__":
 
@@ -182,4 +224,11 @@ if __name__ == "__main__":
 
     plot_dir = "plots/tradeoffs/flowers"
 
-    plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir)
+    plot_accuracy_vs_fps_partial(arches, latency_files, accuracy_files, labels, plot_dir, "2")
+
+    arches = [arch1]
+    latency_files = [latency_file1]
+    accuracy_files = [accuracy_file1]
+    labels = ["InceptionV3"]
+
+    plot_accuracy_vs_fps_partial(arches, latency_files, accuracy_files, labels, plot_dir, "1")

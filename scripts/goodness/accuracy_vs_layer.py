@@ -13,6 +13,9 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 
+import seaborn as sns
+sns.set_style("whitegrid")
+
 do_flip = False
 num_layers = 314
 do_norm = True
@@ -40,8 +43,9 @@ def get_accuracy_data(csv_file):
     return data, indices
 
 def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
-    cs = util.COLORLISTS[12]
-    markers = ["o", "h", "D"]
+    cs = [util.MAINSTREAM["color"], util.NO_SHARING["color"], util.MAX_SHARING["color"]]
+    #cs = util.COLORLISTS[12]
+    markers = ["<", "h", "D"]
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
         ci = 0
         mi = 0
@@ -59,7 +63,7 @@ def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
                 indices = [int(round(x * 100. / num_layers)) for x in indices]
             else:
                 indices = [num_layers - x for x in indices]
-            plt.plot(indices, ys, linestyle="--", marker=markers[mindex], color=cs[ci], lw=2, label=label)
+            plt.plot(indices, ys, marker=markers[mindex], color=cs[ci], lw=4, markersize=8, label=label)
 
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
@@ -128,6 +132,4 @@ if __name__ == "__main__":
               "Cats-MobileNets-224",
               ]
     plot_file = "plots/accuracy/accuracy-by-layer.pdf"
-
-    plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
 

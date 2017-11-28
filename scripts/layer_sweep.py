@@ -132,6 +132,7 @@ def plot_throughput(csv_file, plot_dir):
     layers = [preprocess.op_to_layer(l) for l in LAYERS]
     num_NNs = preprocess.get_num_NNs(csv_file)
     data = get_data(csv_file, "throughput")
+    num_NNs = [1,2,4,8]
 
     xs = range(len(layers))
     if do_flip:
@@ -140,19 +141,19 @@ def plot_throughput(csv_file, plot_dir):
         xs = [int(round(x*100. / len(layers))) for x in xs]
 
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
-        for num_NN, marker, c in zip(num_NNs, MARKERS, plot_util.COLORLISTS[8]):
+        for num_NN, marker, c in zip(num_NNs, MARKERS, plot_util.COLORLISTS[4]):
             task_fps = [np.average(data[num_NN][layer]["task"]) for layer in layers]
-            plt.plot(xs, task_fps, marker=marker, label=str(num_NN)+" apps", lw=2, color=c)
+            plt.plot(xs, task_fps, marker=marker, label=str(num_NN)+" apps", lw=4, markersize=8, color=c)
 
         # Format plot
         plt.xlabel(more_sharing_label, fontsize=25)
         # plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
         plt.ylabel("Throughput (FPS)", fontsize=28)
 
-        plt.tick_params(axis='y', which='major', labelsize=28)
-        plt.tick_params(axis='y', which='minor', labelsize=20)
-        plt.tick_params(axis='x', which='major', labelsize=28)
-        plt.tick_params(axis='x', which='minor', labelsize=20)
+        plt.tick_params(axis='y', which='major', labelsize=30)
+        plt.tick_params(axis='y', which='minor', labelsize=24)
+        plt.tick_params(axis='x', which='major', labelsize=30)
+        plt.tick_params(axis='x', which='minor', labelsize=24)
         plt.ylim(0,20)
         if do_norm:
             plt.xlim(0, 115)
@@ -160,13 +161,13 @@ def plot_throughput(csv_file, plot_dir):
             plt.xlim(1, len(layers) + 4)
 
         if do_flip:
-            plt.legend(loc=0, fontsize=15, frameon=True)
+            plt.legend(loc=0, fontsize=20, frameon=True)
         else:
-            plt.legend(loc=4, fontsize=15)
+            plt.legend(loc=4, fontsize=20)
         plt.gca().xaxis.grid(True)
         plt.gca().yaxis.grid(True)
         plt.tight_layout()
-        plt.savefig(plot_dir + "/task-throughput.pdf")
+        plt.savefig(plot_dir + "/task-throughput-partial.pdf")
 
         plt.clf()
 
