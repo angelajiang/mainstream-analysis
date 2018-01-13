@@ -11,3 +11,10 @@
 0,10,0.61084,0.832535,0.59875,60
 1,10,0.667894,0.8917,0.60625,60
 2,10,0.675497,0.876303,0.595714,60
+3,10,0.462587,0.799066,0.47125,60
+4,10,0.653264,0.89436,0.586667,60
+0,10,0.349183,0.661441,0.424286,70,data/models/exp/yolov2-stmarc-pedestrian-tmp-10fr-trial0.h5
+1,10,0.640126,0.873616,0.55,70,data/models/exp/yolov2-stmarc-pedestrian-tmp-10fr-trial1.h5
+2,10,0.563591,0.805542,0.551429,70,data/models/exp/yolov2-stmarc-pedestrian-tmp-10fr-trial2.h5
+3,10,0.309857,0.506838,0.46,70,data/models/exp/yolov2-stmarc-pedestrian-tmp-10fr-trial3.h5
+4,10,0.559375,0.834803,0.53625,70,data/models/exp/yolov2-stmarc-pedestrian-tmp-10fr-trial4.h5
