@@ -19,6 +19,9 @@
 3,15,0.889093,0.909323,0.495,50,data/models/atc/yolov2-stmarc-car-15fr-trial3.h5
 4,15,0.638351,0.931388,0.337692,50,data/models/atc/yolov2-stmarc-car-15fr-trial4.h5
 5,15,0.876739,0.930942,0.621,50,data/models/atc/yolov2-stmarc-car-15fr-trial5.h5
+6,15,0.35015,0.390191,0.398333,50,data/models/atc/yolov2-stmarc-car-15fr-trial6.h5
+7,15,0,1,0,50,data/models/atc/yolov2-stmarc-car-15fr-trial7.h5
+8,15,0,0,0,50,data/models/atc/yolov2-stmarc-car-15fr-trial8.h5
 0,20,0.780778,0.618814,0.624615,50,data/models/atc/yolov2-stmarc-car-20fr-trial0.h5
 1,20,0.166619,0.339881,0.228571,50,data/models/atc/yolov2-stmarc-car-20fr-trial1.h5
 2,20,0.388371,0.347404,0.7175,50,data/models/atc/yolov2-stmarc-car-20fr-trial2.h5
@@ -44,6 +47,10 @@
 3,30,0.109043,0.165217,0.33,50,data/models/atc/yolov2-stmarc-car-30fr-trial3.h5
 4,30,0.514038,0.737827,0.366,50,data/models/atc/yolov2-stmarc-car-30fr-trial4.h5
 5,30,0.674035,0.416536,0.714444,50,data/models/atc/yolov2-stmarc-car-30fr-trial5.h5
+6,30,0.730402,0.770287,0.526667,50,data/models/atc/yolov2-stmarc-car-30fr-trial6.h5
+7,30,0.419158,0.548679,0.414,50,data/models/atc/yolov2-stmarc-car-30fr-trial7.h5
+8,30,0.861054,0.940697,0.517333,50,data/models/atc/yolov2-stmarc-car-30fr-trial8.h5
+9,30,0.803316,0.799671,0.536667,50,data/models/atc/yolov2-stmarc-car-30fr-trial9.h5
 0,35,0.649015,0.970013,0.324706,50,data/models/atc/yolov2-stmarc-car-35fr-trial0.h5
 1,35,0.295478,0.361368,0.361111,50,data/models/atc/yolov2-stmarc-car-35fr-trial1.h5
 2,35,0,0,0,50,data/models/atc/yolov2-stmarc-car-35fr-trial2.h5
@@ -71,6 +78,19 @@
 4,45,0.29008,0.911364,0.157778,50,data/models/atc/yolov2-stmarc-car-45fr-trial4.h5
 5,45,0.651179,0.941845,0.403333,50,data/models/atc/yolov2-stmarc-car-45fr-trial5.h5
 6,45,0.277778,0.981481,0.138333,50,data/models/atc/yolov2-stmarc-car-45fr-trial6.h5
+7,45,0.0733333,0.75,0.0425,50,data/models/atc/yolov2-stmarc-car-45fr-trial7.h5
+8,45,0.391875,0.59375,0.33,50,data/models/atc/yolov2-stmarc-car-45fr-trial8.h5
+9,45,0.258463,0.423987,0.317647,50,data/models/atc/yolov2-stmarc-car-45fr-trial9.h5
+0,50,0.482308,0.730769,0.33,50,data/models/atc/yolov2-stmarc-car-50fr-trial0-e50.h5
+1,50,0.124234,0.287738,0.1975,50,data/models/atc/yolov2-stmarc-car-50fr-trial1-e50.h5
+2,50,0,0,0,50,data/models/atc/yolov2-stmarc-car-50fr-trial2-e50.h5
+3,50,0,0,0,50,data/models/atc/yolov2-stmarc-car-50fr-trial3-e50.h5
+4,50,0.628424,0.487139,0.566,50,data/models/atc/yolov2-stmarc-car-50fr-trial4-e50.h5
+5,50,0.0643016,0.176672,0.146364,50,data/models/atc/yolov2-stmarc-car-50fr-trial5-e50.h5
+6,50,0.536477,0.747584,0.414286,50,data/models/atc/yolov2-stmarc-car-50fr-trial6-e50.h5
+7,50,0.181739,0.275362,0.33,50,data/models/atc/yolov2-stmarc-car-50fr-trial7-e50.h5
+8,50,0.558912,0.78738,0.407778,50,data/models/atc/yolov2-stmarc-car-50fr-trial8-e50.h5
+9,50,0.584842,0.838186,0.39,50,data/models/atc/yolov2-stmarc-car-50fr-trial9-e50.h5
 0,55,0.0689581,0.256444,0.126667,50,data/models/atc/yolov2-stmarc-car-55fr-trial0.h5
 1,55,0.1992,0.24,0.415,50,data/models/atc/yolov2-stmarc-car-55fr-trial1.h5
 2,55,0.113767,0.324146,0.156364,50,data/models/atc/yolov2-stmarc-car-55fr-trial2.h5
@@ -110,3 +130,4 @@
 6,70,0.475686,0.645273,0.331429,50,data/models/atc/yolov2-stmarc-car-70fr-trial6.h5
 7,70,0,0,0,50,data/models/atc/yolov2-stmarc-car-70fr-trial7.h5
 8,70,0.0217219,0.0635855,0.183333,50,data/models/atc/yolov2-stmarc-car-70fr-trial8.h5
+9,70,0.151084,0.228916,0.33,50,data/models/atc/yolov2-stmarc-car-70fr-trial9.h5
