@@ -3,3 +3,5 @@ mainstream/plots
 *.pyc
 *.DS_Store
 .ipynb_checkpoints
+output/bb/raw/**/plots
+output/bb/raw/**/images
