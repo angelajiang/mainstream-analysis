@@ -36,14 +36,20 @@ def get_data(csv_file):
             f1 = stats.hmean([precision, recall])
 
             if num_frozen not in data.keys():
-                data[num_frozen] = {"maps":[], "f1s": [], "model_names": []}
+                data[num_frozen] = {"maps":[],
+                                    "f1s": [],
+                                    "precisions": [],
+                                    "recalls": [],
+                                    "model_names": []}
 
             data[num_frozen]["maps"].append(mAP)
             data[num_frozen]["f1s"].append(f1)
+            data[num_frozen]["precisions"].append(precision)
+            data[num_frozen]["recalls"].append(recall)
             data[num_frozen]["model_names"].append(model_name)
     return data
 
-def plot_model_set(csv_file, plot_prefix, ylim, title):
+def plot_model_set(csv_file, plot_prefix, title, setfile):
     '''
     Plot mAP and F1 for monotonically ascending values of max(f1s)
     '''
@@ -56,28 +62,33 @@ def plot_model_set(csv_file, plot_prefix, ylim, title):
 
     prev_max_f1 = -1
 
-    superset_file = csv_file + "-set"
-    with open(superset_file, "w+") as f:
+    with open(set_file, "w+") as f:
 
         for num_frozen, data in reversed(list(sorted(data_by_num_frozen.items()))):
             maps = data["maps"]
             f1s = data["f1s"]
+            precisions = data["precisions"]
+            recalls = data["recalls"]
             model_names = data["model_names"]
 
-            i = np.argmax(model_names)
+            i = np.argmax(f1s)
             model_name = model_names[i]
-            max_map = max(maps)
-            max_f1 = max(f1s)
+            max_f1 = f1s[i]
+            mAP = maps[i]
+            precision = precisions[i]
+            recall = recalls[i]
 
             if max_f1 > prev_max_f1:
                 xs.append(num_frozen)
-                y_maps.append(max_map)
+                y_maps.append(mAP)
                 y_f1s.append(max_f1)
 
-                line = "%d,%.6g,%.6g,%s\n" % (num_frozen,
-                                              max_map,
-                                              max_f1,
-                                              model_name)
+                line = "%d,%.6g,%.6g,%.6g,%.6g,%s\n" % (num_frozen,
+                                                        mAP,
+                                                        max_f1,
+                                                        precision,
+                                                        recall,
+                                                        model_name)
                 f.write(line)
 
                 prev_max_f1 = max_f1
@@ -94,9 +105,9 @@ def plot_model_set(csv_file, plot_prefix, ylim, title):
     plot(xs, y_f1s, xlabel, ylabel, plot_file)
 
     print plot_file
-    print superset_file
+    print set_file
 
-def plot_model_superset(csv_file, plot_prefix, ylim, title):
+def plot_model_superset(csv_file, plot_prefix, title):
     '''
     Plot mAP and F1 for all trials
     '''
@@ -153,6 +164,7 @@ if __name__ == "__main__":
     ms_file = "output/bb/urban-tracker/v2/urban-tracker-stmarc-pedestrian"
     plot_prefix = plot_dir + "stmarc-pedestrian"
     title = "St Marc Pedestrian"
-    plot_model_set(ms_file, plot_prefix, 1, title)
-    plot_model_superset(ms_file, plot_prefix, 1, title)
+    set_file = "output/bb/model-sets/pedestrians/stmarc-pedestrian-set"
+    plot_model_set(ms_file, plot_prefix, title, set_file)
+    plot_model_superset(ms_file, plot_prefix, title)
 
