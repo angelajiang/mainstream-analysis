@@ -4,6 +4,19 @@ def op_to_layer(op_full):
     layer = tensor_name.split("/")[0]
     return layer
 
+def layer_to_number(layer, layers_info):
+
+    layer_names = layers_info["layer_names"]
+    for num, name in layer_names.iteritems():
+        if op_to_layer(name) == layer:
+            return num
+
+    print "[Error] No layer %s found in layers info." % (layer)
+
+def get_num_frozens(csv_file, layers_index, layers_info):
+    layers = get_layers(csv_file, layers_index)
+    return [layer_to_number(l, layers_info) for l in layers]
+
 def get_layers(csv_file, layers_index):
     layers = []
     with open(csv_file) as f:
