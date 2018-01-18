@@ -43,7 +43,7 @@ def get_data(csv_file):
             data[num_frozen]["model_names"].append(model_name)
     return data
 
-def plot_model_set(csv_file, plot_prefix, ylim, title):
+def plot_model_set(csv_file, plot_prefix, title, setfile):
     '''
     Plot mAP and F1 for monotonically ascending values of max(f1s)
     '''
@@ -56,8 +56,7 @@ def plot_model_set(csv_file, plot_prefix, ylim, title):
 
     prev_max_f1 = -1
 
-    superset_file = csv_file + "-set"
-    with open(superset_file, "w+") as f:
+    with open(set_file, "w+") as f:
 
         for num_frozen, data in reversed(list(sorted(data_by_num_frozen.items()))):
             maps = data["maps"]
@@ -74,8 +73,7 @@ def plot_model_set(csv_file, plot_prefix, ylim, title):
                 y_maps.append(max_map)
                 y_f1s.append(max_f1)
 
-                line = "%d,%.6g,%.6g,%s\n" % (num_frozen,
-                                              max_map,
+                line = "%d,%.6g,%s\n" % (num_frozen,
                                               max_f1,
                                               model_name)
                 f.write(line)
@@ -94,9 +92,9 @@ def plot_model_set(csv_file, plot_prefix, ylim, title):
     plot(xs, y_f1s, xlabel, ylabel, plot_file)
 
     print plot_file
-    print superset_file
+    print set_file
 
-def plot_model_superset(csv_file, plot_prefix, ylim, title):
+def plot_model_superset(csv_file, plot_prefix, title):
     '''
     Plot mAP and F1 for all trials
     '''
@@ -153,6 +151,7 @@ if __name__ == "__main__":
     ms_file = "output/bb/urban-tracker/v2/urban-tracker-stmarc-pedestrian"
     plot_prefix = plot_dir + "stmarc-pedestrian"
     title = "St Marc Pedestrian"
-    plot_model_set(ms_file, plot_prefix, 1, title)
-    plot_model_superset(ms_file, plot_prefix, 1, title)
+    set_file = "output/mainstream/f1/pedestrians/stmarc-pedestrian-set"
+    plot_model_set(ms_file, plot_prefix, title, set_file)
+    plot_model_superset(ms_file, plot_prefix, title)
 
