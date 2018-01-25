@@ -93,7 +93,7 @@ def plot_throughput(csv_file, net_info, plot_dir):
         xs = [int(round(x*100. / max_layers)) for x in xs]
 
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
-        for num_NN, marker, c in zip(num_NNs, MARKERS, plot_util.COLORLISTS[4]):
+        for num_NN, marker, c in zip(num_NNs, MARKERS, plot_util.COLORLISTS[5]):
             task_fps = [np.average(data[num_NN][num_frozen]["task"]) for num_frozen in num_frozens]
             plt.plot(xs, task_fps, marker=marker, label=str(num_NN)+" apps", lw=4, markersize=8, color=c)
 
@@ -106,7 +106,7 @@ def plot_throughput(csv_file, net_info, plot_dir):
         plt.tick_params(axis='y', which='minor', labelsize=24)
         plt.tick_params(axis='x', which='major', labelsize=30)
         plt.tick_params(axis='x', which='minor', labelsize=24)
-        plt.ylim(0,5)
+        plt.ylim(0,6)
         if do_norm:
             plt.xlim(0, 115)
         else:
@@ -129,7 +129,7 @@ def plot_latency(processors_file, net_info, plot_dir):
     num_NNs = preprocess.get_num_NNs(processors_file)
     max_layers = net_info["num_layers"]
     data = get_data(processors_file, net_info, "latency-processors")
-    width = 0.4
+    width = 0.8
 
     xs = num_frozens
     if do_flip:
@@ -160,7 +160,7 @@ def plot_latency(processors_file, net_info, plot_dir):
 
             plt.xlabel(more_sharing_label, fontsize=28)
             plt.ylabel("CPU per frame (ms)", fontsize=28)
-            plt.ylim(0, 10)
+            plt.ylim(0, 1000)
             plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
@@ -179,9 +179,9 @@ if __name__ == "__main__":
     net_info = layers_info.inception_info
 
     plot_dir = "plots/performance/throughput/yolo/flow_control"
-    csv_file = "output/streamer/throughput/yolo/yolo-fps"
+    csv_file = "output/streamer/throughput/yolo/throughput.csv"
     net_info = layers_info.yolo_info
     plot_throughput(csv_file, net_info, plot_dir)
-    csv_file = "output/streamer/latency/yolo/yolo-latency"
+    csv_file = "output/streamer/latency/yolo/latency.csv"
     plot_latency(csv_file, net_info, plot_dir)
 

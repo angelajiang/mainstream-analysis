@@ -161,6 +161,13 @@ def plot(xs, ys, xlabel, ylabel, plot_file):
 if __name__ == "__main__":
     plot_dir = "plots/bb/urban-tracker/v2/"
 
+    ms_file = "output/bb/urban-tracker/v2/urban-tracker-stmarc-car"
+    plot_prefix = plot_dir + "stmarc-car"
+    title = "St Marc Car"
+    set_file = "output/bb/model-sets/cars/stmarc-car-set"
+    plot_model_set(ms_file, plot_prefix, title, set_file)
+    plot_model_superset(ms_file, plot_prefix, title)
+
     ms_file = "output/bb/urban-tracker/v2/urban-tracker-stmarc-pedestrian"
     plot_prefix = plot_dir + "stmarc-pedestrian"
     title = "St Marc Pedestrian"

@@ -43,8 +43,8 @@ def get_accuracy_data(csv_file):
     return data, indices
 
 def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
-    cs = [util.MAINSTREAM["color"], util.NO_SHARING["color"], util.MAX_SHARING["color"]]
-    #cs = util.COLORLISTS[12]
+    #cs = [util.MAINSTREAM["color"], util.NO_SHARING["color"], util.MAX_SHARING["color"]]
+    cs = util.COLORLISTS[12]
     markers = ["<", "h", "D"]
     for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
         ci = 0
@@ -117,8 +117,20 @@ if __name__ == "__main__":
     ci = "output/mainstream/accuracy/cats/cats-inception-accuracy"
     cm = "output/mainstream/accuracy/cats/cats-mobilenets-accuracy"
     cr = "output/mainstream/accuracy/cats/cats-resnet-accuracy"
+    ai = "output/mainstream/accuracy/pedestrian/atrium/inception/atrium-40-0.0001"
+    am = "output/mainstream/accuracy/pedestrian/atrium/mobilenets/atrium-mobilenets-accuracy"
 
-    accuracy_files = [fr, pr, cr, fi, pi, ci, fm, pm, cm]
+    accuracy_files = [fr,
+                      pr,
+                      cr,
+                      fi,
+                      pi,
+                      ci,
+                      ai,
+                      fm,
+                      pm,
+                      cm,
+                      am]
 
     labels = [
               "Flowers-ResNet50",
@@ -127,9 +139,12 @@ if __name__ == "__main__":
               "Flowers-InceptionV3",
               "Paris-InceptionV3",
               "Cats-InceptionV3",
+              "Pedestrian-InceptionV3",
               "Flowers-MobileNets-224",
               "Paris-MobileNets-224",
               "Cats-MobileNets-224",
+              "Pedestrian-MobileNets-224"
               ]
     plot_file = "plots/accuracy/accuracy-by-layer.pdf"
 
+    plot_accuracy_vs_layer(accuracy_files, labels, plot_file)

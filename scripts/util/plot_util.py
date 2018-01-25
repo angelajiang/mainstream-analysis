@@ -13,6 +13,13 @@ COLORLISTS = {3: [
                 colors.colorConverter.to_rgb("#abdda4"),
                 colors.colorConverter.to_rgb("#2b83ba")
                 ],
+              5: [
+                colors.colorConverter.to_rgb("#a6cee3"),
+                colors.colorConverter.to_rgb("#1f78b4"),
+                colors.colorConverter.to_rgb("#b2df8a"),
+                colors.colorConverter.to_rgb("#33a02c"),
+                colors.colorConverter.to_rgb("#fb9a99")
+                ],
               8: [
                 colors.colorConverter.to_rgb("#d53e4f"),
                 colors.colorConverter.to_rgb("#f46d43"),
