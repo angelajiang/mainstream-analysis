@@ -1,0 +1,9 @@
+10,0.00875,0.75,0.01,/users/ahjiang/models/detection/yad2k/pedestrian/yolov2-atrium-caltech-pedestrian-10fr-trial0.h5,50
+10,0,0,0,/users/ahjiang/models/detection/yad2k/pedestrian/yolov2-atrium-caltech-pedestrian-10fr-trial1.h5,50
+40,0.386154,0.802469,0.47,/users/ahjiang/models/detection/yad2k/pedestrian/yolov2-atrium-caltech-pedestrian-40fr-trial0.h5,50
+40,0.575142,0.747082,0.69,/users/ahjiang/models/detection/yad2k/pedestrian/yolov2-atrium-caltech-pedestrian-40fr-trial1.h5,50
+70,0.126304,0.727273,0.16,/users/ahjiang/models/detection/yad2k/pedestrian/yolov2-atrium-caltech-pedestrian-70fr-trial0.h5,50
+70,0.434265,0.678423,0.59,/users/ahjiang/models/detection/yad2k/pedestrian/yolov2-atrium-caltech-pedestrian-70fr-trial0.h5,50
+70,0.333879,0.784452,0.4,/users/ahjiang/models/detection/yad2k/pedestrian/yolov2-atrium-caltech-pedestrian-70fr-trial1.h5,50
+70,0.214804,0.696833,0.28,/users/ahjiang/models/detection/yad2k/pedestrian/yolov2-atrium-caltech-pedestrian-70fr-trial0.h5,50
+70,0.442106,0.743902,0.55,/users/ahjiang/models/detection/yad2k/pedestrian/yolov2-atrium-caltech-pedestrian-70fr-trial1.h5,50
