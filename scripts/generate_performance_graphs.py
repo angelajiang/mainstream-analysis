@@ -178,8 +178,8 @@ if __name__ == "__main__":
     dependent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-whole"
     independent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-whole"
     empirical_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
-    files = [dependent_file, independent_file, empirical_file]
-    labels = ["Dependent", "Independent", "Empirical"]
+    files = [independent_file, empirical_file, dependent_file]
+    labels = ["Fully Independent", "Profiled", "Fully Dependent"]
     false_neg_by_stride.plot_dependence(files, labels, event_lengths, plot_file)
 
     plot_file = "plots/frame-rate/frame-rate-afn-dependences-with-correlation.pdf"
@@ -187,8 +187,8 @@ if __name__ == "__main__":
     independent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-whole"
     empirical_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
     correlation_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-correlation"
-    files = [dependent_file, independent_file, empirical_file, correlation_file]
-    labels = ["Dependent", "Independent", "Empirical", "Correlation"]
+    files = [independent_file, empirical_file, correlation_file, dependent_file]
+    labels = ["Fully Independent", "Profiled", "Mainstream Model", "Fully Dependent"]
     false_neg_by_stride.plot_dependence(files, labels, event_lengths, plot_file)
 
 
