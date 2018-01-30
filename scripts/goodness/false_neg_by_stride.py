@@ -61,6 +61,8 @@ def plot_models(rate_files, labels, plot_file, slo=None):
             sys.exit()
         xs = data_by_slo[slo]["xs"]
         ys = data_by_slo[slo]["ys"]
+        # FNR to Recall
+        ys = 1. - ys
         plt.plot(xs, ys, label=label + " frozen", lw=2, color=color)
 
     plt.title("Detection within " + str(slo) + " frames")
@@ -69,7 +71,7 @@ def plot_models(rate_files, labels, plot_file, slo=None):
     plt.tick_params(axis='x', which='major', labelsize=28)
     plt.tick_params(axis='x', which='minor', labelsize=20)
     plt.xlabel("Stride", fontsize=25)
-    plt.ylabel("False negative rate", fontsize=25)
+    plt.ylabel("Recall", fontsize=25)
     plt.xlim(0, 100)
     plt.ylim(0, 1)
     plt.legend(loc=0, fontsize=15)
@@ -131,9 +133,11 @@ def plot_dependence(files, labels, event_lengths, plot_file):
             xs = [1 / float(s) for s in strides]
             xlabels = ["1/" + str(s) for s in strides]
             ys = data["ys"]
+            # FNR to Recall
+            ys = [1. - y for y in ys]
             plt.plot(xs, ys, label=label, lw=2)
 
-        max_y = 0.4
+        min_y = .5
 
         for length in event_lengths:
             plt.axvline(x=1.0 / length, linestyle="--", color="black", alpha=0.3)
@@ -143,13 +147,13 @@ def plot_dependence(files, labels, event_lengths, plot_file):
         plt.tick_params(axis='x', which='major', labelsize=28)
         plt.tick_params(axis='x', which='minor', labelsize=20)
         plt.xlabel("Frame sample rate (Hz)", fontsize=35)
-        plt.ylabel("False negative rate", fontsize=35)
+        plt.ylabel("Recall", fontsize=35)
 
         plt.xscale('log')
         ax.xaxis.set_major_formatter(ticker.FuncFormatter(fraction_log_fmt))
 
         plt.xlim(0, 1)
-        plt.ylim(0, max_y)
+        plt.ylim(min_y, 1)
 
         plt.gca().yaxis.grid(True)
         plt.legend(loc=0, fontsize=20)
@@ -208,8 +212,8 @@ if __name__ == "__main__":
     dependent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-dependent-whole"
     independent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-whole"
     empirical_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
-    files = [dependent_file, independent_file, empirical_file]
-    labels = ["Dependent", "Independent", "Empirical"]
+    files = [independent_file, empirical_file, dependent_file]
+    labels = ["Fully Independent", "Profiled", "Fully Dependent"]
     plot_dependence(files, labels, event_lengths, plot_file)
 
     plot_file = "plots/frame-rate/frame-rate-afn-dependences-with-correlation.pdf"
@@ -217,6 +221,6 @@ if __name__ == "__main__":
     independent_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-independent-whole"
     empirical_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
     correlation_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-correlation"
-    files = [dependent_file, independent_file, empirical_file, correlation_file]
-    labels = ["Dependent", "Independent", "Empirical", "Correlation"]
+    files = [independent_file, empirical_file, correlation_file, dependent_file]
+    labels = ["Fully Independent", "Profiled", "Mainstream Model", "Fully Dependent"]
     plot_dependence(files, labels, event_lengths, plot_file)
