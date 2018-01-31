@@ -1,5 +1,8 @@
 
+import matplotlib.pyplot as plt
 from matplotlib import colors
+
+MARKERS = ["*", "v", "D", "o", ".", "8", "h"]
 
 # http://colorbrewer2.org/#type=diverging&scheme=Spectral&n=4
 COLORLISTS = {3: [
@@ -81,3 +84,18 @@ MAX_SHARING = {"color": COLORLISTS[8][7],
               "pattern": "xxxxx",
               "label": "Max Sharing"
               }
+
+def format_plot(xlabel, ylabel):
+    plt.tick_params(axis='y', which='major', labelsize=28)
+    plt.tick_params(axis='y', which='minor', labelsize=20)
+    plt.tick_params(axis='x', which='major', labelsize=28)
+    plt.tick_params(axis='x', which='minor', labelsize=20)
+
+    plt.legend(loc=0, fontsize=15)
+
+    plt.xlabel(xlabel, fontsize=35)
+    plt.ylabel(ylabel, fontsize=35)
+    plt.tight_layout()
+    plt.gca().xaxis.grid(True)
+    plt.gca().yaxis.grid(True)
+
