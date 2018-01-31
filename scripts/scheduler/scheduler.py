@@ -112,6 +112,55 @@ def get_f1_data(csv_file):
         errs.append(np.std(metrics[x]))
     return xs, ys, errs
 
+def plot_x_voting(ms_files, labels, plot_file, plot_dir):
+    colors = plot_util.COLORLISTS[3]
+    markers = plot_util.MARKERS[:3]
+    for i in range(2):
+        for ms_file, label, c, m in zip(ms_files, labels, colors, markers):
+            xs, ys, errs = get_f1_data(ms_file)
+            plt.errorbar(xs, ys, yerr=errs, label=label, lw=4, markersize=8,
+                         marker=m,
+                         color=c)
+
+        plot_util.format_plot("Number of concurrent apps", "F1-score")
+        plt.xlim(max(min(xs),2), max(xs))
+        plt.ylim(0, 1)
+
+        plt.savefig(plot_dir + "/" + plot_file + "-f1.pdf")
+        #plt.savefig(plot_dir + "/" + plot_file + "-f1.png")
+        plt.clf()
+
+    for i in range(2):
+        for ms_file, label, c, m in zip(ms_files, labels, colors, markers):
+            xs, ys, errs, _, _ = get_fnr_data(ms_file, 1)
+
+            plt.errorbar(xs, ys, yerr=errs, label=label, lw=4, markersize=8,
+                         marker=m,
+                         color=c)
+
+        plot_util.format_plot("Number of concurrent apps", "Recall")
+        plt.xlim(max(min(xs),2), max(xs))
+        plt.ylim(0, 1)
+
+        plt.savefig(plot_dir + "/" + plot_file + "-recall.pdf")
+        #plt.savefig(plot_dir + "/" + plot_file + "-recall.png")
+        plt.clf()
+
+    for i in range(2):
+        for ms_file, label, c, m in zip(ms_files, labels, colors, markers):
+            xs, ys, errs = get_fpr_data(ms_file)
+            plt.errorbar(xs, ys, yerr=errs, label=label, lw=4, markersize=8,
+                         marker=m,
+                         color=c)
+
+        plot_util.format_plot("Number of concurrent apps", "Precision")
+        plt.xlim(max(min(xs),2), max(xs))
+        plt.ylim(0, 1)
+
+        plt.savefig(plot_dir + "/" + plot_file + "-precision.pdf")
+        #plt.savefig(plot_dir + "/" + plot_file + "-precision.png")
+        plt.clf()
+        plt.clf()
 
 def plot_recall(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotated=False, version=0):
     for i in range(2):
@@ -162,22 +211,12 @@ def plot_recall(ms_files, max_files, min_files, plot_files, titles, plot_dir, an
                                  textcoords='offset points',
                                  arrowprops=dict(arrowstyle="->"))
 
-            plt.legend(loc=0, fontsize=15)
-
-            plt.tick_params(axis='y', which='major', labelsize=28)
-            plt.tick_params(axis='y', which='minor', labelsize=20)
-            plt.tick_params(axis='x', which='major', labelsize=28)
-            plt.tick_params(axis='x', which='minor', labelsize=20)
-
-            #plt.title(title, fontsize=35)
-            plt.xlabel("Number of concurrent apps", fontsize=35)
-            plt.xlim(2, max(xs1))
+            plot_util.format_plot("Number of concurrent apps", "Recall")
+            plt.xlim(max(min(xs1),2), max(xs1))
             plt.ylim(0, 1)
-            plt.ylabel("Recall", fontsize=35)
-            plt.tight_layout()
-            plt.gca().xaxis.grid(True)
-            plt.gca().yaxis.grid(True)
+
             plt.savefig(plot_dir + "/" + plot_file + "-recall.pdf")
+            #plt.savefig(plot_dir + "/" + plot_file + "-recall.png")
             plt.clf()
 
 def plot_precision(ms_files, max_files, min_files, plot_files, titles, plot_dir):
@@ -201,23 +240,12 @@ def plot_precision(ms_files, max_files, min_files, plot_files, titles, plot_dir)
                          color=plot_util.MAINSTREAM['color'],
                          label=plot_util.MAINSTREAM['label'])
 
-            plt.legend(loc=0, fontsize=15)
-
-            plt.tick_params(axis='y', which='major', labelsize=28)
-            plt.tick_params(axis='y', which='minor', labelsize=20)
-            plt.tick_params(axis='x', which='major', labelsize=28)
-            plt.tick_params(axis='x', which='minor', labelsize=20)
-
-            #plt.title(title, fontsize=35)
-            plt.rcParams["axes.labelsize"] = 35
-            plt.xlabel("Number of concurrent apps", fontsize=30)
-            plt.xlim(2, max(xs1))
+            plot_util.format_plot("Number of concurrent apps", "Precision")
+            plt.xlim(max(min(xs1),2), max(xs1))
             plt.ylim(0, 1)
-            plt.ylabel("Precision", fontsize=30)
-            plt.tight_layout()
-            plt.gca().xaxis.grid(True)
-            plt.gca().yaxis.grid(True)
+
             plt.savefig(plot_dir + "/" + plot_file + "-precision.pdf")
+            #plt.savefig(plot_dir + "/" + plot_file + "-precision.png")
             plt.clf()
 
 def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir):
@@ -241,32 +269,27 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir):
                          color=plot_util.MAINSTREAM['color'],
                          label=plot_util.MAINSTREAM['label'])
 
-            plt.legend(loc=0, fontsize=15)
-
-            plt.tick_params(axis='y', which='major', labelsize=28)
-            plt.tick_params(axis='y', which='minor', labelsize=20)
-            plt.tick_params(axis='x', which='major', labelsize=28)
-            plt.tick_params(axis='x', which='minor', labelsize=20)
-
-            #plt.title(title, fontsize=35)
-            plt.xlabel("Number of concurrent apps", fontsize=30)
-            plt.xlim(2, max(xs1))
+            plot_util.format_plot("Number of concurrent apps", "Recall")
+            plt.xlim(max(min(xs1),2), max(xs1))
             plt.ylim(0, 1)
-            plt.ylabel("F1 Score", fontsize=30)
-            plt.tight_layout()
-            plt.gca().xaxis.grid(True)
-            plt.gca().yaxis.grid(True)
-            plt.savefig(plot_dir + "/" + plot_file + "-f1.pdf")
+
+            plt.savefig(plot_dir + "/" + plot_file + "-recall.pdf")
+            #plt.savefig(plot_dir + "/" + plot_file + "-recall.png")
             plt.clf()
+
 
 if __name__ == "__main__":
 
-    ms1 = "output/streamer/scheduler/correlation/scheduler-correlation-mainstream-c0.1664-ll0" 
-    max1 = "output/streamer/scheduler/correlation/scheduler-correlation-maxsharing-c0.1664" 
-    min1 = "output/streamer/scheduler/correlation/scheduler-correlation-nosharing-c0.1664" 
-    f1 ="scheduler-false-neg-rate"
+
+    ################## Maximize F1 Score ##################
+
+    plot_dir = "plots/scheduler/atc/maximize-f1"
     t1 = ""
-    plot_dir = "plots/scheduler"
+
+    ms1 =  "output/streamer/scheduler/atc/f1/f1-pedestrian-500-mainstream-simulator"
+    max1 = "output/streamer/scheduler/atc/f1/f1-pedestrian-500-maxsharing"
+    min1 = "output/streamer/scheduler/atc/f1/f1-pedestrian-500-nosharing"
+    f1 ="f1-pedestrian-500"
 
     ms_files = [ms1]
     max_files = [max1]
@@ -275,5 +298,72 @@ if __name__ == "__main__":
     f_files_annotated = [f + "-annotated" for f in f_files]
     titles = [t1]
 
-    plot_recall(ms_files, max_files, min_files, f_files, titles, plot_dir)
-    plot_recall(ms_files, max_files, min_files, f_files_annotated, titles, plot_dir, True)
+    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    plot_recall(ms_files, max_files, min_files, f_files, titles, plot_dir, version=1)
+    plot_precision(ms_files, max_files, min_files, f_files, titles, plot_dir)
+
+    plot_dir = "plots/scheduler/atc/maximize-f1"
+    t1 = ""
+
+    ms1 =  "output/streamer/scheduler/atc/f1/f1-cars-500-mainstream-simulator"
+    max1 = "output/streamer/scheduler/atc/f1/f1-cars-500-maxsharing"
+    min1 = "output/streamer/scheduler/atc/f1/f1-cars-500-nosharing"
+    f1 ="f1-cars-500"
+
+    ms_files = [ms1]
+    max_files = [max1]
+    min_files = [min1]
+    f_files = [f1]
+    f_files_annotated = [f + "-annotated" for f in f_files]
+    titles = [t1]
+
+    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    plot_recall(ms_files, max_files, min_files, f_files, titles, plot_dir, version=1)
+    plot_precision(ms_files, max_files, min_files, f_files, titles, plot_dir)
+
+    ms1 =  "output/streamer/scheduler/atc/f1/f1-train-500-mainstream-simulator"
+    max1 = "output/streamer/scheduler/atc/f1/f1-train-500-maxsharing"
+    min1 = "output/streamer/scheduler/atc/f1/f1-train-500-nosharing"
+    f1 ="f1-train-500"
+
+    ms_files = [ms1]
+    max_files = [max1]
+    min_files = [min1]
+    f_files = [f1]
+    f_files_annotated = [f + "-annotated" for f in f_files]
+    titles = [t1]
+
+    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    plot_recall(ms_files, max_files, min_files, f_files, titles, plot_dir, version=1)
+    plot_precision(ms_files, max_files, min_files, f_files, titles, plot_dir)
+
+    ms1 =  "output/streamer/scheduler/atc/f1/f1-3v-train-500-mainstream-simulator"
+    max1 = "output/streamer/scheduler/atc/f1/f1-train-500-maxsharing"
+    min1 = "output/streamer/scheduler/atc/f1/f1-train-500-nosharing"
+    f1 ="f1-3v-train-500"
+
+    ms_files = [ms1]
+    max_files = [max1]
+    min_files = [min1]
+    f_files = [f1]
+    f_files_annotated = [f + "-annotated" for f in f_files]
+    titles = [t1]
+
+    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    plot_recall(ms_files, max_files, min_files, f_files, titles, plot_dir, version=1)
+    plot_precision(ms_files, max_files, min_files, f_files, titles, plot_dir)
+
+################ X-Voting ##################
+
+    ms1 =  "output/streamer/scheduler/atc/f1/f1-train-500-mainstream-simulator"
+    ms2 =  "output/streamer/scheduler/atc/f1/f1-2v-train-500-mainstream-simulator"
+    ms3 =  "output/streamer/scheduler/atc/f1/f1-3v-train-500-mainstream-simulator"
+    l1 = "1-voting"
+    l2 = "2-voting"
+    l3 = "3-voting"
+    f_name ="voting-train-500"
+
+    plot_x_voting([ms1, ms2, ms3], [l1, l2, l3], f_name, plot_dir)
+
+
+
