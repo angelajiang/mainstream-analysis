@@ -15,7 +15,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 
-def get_fnr_data(csv_file, version):
+def get_recall_data(csv_file, version):
     # Version 0: num_apps,fnr,acc_loss,fps_list...,frozen_list...
     # Version 1: num_apps,fnr,fpr,acc_loss,fps_list...,frozen_list...
     metrics = {}
@@ -61,31 +61,46 @@ def get_fnr_data(csv_file, version):
         as2.append(round(np.average(fpses[x]), 2))
     return xs, ys, errs, as1, as2
 
-def get_fpr_data(csv_file):
+def get_precision_data(csv_file):
     # Assumes Version 1
     # Version 1: num_apps,fnr,fpr,acc_loss,fps_list...,frozen_list...
     metrics = {}
+    fpses = {}
+    acc_losses = {}
     xs = []
     ys = []
     errs = []
+    as1 = []
+    as2 = []
+
     with open(csv_file) as f:
         for line in f:
             vals = line.split(',')
             num_apps = int(vals[0])
+            acc_loss = round(float(vals[3]),2)
+            fps_start = num_apps + 5
+            fps_end = (2 *num_apps) + 4
+            fps_list = [float(v) for v in vals[fps_start:fps_end]]
+            average_fps = round(np.average(fps_list), 2)
 
             if num_apps not in metrics.keys():
                 xs.append(num_apps)
                 metrics[num_apps] = []
+                acc_losses[num_apps] = []
+                fpses[num_apps] = []
 
             fnr = float(vals[1])
             fpr = float(vals[2])
             metrics[num_apps].append(1 - fpr)
+            acc_losses[num_apps].append(acc_loss)
+            fpses[num_apps].append(average_fps)
 
     for x in xs:
         ys.append(np.average(metrics[x]))
         errs.append(np.std(metrics[x]))
-    return xs, ys, errs
-
+        as1.append(round(np.average(acc_losses[x]), 2))
+        as2.append(round(np.average(fpses[x]), 2))
+    return xs, ys, errs, as1, as2
 
 def get_f1_data(csv_file):
     # Assumes Version 1
@@ -135,7 +150,7 @@ def plot_correlation(ms_files, labels, plot_file, plot_dir, version=0):
     markers = plot_util.MARKERS[:3]
     for i in range(2):
         for ms_file, label, c, m in zip(ms_files, labels, colors, markers):
-            xs, ys, errs, losses, fpses = get_fnr_data(ms_file, version)
+            xs, ys, errs, losses, fpses = get_recall_data(ms_file, version)
             plt.errorbar(xs, ys, yerr=errs, label=label, lw=4, markersize=8,
                          marker=m,
                          color=c)
@@ -166,7 +181,7 @@ def plot_x_voting(ms_files, labels, plot_file, plot_dir):
 
     for i in range(2):
         for ms_file, label, c, m in zip(ms_files, labels, colors, markers):
-            xs, ys, errs, _, _ = get_fnr_data(ms_file, 1)
+            xs, ys, errs, _, _ = get_recall_data(ms_file, 1)
 
             plt.errorbar(xs, ys, yerr=errs, label=label, lw=4, markersize=8,
                          marker=m,
@@ -181,7 +196,7 @@ def plot_x_voting(ms_files, labels, plot_file, plot_dir):
 
     for i in range(2):
         for ms_file, label, c, m in zip(ms_files, labels, colors, markers):
-            xs, ys, errs = get_fpr_data(ms_file)
+            xs, ys, errs, _, _ = get_precision_data(ms_file)
             plt.errorbar(xs, ys, yerr=errs, label=label, lw=4, markersize=8,
                          marker=m,
                          color=c)
@@ -198,9 +213,9 @@ def plot_recall(ms_files, max_files, min_files, plot_files, titles, plot_dir, ve
     for i in range(2):
         for ms_file, max_file, min_file, plot_file, title \
                 in zip(ms_files, max_files, min_files, plot_files, titles):
-            xs1, ys1, errs1, losses1, fpses1 = get_fnr_data(ms_file, version)
-            xs2, ys2, errs2, losses2, fpses2 = get_fnr_data(max_file, version)
-            xs3, ys3, errs3, losses3, fpses3 = get_fnr_data(min_file, version)
+            xs1, ys1, errs1, losses1, fpses1 = get_recall_data(ms_file, version)
+            xs2, ys2, errs2, losses2, fpses2 = get_recall_data(max_file, version)
+            xs3, ys3, errs3, losses3, fpses3 = get_recall_data(min_file, version)
 
             plt.errorbar(xs3, ys3, yerr=errs3, lw=4, markersize=8,
                          marker=plot_util.NO_SHARING['marker'],
@@ -226,9 +241,9 @@ def plot_precision(ms_files, max_files, min_files, plot_files, titles, plot_dir)
     for i in range(2):
         for ms_file, max_file, min_file, plot_file, title \
                 in zip(ms_files, max_files, min_files, plot_files, titles):
-            xs1, ys1, errs1 = get_fpr_data(ms_file)
-            xs2, ys2, errs2 = get_fpr_data(max_file)
-            xs3, ys3, errs3 = get_fpr_data(min_file)
+            xs1, ys1, errs1, _, _ = get_precision_data(ms_file)
+            xs2, ys2, errs2, _, _ = get_precision_data(max_file)
+            xs3, ys3, errs3, _, _ = get_precision_data(min_file)
 
             plt.errorbar(xs3, ys3, yerr=errs3, lw=4, markersize=8,
                          marker=plot_util.NO_SHARING['marker'],
@@ -277,17 +292,16 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
 
             plt.savefig(plot_dir + "/" + plot_file + "-f1.pdf")
 
-            # Pedestrian
-            a1 = 2
-            a2 = 17
-            b1 = 2
-            b2 = 15
-            c1 = 8
-            c2 = 20
-
-            # Trains
-
             if annotated:
+
+                # Pedestrian annotations
+                a1 = 2
+                a2 = 17
+                b1 = 2
+                b2 = 15
+                c1 = 8
+                c2 = 20
+
                 (x, y, loss, fps) = (xs1[a1], ys1[a1], losses1[a1], fpses1[a1])
                 plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                              xy=(x, y),
@@ -300,7 +314,7 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
                 (x, y, loss, fps) = (xs1[a2], ys1[a2], losses1[a2], fpses1[a2])
                 plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                              xy=(x, y),
-                             xytext=(-80, 30),
+                             xytext=(-160, 30),
                              xycoords='data',
                              fontsize=15,
                              textcoords='offset points',
@@ -318,7 +332,7 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
                 (x, y, loss, fps) = (xs2[b2], ys2[b2], losses2[b2], fpses2[b2])
                 plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                              xy=(x, y),
-                             xytext=(-80, 30),
+                             xytext=(-160, 30),
                              xycoords='data',
                              fontsize=15,
                              textcoords='offset points',
@@ -336,7 +350,7 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
                 (x, y, loss, fps) = (xs3[c2], ys3[c2], losses3[c2], fpses3[c2])
                 plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                              xy=(x, y),
-                             xytext=(-150, 50),
+                             xytext=(-170, 70),
                              xycoords='data',
                              fontsize=15,
                              textcoords='offset points',
@@ -359,6 +373,7 @@ if __name__ == "__main__":
     f_name ="voting-train-500"
 
     #plot_x_voting([ms1, ms2, ms3], [l1, l2, l3], f_name, plot_dir)
+
 
 
 

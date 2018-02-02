@@ -86,6 +86,7 @@ MAX_SHARING = {"color": COLORLISTS[8][7],
               }
 
 def format_plot(xlabel, ylabel):
+
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
     plt.tick_params(axis='x', which='major', labelsize=28)
