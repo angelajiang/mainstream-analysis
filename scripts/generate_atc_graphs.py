@@ -58,6 +58,7 @@ hybrid4_annotations = [1, 6, 1, 5, 3, 6]
 scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, annotations = hybrid4_annotations)
 scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
 scheduler.plot_recall(ms_files, max_files, min_files, f_files, titles, plot_dir)
+scheduler.plot_precision(ms_files, max_files, min_files, f_files, titles, plot_dir)
 scheduler_dual.plot_f1_dual(ms_files, max_files, min_files, f_files, titles, plot_dir)
 scheduler_dual.plot_recall_dual(ms_files, max_files, min_files, f_files, titles, plot_dir)
 scheduler_dual.plot_precision_dual(ms_files, max_files, min_files, f_files, titles, plot_dir)
