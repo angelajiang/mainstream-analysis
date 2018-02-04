@@ -4,18 +4,6 @@ import scheduler
 import scheduler_dual
 
 
-plot_dir = "plots/scheduler/atc/correlation"
-f1 ="recall-maxsharing"
-
-max1 = "output/streamer/scheduler/atc/recall/recall-pedestrian-corr0.3-maxsharing" 
-max2 = "output/streamer/scheduler/atc/recall/recall-pedestrian-corr0-maxsharing" 
-max3 = "output/streamer/scheduler/atc/recall/recall-pedestrian-corr1-maxsharing" 
-l1 = "Empirical"
-l2 = "Fully uncorrelated"
-l3 = "Fully correlated"
-
-#scheduler.plot_correlation([max1, max2, max3], [l1, l2, l3], f1, plot_dir)
-
 ################## Maximize F1 Score ##################
 
 plot_dir = "plots/scheduler/atc/maximize-f1"
@@ -80,6 +68,17 @@ ms1 =  "output/streamer/scheduler/atc/f1/f1-4hybrid-corr0-mainstream-simulator"
 max1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-corr0-maxsharing"
 min1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-corr0-nosharing"
 f1 ="f1-4hybrid-corr0"
+
+ms_files = [ms1]
+max_files = [max1]
+min_files = [min1]
+f_files = [f1]
+titles = [t1]
+
+ms1 =  "output/streamer/scheduler/atc/f1/f1-4hybrid-mainstream-simulator"
+max1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-maxsharing"
+min1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-nosharing"
+f1 ="f1-4hybrid-corr-emph"
 
 ms_files = [ms1]
 max_files = [max1]
