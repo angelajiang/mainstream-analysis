@@ -7,7 +7,7 @@ import matplotlib
 import numpy as np
 from itertools import cycle
 from scipy.stats import linregress, hmean
-from data_util import get_recall_data, get_precision_data, get_f1_data, csvs_to_stats
+from data_util import get_recall_data, get_precision_data, get_f1_data, collect_comb_csvs
 
 sys.path.append("scripts/util")
 import plot_util
@@ -249,8 +249,23 @@ def main():
     """ Combinations"""
     metric = "f1"
     comb_files_loc = root_dir + "/{metric}/{metric}-combinations-*-mainstream-simulator".format(metric=metric)
-    print csv_to_stats(comb_files_loc)
-    return
+    comb_file_name = collect_comb_csvs(comb_files_loc)
+    ms0 = comb_file_name
+    ms1 =  "output/streamer/scheduler/atc/f1/f1-4hybrid-mainstream-simulator"
+    max1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-maxsharing"
+    min1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-nosharing"
+    f1 ="f1-4hybrid"
+    t1 = ""
+    ms_files = [ms0, ms1]
+    max_files = [max1]
+    min_files = [min1]
+    f_files = [f1]
+    titles = [t1]
+    hybrid4_annotations = [1, 6, 1, 5, 3, 6]
+    plot_dir = "plots/scheduler/atc/maximize-f1"
+    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, annotations = hybrid4_annotations)
+    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
+
 
     ################ X-Voting ##################
     for dataset in ["trains", "pedestrian"]:

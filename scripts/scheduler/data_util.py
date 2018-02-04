@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.stats import hmean
+import subprocess
 import glob
 
 
@@ -17,8 +18,12 @@ def get_recall_data(csv_file, version):
     with open(csv_file) as f:
         for line in f:
             vals = line.split(',')
-            num_apps = int(vals[0])
-            if version == 0:
+            if vals[0].isdigit():
+                num_apps = int(vals[0])
+            else:
+                num_apps = len(vals[0].split("_"))
+
+            if version == 0:  # NSDI
                 acc_loss = round(float(vals[2]),2)
                 fps_start = num_apps + 4
                 fps_end = (2 *num_apps) + 3
@@ -65,7 +70,11 @@ def get_precision_data(csv_file):
     with open(csv_file) as f:
         for line in f:
             vals = line.split(',')
-            num_apps = int(vals[0])
+            if vals[0].isdigit():
+                num_apps = int(vals[0])
+            else:
+                print "Interpreting as combs"
+                num_apps = len(vals[0].split("_"))
             acc_loss = round(float(vals[3]),2)
             fps_start = num_apps + 5
             fps_end = (2 *num_apps) + 4
@@ -107,7 +116,11 @@ def get_f1_data(csv_file):
     with open(csv_file) as f:
         for line in f:
             vals = line.split(',')
-            num_apps = int(vals[0])
+            if vals[0].isdigit():
+                num_apps = int(vals[0])
+            else:
+                print "Interpreting as combs"
+                num_apps = len(vals[0].split("_"))
             acc_loss = round(float(vals[3]),2)
             fps_start = num_apps + 4
             fps_end = (2 *num_apps) + 4
@@ -139,6 +152,10 @@ def get_f1_data(csv_file):
     return xs, ys, errs, avg_losses, avg_fpses
 
 
-def collect_(csv_files):
-    comb_files = glob.glob(comb_files_loc)
-    
+def collect_comb_csvs(comb_files_loc):
+    """cat files-*- > files-combined- """
+    new_file_name = comb_files_loc.replace("-*-", "_combined-")
+    files = sorted(glob.glob(comb_files_loc), key=lambda x: int(x.split('-')[-3]))
+    with open(new_file_name, "w") as f:
+        subprocess.call(["cat"] + files, stdout=f)
+    return new_file_name
