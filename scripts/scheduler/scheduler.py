@@ -162,6 +162,7 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
                          color=plot_util.MAINSTREAM['color'],
                          label=plot_util.MAINSTREAM['label'])
 
+            plt.legend()
             plt.savefig(plot_dir + "/" + plot_file + "-f1.pdf")
 
             if len(annotations) > 0:
@@ -243,10 +244,16 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
             plt.clf()
 
 
-def main():
-    root_dir = "output/streamer/scheduler/atc"
+root_dir = "output/streamer/scheduler/atc"
 
-    """ Combinations"""
+
+def main():
+    # run_combinations()
+    run_fairness()
+    # run_x_voting()
+
+
+def run_combinations():
     metric = "f1"
     comb_files_loc = root_dir + "/{metric}/{metric}-combinations-*-mainstream-simulator".format(metric=metric)
     comb_file_name = collect_comb_csvs(comb_files_loc)
@@ -256,7 +263,7 @@ def main():
     min1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-nosharing"
     f1 ="f1-4hybrid"
     t1 = ""
-    ms_files = [ms0, ms1]
+    ms_files = [ms1]
     max_files = [max1]
     min_files = [min1]
     f_files = [f1]
@@ -266,8 +273,22 @@ def main():
     plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, annotations = hybrid4_annotations)
     plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
 
+def run_fairness():
+    metric = "f1"
+    ms1 =  "output/streamer/scheduler/atc/f1/f1-fairness-4hybrid-mainstream-simulator"
+    max1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-maxsharing"
+    min1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-nosharing"
+    f1 ="f1-fairness"
+    t1 = ""
+    ms_files = [ms1]
+    max_files = [max1]
+    min_files = [min1]
+    f_files = [f1]
+    titles = [t1]
+    plot_dir = "plots/scheduler/atc/maximize-f1"
+    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
 
-    ################ X-Voting ##################
+def run_x_voting():
     for dataset in ["trains", "pedestrian"]:
         for metric in ["f1", "fnr", "fpr"]:
             ms0 = "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-mainstream-simulator".format(metric=metric, dataset=dataset)
