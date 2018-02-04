@@ -146,8 +146,8 @@ def get_f1_data(csv_file):
     return xs, ys, errs, avg_losses, avg_fpses
 
 def plot_correlation(ms_files, labels, plot_file, plot_dir, version=0):
-    colors = plot_util.COLORLISTS[3]
-    markers = plot_util.MARKERS[:3]
+    colors = plot_util.COLORLISTS[len(ms_files)]
+    markers = plot_util.MARKERS[:len(ms_files)]
     for i in range(2):
         for ms_file, label, c, m in zip(ms_files, labels, colors, markers):
             xs, ys, errs, losses, fpses = get_recall_data(ms_file, version)
@@ -163,8 +163,8 @@ def plot_correlation(ms_files, labels, plot_file, plot_dir, version=0):
         plt.clf()
 
 def plot_x_voting(ms_files, labels, plot_file, plot_dir):
-    colors = plot_util.COLORLISTS[3]
-    markers = plot_util.MARKERS[:3]
+    colors = plot_util.COLORLISTS[len(ms_files)]
+    markers = plot_util.MARKERS[:len(ms_files)]
     for i in range(2):
         for ms_file, label, c, m in zip(ms_files, labels, colors, markers):
             xs, ys, errs, losses, fpses = get_f1_data(ms_file)
@@ -363,16 +363,19 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
 if __name__ == "__main__":
 
 ################ X-Voting ##################
-
-    ms1 =  "output/streamer/scheduler/atc/f1/f1-train-500-x1-mainstream-simulator"
-    ms2 =  "output/streamer/scheduler/atc/f1/f1-train-500-x2-mainstream-simulator"
-    ms3 =  "output/streamer/scheduler/atc/f1/f1-train-500-x3-mainstream-simulator"
-    l1 = "1-voting"
-    l2 = "2-voting"
-    l3 = "3-voting"
-    f_name ="voting-train-500"
-
-    #plot_x_voting([ms1, ms2, ms3], [l1, l2, l3], f_name, plot_dir)
+    for dataset in ["trains", "pedestrian"]:
+        for metric in ["f1", "fnr", "fpr"]:
+            ms0 = "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-mainstream-simulator".format(metric=metric, dataset=dataset)
+            ms1 =  "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-x1-mainstream-simulator".format(metric=metric, dataset=dataset)
+            ms2 =  "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-x2-mainstream-simulator".format(metric=metric, dataset=dataset)
+            ms3 =  "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-x3-mainstream-simulator".format(metric=metric, dataset=dataset)
+            l0 = "1-voting (for check)"
+            l1 = "1-voting"
+            l2 = "2-voting"
+            l3 = "3-voting"
+            f_name ="voting-{}-500-{}".format(dataset, metric)
+            plot_dir = "plots/scheduler/"
+            plot_x_voting([ms1, ms2, ms3, ms0], [l1, l2, l3, l0], f_name, plot_dir)
 
 
 
