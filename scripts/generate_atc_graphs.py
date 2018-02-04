@@ -63,6 +63,29 @@ scheduler_dual.plot_f1_dual(ms_files, max_files, min_files, f_files, titles, plo
 scheduler_dual.plot_recall_dual(ms_files, max_files, min_files, f_files, titles, plot_dir)
 scheduler_dual.plot_precision_dual(ms_files, max_files, min_files, f_files, titles, plot_dir)
 
+
+############## COMBINATIONS ############
+root_dir = "output/streamer/scheduler/atc"
+metric = "f1"
+comb_files_loc = root_dir + "/{metric}/{metric}-combinations-*-mainstream-simulator".format(metric=metric)
+comb_file_name = collect_comb_csvs(comb_files_loc)
+ms0 = comb_file_name
+ms1 =  "output/streamer/scheduler/atc/f1/f1-4hybrid-mainstream-simulator"
+max1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-maxsharing"
+min1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-nosharing"
+f1 ="f1-4hybrid"
+t1 = ""
+ms_files = [ms0, ms1]
+max_files = [max1]
+min_files = [min1]
+f_files = [f1]
+titles = [t1]
+hybrid4_annotations = [1, 6, 1, 5, 3, 6]
+plot_dir = "plots/scheduler/atc/maximize-f1"
+plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, annotations = hybrid4_annotations)
+plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
+
+
 ############## CONDITIONAL PROBABILITY ############
 
 ms1 =  "output/streamer/scheduler/atc/f1/f1-4hybrid-corr0-mainstream-simulator"

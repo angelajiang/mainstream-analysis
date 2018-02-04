@@ -7,6 +7,7 @@ import matplotlib
 import numpy as np
 from itertools import cycle
 from scipy.stats import linregress, hmean
+from data_util import get_recall_data, get_precision_data, get_f1_data, collect_comb_csvs
 
 sys.path.append("scripts/util")
 import plot_util
@@ -15,142 +16,10 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 
-def get_recall_data(csv_file, version):
-    # Version 0: num_apps,fnr,acc_loss,fps_list...,frozen_list...
-    # Version 1: num_apps,fnr,fpr,acc_loss,fps_list...,frozen_list...
-    metrics = {}
-    fpses = {}
-    acc_losses = {}
-    xs = []
-    ys = []
-    errs = []
-    as1 = []
-    as2 = []
-    with open(csv_file) as f:
-        for line in f:
-            vals = line.split(',')
-            num_apps = int(vals[0])
-            if version == 0:
-                acc_loss = round(float(vals[2]),2)
-                fps_start = num_apps + 4
-                fps_end = (2 *num_apps) + 3
-                fps_list = [float(v) for v in vals[fps_start:fps_end]]
-                average_fps = round(np.average(fps_list),2)
-            if version == 1:
-                acc_loss = round(float(vals[3]),2)
-                fps_start = num_apps + 5
-                fps_end = (2 *num_apps) + 4
-                fps_list = [float(v) for v in vals[fps_start:fps_end]]
-                average_fps = round(np.average(fps_list), 2)
-
-            if num_apps not in metrics.keys():
-                xs.append(num_apps)
-                metrics[num_apps] = []
-                acc_losses[num_apps] = []
-                fpses[num_apps] = []
-
-            fnr = float(vals[1])
-            metrics[num_apps].append(1 - fnr)
-            acc_losses[num_apps].append(acc_loss)
-            fpses[num_apps].append(average_fps)
-
-    for x in xs:
-        ys.append(np.average(metrics[x]))
-        errs.append(np.std(metrics[x]))
-        as1.append(round(np.average(acc_losses[x]), 2))
-        as2.append(round(np.average(fpses[x]), 2))
-    return xs, ys, errs, as1, as2
-
-def get_precision_data(csv_file):
-    # Assumes Version 1
-    # Version 1: num_apps,fnr,fpr,acc_loss,fps_list...,frozen_list...
-    metrics = {}
-    fpses = {}
-    acc_losses = {}
-    xs = []
-    ys = []
-    errs = []
-    as1 = []
-    as2 = []
-
-    with open(csv_file) as f:
-        for line in f:
-            vals = line.split(',')
-            num_apps = int(vals[0])
-            acc_loss = round(float(vals[3]),2)
-            fps_start = num_apps + 5
-            fps_end = (2 *num_apps) + 4
-            fps_list = [float(v) for v in vals[fps_start:fps_end]]
-            average_fps = round(np.average(fps_list), 2)
-
-            if num_apps not in metrics.keys():
-                xs.append(num_apps)
-                metrics[num_apps] = []
-                acc_losses[num_apps] = []
-                fpses[num_apps] = []
-
-            fnr = float(vals[1])
-            fpr = float(vals[2])
-            metrics[num_apps].append(1 - fpr)
-            acc_losses[num_apps].append(acc_loss)
-            fpses[num_apps].append(average_fps)
-
-    for x in xs:
-        ys.append(np.average(metrics[x]))
-        errs.append(np.std(metrics[x]))
-        as1.append(round(np.average(acc_losses[x]), 2))
-        as2.append(round(np.average(fpses[x]), 2))
-    return xs, ys, errs, as1, as2
-
-def get_f1_data(csv_file):
-    # Assumes Version 1
-    # Version 1: num_apps,fnr,fpr,acc_loss,fps_list...,frozen_list...
-    metrics = {}
-    xs = []
-    ys = []
-    errs = []
-    avg_losses = []
-    avg_fpses = []
-    acc_losses = {}
-    fpses = {}
-
-    with open(csv_file) as f:
-        for line in f:
-            vals = line.split(',')
-            num_apps = int(vals[0])
-            acc_loss = round(float(vals[3]),2)
-            fps_start = num_apps + 4
-            fps_end = (2 *num_apps) + 4
-            fps_list = [float(v) for v in vals[fps_start:fps_end]]
-            average_fps = round(np.average(fps_list), 2)
-
-            if num_apps not in metrics.keys():
-                xs.append(num_apps)
-                metrics[num_apps] = []
-                acc_losses[num_apps] = []
-                fpses[num_apps] = []
-
-            fnr = float(vals[1])
-            fpr = float(vals[2])
-            if fpr == 1:
-                fpr = 0
-                print "WARNING: No false positives. Set precision to 0"
-            f1 = hmean([1 - float(fnr), 1 - float(fpr)])
-            metrics[num_apps].append(f1)
-            acc_losses[num_apps].append(acc_loss)
-            fpses[num_apps].append(average_fps)
-
-    for x in xs:
-        ys.append(np.average(metrics[x]))
-        errs.append(np.std(metrics[x]))
-        avg_losses.append(round(np.average(acc_losses[x]), 2))
-        avg_fpses.append(round(np.average(fpses[x]), 2))
-
-    return xs, ys, errs, avg_losses, avg_fpses
 
 def plot_correlation(ms_files, labels, plot_file, plot_dir, version=0):
-    colors = plot_util.COLORLISTS[3]
-    markers = plot_util.MARKERS[:3]
+    colors = plot_util.COLORLISTS[len(ms_files)]
+    markers = plot_util.MARKERS[:len(ms_files)]
     for i in range(2):
         for ms_file, label, c, m in zip(ms_files, labels, colors, markers):
             xs, ys, errs, losses, fpses = get_recall_data(ms_file, version)
@@ -166,8 +35,8 @@ def plot_correlation(ms_files, labels, plot_file, plot_dir, version=0):
         plt.clf()
 
 def plot_x_voting(ms_files, labels, plot_file, plot_dir):
-    colors = plot_util.COLORLISTS[3]
-    markers = plot_util.MARKERS[:3]
+    colors = plot_util.COLORLISTS[len(ms_files)]
+    markers = plot_util.MARKERS[:len(ms_files)]
     for i in range(2):
         for ms_file, label, c, m in zip(ms_files, labels, colors, markers):
             xs, ys, errs, losses, fpses = get_f1_data(ms_file)
@@ -374,20 +243,45 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
             plt.clf()
 
 
-if __name__ == "__main__":
+def main():
+    root_dir = "output/streamer/scheduler/atc"
 
-################ X-Voting ##################
+    """ Combinations"""
+    metric = "f1"
+    comb_files_loc = root_dir + "/{metric}/{metric}-combinations-*-mainstream-simulator".format(metric=metric)
+    comb_file_name = collect_comb_csvs(comb_files_loc)
+    ms0 = comb_file_name
+    ms1 =  "output/streamer/scheduler/atc/f1/f1-4hybrid-mainstream-simulator"
+    max1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-maxsharing"
+    min1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-nosharing"
+    f1 ="f1-4hybrid"
+    t1 = ""
+    ms_files = [ms0, ms1]
+    max_files = [max1]
+    min_files = [min1]
+    f_files = [f1]
+    titles = [t1]
+    hybrid4_annotations = [1, 6, 1, 5, 3, 6]
+    plot_dir = "plots/scheduler/atc/maximize-f1"
+    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, annotations = hybrid4_annotations)
+    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
 
-    ms1 =  "output/streamer/scheduler/atc/f1/f1-train-500-x1-mainstream-simulator"
-    ms2 =  "output/streamer/scheduler/atc/f1/f1-train-500-x2-mainstream-simulator"
-    ms3 =  "output/streamer/scheduler/atc/f1/f1-train-500-x3-mainstream-simulator"
-    l1 = "1-voting"
-    l2 = "2-voting"
-    l3 = "3-voting"
-    f_name ="voting-train-500"
 
-    #plot_x_voting([ms1, ms2, ms3], [l1, l2, l3], f_name, plot_dir)
+    ################ X-Voting ##################
+    for dataset in ["trains", "pedestrian"]:
+        for metric in ["f1", "fnr", "fpr"]:
+            ms0 = "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-mainstream-simulator".format(metric=metric, dataset=dataset)
+            ms1 =  "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-x1-mainstream-simulator".format(metric=metric, dataset=dataset)
+            ms2 =  "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-x2-mainstream-simulator".format(metric=metric, dataset=dataset)
+            ms3 =  "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-x3-mainstream-simulator".format(metric=metric, dataset=dataset)
+            l0 = "1-voting (for check)"
+            l1 = "1-voting"
+            l2 = "2-voting"
+            l3 = "3-voting"
+            f_name ="voting-{}-500-{}".format(dataset, metric)
+            plot_dir = "plots/scheduler/"
+            plot_x_voting([ms1, ms2, ms3, ms0], [l1, l2, l3, l0], f_name, plot_dir)
 
 
-
-
+if __name__ == '__main__':
+    main()
