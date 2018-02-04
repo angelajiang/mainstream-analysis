@@ -132,6 +132,9 @@ def get_f1_data(csv_file):
 
             fnr = float(vals[1])
             fpr = float(vals[2])
+            if fpr == 1:
+                fpr = 0
+                print "WARNING: No false positives. Set precision to 0"
             f1 = hmean([1 - float(fnr), 1 - float(fpr)])
             metrics[num_apps].append(f1)
             acc_losses[num_apps].append(acc_loss)
@@ -265,7 +268,7 @@ def plot_precision(ms_files, max_files, min_files, plot_files, titles, plot_dir)
             plt.savefig(plot_dir + "/" + plot_file + "-precision.pdf")
             plt.clf()
 
-def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotated=False):
+def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotations = []):
     for i in range(2):
         for ms_file, max_file, min_file, plot_file, title \
                 in zip(ms_files, max_files, min_files, plot_files, titles):
@@ -292,17 +295,13 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
 
             plt.savefig(plot_dir + "/" + plot_file + "-f1.pdf")
 
-            if annotated:
+            if len(annotations) > 0:
+                assert len(annotations) == 6
 
-                # Pedestrian annotations
-                a1 = 2
-                a2 = 17
-                b1 = 2
-                b2 = 15
-                c1 = 8
-                c2 = 20
-
-                (x, y, loss, fps) = (xs1[a1], ys1[a1], losses1[a1], fpses1[a1])
+                (x, y, loss, fps) = (xs1[annotations[0]],
+                                     ys1[annotations[0]],
+                                     losses1[annotations[0]],
+                                     fpses1[annotations[0]])
                 plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                              xy=(x, y),
                              xytext=(20, 30),
@@ -311,7 +310,10 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
                              textcoords='offset points',
                              arrowprops=dict(arrowstyle="->"))
 
-                (x, y, loss, fps) = (xs1[a2], ys1[a2], losses1[a2], fpses1[a2])
+                (x, y, loss, fps) = (xs1[annotations[1]],
+                                     ys1[annotations[1]],
+                                     losses1[annotations[1]],
+                                     fpses1[annotations[1]])
                 plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                              xy=(x, y),
                              xytext=(-160, 30),
@@ -320,7 +322,10 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
                              textcoords='offset points',
                              arrowprops=dict(arrowstyle="->"))
 
-                (x, y, loss, fps) = (xs2[b1], ys2[b1], losses2[b1], fpses2[b1])
+                (x, y, loss, fps) = (xs2[annotations[2]],
+                                     ys2[annotations[2]],
+                                     losses2[annotations[2]],
+                                     fpses2[annotations[2]])
                 plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                              xy=(x, y),
                              xytext=(-25, 50),
@@ -329,7 +334,10 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
                              textcoords='offset points',
                              arrowprops=dict(arrowstyle="->"))
 
-                (x, y, loss, fps) = (xs2[b2], ys2[b2], losses2[b2], fpses2[b2])
+                (x, y, loss, fps) = (xs2[annotations[3]],
+                                     ys2[annotations[3]],
+                                     losses2[annotations[3]],
+                                     fpses2[annotations[3]])
                 plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                              xy=(x, y),
                              xytext=(-160, 30),
@@ -338,7 +346,10 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
                              textcoords='offset points',
                              arrowprops=dict(arrowstyle="->"))
 
-                (x, y, loss, fps) = (xs3[c1], ys3[c1], losses3[c1], fpses3[c1])
+                (x, y, loss, fps) = (xs3[annotations[4]],
+                                     ys3[annotations[4]],
+                                     losses3[annotations[4]],
+                                     fpses3[annotations[4]])
                 plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                              xy=(x, y),
                              xytext=(-15, 25),
@@ -347,7 +358,10 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
                              textcoords='offset points',
                              arrowprops=dict(arrowstyle="->"))
 
-                (x, y, loss, fps) = (xs3[c2], ys3[c2], losses3[c2], fpses3[c2])
+                (x, y, loss, fps) = (xs3[annotations[5]],
+                                     ys3[annotations[5]],
+                                     losses3[annotations[5]],
+                                     fpses3[annotations[5]])
                 plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
                              xy=(x, y),
                              xytext=(-170, 70),
