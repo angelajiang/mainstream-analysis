@@ -1,8 +1,7 @@
 
-import matplotlib.pyplot as plt
 from matplotlib import colors
 
-MARKERS = ["*", "v", "D", "o", ".", "8", "h"]
+MARKERS = ["o", "v", "D", "*", "p", "8", "h"]
 
 # http://colorbrewer2.org/#type=diverging&scheme=Spectral&n=4
 COLORLISTS = {3: [
@@ -92,7 +91,7 @@ MAX_SHARING = {"color": COLORLISTS[8][7],
               }
 
 def format_plot(xlabel, ylabel):
-
+    import matplotlib.pyplot as plt
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
     plt.tick_params(axis='x', which='major', labelsize=28)
@@ -102,6 +101,28 @@ def format_plot(xlabel, ylabel):
 
     plt.xlabel(xlabel, fontsize=35)
     plt.ylabel(ylabel, fontsize=35)
+    plt.tight_layout()
+    plt.gca().xaxis.grid(True)
+    plt.gca().yaxis.grid(True)
+
+
+def format_plot_dual(ax1, ax2, xlabel, ylabel1, ylabel2):
+    import matplotlib.pyplot as plt
+    ax1.tick_params(axis='y', which='major', labelsize=23)
+    ax1.tick_params(axis='y', which='minor', labelsize=20)
+    ax1.tick_params(axis='x', which='major', labelsize=23)
+    ax1.tick_params(axis='x', which='minor', labelsize=20)
+
+    ax2.tick_params(axis='y', which='major', labelsize=23)
+    ax2.tick_params(axis='y', which='minor', labelsize=20)
+    ax2.tick_params(axis='x', which='major', labelsize=23)
+    ax2.tick_params(axis='x', which='minor', labelsize=20)
+
+    ax1.set_ylim(0, 1)
+
+    ax1.set_xlabel(xlabel, fontsize=30)
+    ax1.set_ylabel(ylabel1, fontsize=30)
+    ax2.set_ylabel(ylabel2, fontsize=30)
     plt.tight_layout()
     plt.gca().xaxis.grid(True)
     plt.gca().yaxis.grid(True)

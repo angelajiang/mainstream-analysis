@@ -34,52 +34,49 @@ def plot_correlation(ms_files, labels, plot_file, plot_dir, version=0):
         plt.savefig(plot_dir + "/" + plot_file + "-correlation.pdf")
         plt.clf()
 
-def plot_x_voting(ms_files, labels, plot_file, plot_dir):
-    colors = plot_util.COLORLISTS[len(ms_files)]
+def plot_x_voting(ms_files, labels, plot_file, plot_dir, dual=False):
+    colors = plot_util.COLORLISTS[8]
     markers = plot_util.MARKERS[:len(ms_files)]
-    for i in range(2):
-        for ms_file, label, c, m in zip(ms_files, labels, colors, markers):
-            xs, ys, errs, losses, fpses = get_f1_data(ms_file)
-            plt.errorbar(xs, ys, yerr=errs, label=label, lw=4, markersize=8,
-                         marker=m,
-                         color=c)
 
-        plot_util.format_plot("Number of concurrent apps", "Event F1-score")
-        plt.xlim(max(min(xs),2), max(xs))
-        plt.ylim(0, 1)
+    metrics = ["f1", "recall", "precision"]
+    titles = ["F1-score", "Recall", "Precision"]
 
-        plt.savefig(plot_dir + "/" + plot_file + "-f1.pdf")
-        plt.clf()
+    for metric, title in zip(metrics, titles):
+        for i in range(2):
+            fig, ax1 = plt.subplots()
+            if dual:
+                ax2 = ax1.twinx()
 
-    for i in range(2):
-        for ms_file, label, c, m in zip(ms_files, labels, colors, markers):
-            xs, ys, errs, _, _ = get_recall_data(ms_file, 1)
+            lines = []
+            for ms_file, label, c, m in zip(ms_files, labels, colors, markers):
+                if metric == 'f1':
+                    xs, ys, errs, losses, fpses = get_f1_data(ms_file)
+                elif metric == 'recall':
+                    xs, ys, errs, losses, fpses = get_recall_data(ms_file, 1)
+                elif metric == 'precision':
+                    xs, ys, errs, losses, fpses = get_precision_data(ms_file)
+                lines.append(ax1.errorbar(xs, ys, yerr=errs, label=label, lw=4, markersize=8,
+                                          marker=m,
+                                          color=c))
+                if dual:
+                    ax2.plot(xs, fpses, lw=2, markersize=8, alpha=0.2,
+                             marker=m,
+                             color=c)
 
-            plt.errorbar(xs, ys, yerr=errs, label=label, lw=4, markersize=8,
-                         marker=m,
-                         color=c)
+            if dual:
+                plot_util.format_plot_dual(ax1, ax2, "Number of concurrent apps", "Event " + title, "Average FPS")
+            else:    
+                plot_util.format_plot("Number of concurrent apps", "Event " + title)
+            ax1.set_xlim(max(min(xs),2), max(xs))
 
-        plot_util.format_plot("Number of concurrent apps", "Event Recall")
-        plt.xlim(max(min(xs),2), max(xs))
-        plt.ylim(0, 1)
+            filename = plot_dir + "/" + plot_file + "-" + metric
+            if dual:
+                filename += "-dual"
+            labels = [l.get_label() for l in lines]
+            leg = ax1.legend(lines, labels, loc=0, fontsize=15)
+            leg.get_frame().set_alpha(0.5)
+            plt.savefig(filename + ".pdf")
 
-        plt.savefig(plot_dir + "/" + plot_file + "-recall.pdf")
-        plt.clf()
-
-    for i in range(2):
-        for ms_file, label, c, m in zip(ms_files, labels, colors, markers):
-            xs, ys, errs, _, _ = get_precision_data(ms_file)
-            plt.errorbar(xs, ys, yerr=errs, label=label, lw=4, markersize=8,
-                         marker=m,
-                         color=c)
-
-        plot_util.format_plot("Number of concurrent apps", "Event Precision")
-        plt.xlim(max(min(xs),2), max(xs))
-        plt.ylim(0, 1)
-
-        plt.savefig(plot_dir + "/" + plot_file + "-precision.pdf")
-        plt.clf()
-        plt.clf()
 
 def plot_recall(ms_files, max_files, min_files, plot_files, titles, plot_dir, version=0):
     for i in range(2):
@@ -266,8 +263,8 @@ root_dir = "output/streamer/scheduler/atc"
 def main():
     # run_combinations()
     # run_fairness()
-    run_combinations_left4pts()
-    # run_x_voting()
+    # run_combinations_left4pts()
+    run_x_voting()
 
 
 def run_combinations():
@@ -323,19 +320,20 @@ def run_fairness():
 
 
 def run_x_voting():
-    for dataset in ["trains", "pedestrian"]:
+    max_x = 7
+    for dataset in ["train", "pedestrian"]:
         for metric in ["f1", "fnr", "fpr"]:
-            ms0 = "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-mainstream-simulator".format(metric=metric, dataset=dataset)
-            ms1 =  "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-x1-mainstream-simulator".format(metric=metric, dataset=dataset)
-            ms2 =  "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-x2-mainstream-simulator".format(metric=metric, dataset=dataset)
-            ms3 =  "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-x3-mainstream-simulator".format(metric=metric, dataset=dataset)
-            l0 = "1-voting (for check)"
-            l1 = "1-voting"
-            l2 = "2-voting"
-            l3 = "3-voting"
+            # ms0 = "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-mainstream-simulator".format(metric=metric, dataset=dataset)
+            # l0 = "1-voting (for check)"
+            mses = ["output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-x{x}-mainstream-simulator".format(metric=metric, dataset=dataset, x=i) for i in range(1, max_x + 1)]
+            mses = [ms for ms in mses if os.path.isfile(ms)]            
+            if len(mses) == 0:
+                continue
+            lines = ["{}-voting".format(i) for i in range(1, max_x+1)][:len(mses)]
             f_name ="voting-{}-500-{}".format(dataset, metric)
             plot_dir = "plots/scheduler/"
-            plot_x_voting([ms1, ms2, ms3, ms0], [l1, l2, l3, l0], f_name, plot_dir)
+            plot_x_voting(mses, lines, f_name, plot_dir)
+            plot_x_voting(mses, lines, f_name, plot_dir, dual=True)
 
 
 if __name__ == '__main__':
