@@ -5,3 +5,4 @@ mainstream/plots
 .ipynb_checkpoints
 output/bb/raw/**/plots
 output/bb/raw/**/images
+plots/
