@@ -35,7 +35,8 @@ def plot_correlation(ms_files, labels, plot_file, plot_dir, version=0):
         plt.clf()
 
 def plot_x_voting(ms_files, labels, plot_file, plot_dir, dual=False, frontier=False):
-    colors = plot_util.COLORLISTS[8]
+    colors = plot_util.COLORLISTS[4]
+    colors = [colors[0], colors[3], colors[1], colors[2]]
     markers = plot_util.MARKERS[:len(ms_files)]
 
     metrics = ["f1", "recall", "precision"]
@@ -57,8 +58,11 @@ def plot_x_voting(ms_files, labels, plot_file, plot_dir, dual=False, frontier=Fa
                 elif metric == 'precision':
                     xs, ys, errs, losses, fpses = get_precision_data(ms_file)
                 if frontier:
-                    lines.append(ax1.scatter(xs, ys, label=label, s=50,
-                                             edgecolor='black', marker=m, color=c))
+                    lines.append(ax1.errorbar(xs, ys, yerr=errs, label=label, lw=2, markersize=8,
+                                              marker=m,
+                                              color=c))
+                    # lines.append(ax1.scatter(xs, ys, label=label, s=50,
+                                             # edgecolor='black', marker=m, color=c))
                     all_pts += list(zip(xs, ys))
                 else:
                     lines.append(ax1.errorbar(xs, ys, yerr=errs, label=label, lw=4, markersize=8,
@@ -71,7 +75,8 @@ def plot_x_voting(ms_files, labels, plot_file, plot_dir, dual=False, frontier=Fa
 
             if frontier:
                 xss, ys = plot_util.frontier(all_pts)
-                ax1.plot(xss, ys, '--', label='Frontier')
+                lines += ax1.plot(xss, ys, '--', label='Frontier', lw=7)
+
                 ax1.set_ylim(0, 1)
 
             if dual:
@@ -334,20 +339,19 @@ def run_fairness():
 
 def run_x_voting():
     max_x = 7
+    selected_x = [1, 3, 5, 7]
     for dataset in ["train", "pedestrian"]:
         for metric in ["f1", "fnr", "fpr"]:
             # ms0 = "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-mainstream-simulator".format(metric=metric, dataset=dataset)
             # l0 = "1-voting (for check)"
-            mses = ["output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-x{x}-mainstream-simulator".format(metric=metric, dataset=dataset, x=i) for i in range(1, max_x + 1)]
-            mses = [ms for ms in mses if os.path.isfile(ms)]            
-            if len(mses) == 0:
-                continue
-            lines = ["{}-voting".format(i) for i in range(1, max_x+1)][:len(mses)]
+            mses = ["output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-x{x}-mainstream-simulator".format(metric=metric, dataset=dataset, x=i) for i in selected_x]
+            lines = ["{}-voting".format(i) for i in selected_x]
             f_name ="voting-{}-500-{}".format(dataset, metric)
             plot_dir = "plots/scheduler/"
-            plot_x_voting(mses, lines, f_name, plot_dir)
+            # plot_x_voting(mses, lines, f_name, plot_dir)
             plot_x_voting(mses, lines, f_name, plot_dir, frontier=True)
-            plot_x_voting(mses, lines, f_name, plot_dir, dual=True)
+            return
+            # plot_x_voting(mses, lines, f_name, plot_dir, dual=True)
 
 
 if __name__ == '__main__':
