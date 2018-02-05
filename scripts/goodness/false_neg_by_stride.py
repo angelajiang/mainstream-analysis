@@ -226,7 +226,7 @@ if __name__ == "__main__":
     empirical_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
     correlation_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-correlation"
     files = [independent_file, empirical_file, correlation_file, dependent_file]
-    labels = ["Fully Independent", "Profiled", "Mainstream Model", "Fully Dependent"]
+    labels = ["Fully Independent", "Profiled", "Mainstream Prediction", "Fully Dependent"]
     plot_dependence(files, labels, event_lengths, plot_file)
 
     event_lengths = [49, 9, 42, 52, 77, 18, 90, 9, 76, 111, 149, 66, 34, 30, 77, 31, 28, 31, 8, 2, 151, 44, 33, 44, 30, 40, 38, 115, 55, 23, 257, 5, 32, 1681, 103, 18, 110, 66, 76, 86, 124, 39, 74, 29, 71, 40, 63, 23, 81]
@@ -237,6 +237,6 @@ if __name__ == "__main__":
     empirical_file = file_prefix + "-empirical-random"
     correlation_file = file_prefix + "-correlation"
     files = [independent_file, empirical_file, correlation_file, dependent_file]
-    labels = ["Fully Independent", "Profiled", "Mainstream Model", "Fully Dependent"]
+    labels = ["Fully Independent", "Profiled", "Mainstream Prediction", "Fully Dependent"]
     plot_dependence(files, labels, event_lengths, plot_file)
 
