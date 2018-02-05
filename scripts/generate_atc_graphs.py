@@ -57,8 +57,8 @@ f_files = [f1]
 titles = [t1]
 hybrid4_annotations = [2, 6, 1, 5, 0, 6]
 
-scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, annotations = hybrid4_annotations)
-scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
+scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, annotations = hybrid4_annotations, errbars=False)
+scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, errbars=False)
 scheduler.plot_recall(ms_files, max_files, min_files, f_files, titles, plot_dir)
 scheduler.plot_precision(ms_files, max_files, min_files, f_files, titles, plot_dir)
 scheduler_dual.plot_f1_dual(ms_files, max_files, min_files, f_files, titles, plot_dir)
@@ -67,13 +67,13 @@ scheduler_dual.plot_precision_dual(ms_files, max_files, min_files, f_files, titl
 
 
 ############## COMBINATIONS ############
-scheduler.run_combinations()
+# scheduler.run_combinations()
 
 ############## X-voting ############
 scheduler.run_x_voting()
 
 ############## Fairness ############
-scheduler.run_fairness()
+# scheduler.run_fairness()
 
 ############## CONDITIONAL PROBABILITY ############
 
@@ -102,8 +102,8 @@ min_files = [min1]
 f_files = [f1]
 titles = [t1]
 
-scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
-scheduler.plot_precision(ms_files, max_files, min_files, f_files, titles, plot_dir)
+scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, errbars=False)
+scheduler.plot_precision(ms_files, max_files, min_files, f_files, titles, plot_dir, errbars=False)
 
 ms1 =  "output/streamer/scheduler/atc/f1/f1-4hybrid-corr1-mainstream-simulator"
 max1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-corr1-maxsharing"

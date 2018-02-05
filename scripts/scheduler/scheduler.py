@@ -124,7 +124,7 @@ def plot_recall(ms_files, max_files, min_files, plot_files, titles, plot_dir, ve
             plt.savefig(plot_dir + "/" + plot_file + "-recall.pdf")
             plt.clf()
 
-def plot_precision(ms_files, max_files, min_files, plot_files, titles, plot_dir):
+def plot_precision(ms_files, max_files, min_files, plot_files, titles, plot_dir, errbars=True):
     for i in range(2):
         for ms_file, max_file, min_file, plot_file, title \
                 in zip(ms_files, max_files, min_files, plot_files, titles):
@@ -132,6 +132,10 @@ def plot_precision(ms_files, max_files, min_files, plot_files, titles, plot_dir)
             xs2, ys2, errs2, _, _ = get_precision_data(max_file)
             xs3, ys3, errs3, _, _ = get_precision_data(min_file)
 
+            if not errbars:
+                errs3 = None
+                errs2 = None
+                errs1 = None
             plt.errorbar(xs3, ys3, yerr=errs3, lw=4, markersize=8,
                          marker=plot_util.NO_SHARING['marker'],
                          color=plot_util.NO_SHARING['color'],
@@ -152,7 +156,7 @@ def plot_precision(ms_files, max_files, min_files, plot_files, titles, plot_dir)
             plt.savefig(plot_dir + "/" + plot_file + "-precision.pdf")
             plt.clf()
 
-def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, xlim=None, annotations = [], ms_variant_files=[], ms_variant_name=None, legend=False, legend_xargs={}):
+def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, errbars=True, xlim=None, annotations = [], ms_variant_files=[], ms_variant_name=None, legend=False, legend_xargs={}):
     for i in range(2):
         for i, (ms_file, max_file, min_file, plot_file, title) \
                 in enumerate(zip(ms_files, max_files, min_files, plot_files, titles)):
@@ -172,6 +176,10 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, xlim=N
                 plt.xlim(max(min(xs1),2), max(xs1))
             plt.ylim(0, 1)
 
+            if not errbars:
+                errs3 = None
+                errs2 = None
+                errs1 = None
             plt.errorbar(xs3, ys3, yerr=errs3, lw=4, markersize=8,
                          marker=plot_util.NO_SHARING['marker'],
                          color=plot_util.NO_SHARING['color'],
@@ -341,7 +349,7 @@ def run_x_voting():
     max_x = 7
     selected_x = [1, 3, 5, 7]
     for dataset in ["train", "pedestrian"]:
-        for metric in ["f1", "fnr", "fpr"]:
+        for metric in ["f1"]: #, "fnr", "fpr"]:
             # ms0 = "output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-mainstream-simulator".format(metric=metric, dataset=dataset)
             # l0 = "1-voting (for check)"
             mses = ["output/streamer/scheduler/atc/{metric}/{metric}-{dataset}-500-x{x}-mainstream-simulator".format(metric=metric, dataset=dataset, x=i) for i in selected_x]
@@ -350,7 +358,6 @@ def run_x_voting():
             plot_dir = "plots/scheduler/"
             # plot_x_voting(mses, lines, f_name, plot_dir)
             plot_x_voting(mses, lines, f_name, plot_dir, frontier=True)
-            return
             # plot_x_voting(mses, lines, f_name, plot_dir, dual=True)
 
 
