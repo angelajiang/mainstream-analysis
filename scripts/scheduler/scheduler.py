@@ -6,7 +6,7 @@ import math
 import matplotlib
 import numpy as np
 from itertools import cycle
-from scipy.stats import linregress, hmean
+from scipy.stats import linregress
 from data_util import get_recall_data, get_precision_data, get_f1_data, collect_comb_csvs
 
 sys.path.append("scripts/util")
@@ -137,7 +137,7 @@ def plot_precision(ms_files, max_files, min_files, plot_files, titles, plot_dir)
             plt.savefig(plot_dir + "/" + plot_file + "-precision.pdf")
             plt.clf()
 
-def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, xlim=None, annotations = [], ms_variant_files=[], ms_variant_name=None, legend=False):
+def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, xlim=None, annotations = [], ms_variant_files=[], ms_variant_name=None, legend=False, legend_xargs={}):
     for i in range(2):
         for i, (ms_file, max_file, min_file, plot_file, title) \
                 in enumerate(zip(ms_files, max_files, min_files, plot_files, titles)):
@@ -176,7 +176,7 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, xlim=N
                              label=ms_variant_name if ms_variant_name else plot_util.MAINSTREAM_VARIANT['label'])
 
             if legend:
-                leg = plt.legend(loc=1)
+                leg = plt.legend(**legend_xargs)
                 leg.get_frame().set_alpha(0.5)
 
             plt.savefig(plot_dir + "/" + plot_file + "-f1.pdf")
@@ -188,7 +188,7 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, xlim=N
                                      ys1[annotations[0]],
                                      losses1[annotations[0]],
                                      fpses1[annotations[0]])
-                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
+                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps),
                              xy=(x, y),
                              xytext=(20, 30),
                              xycoords='data',
@@ -200,7 +200,7 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, xlim=N
                                      ys1[annotations[1]],
                                      losses1[annotations[1]],
                                      fpses1[annotations[1]])
-                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
+                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps),
                              xy=(x, y),
                              xytext=(-160, 30),
                              xycoords='data',
@@ -212,7 +212,7 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, xlim=N
                                      ys2[annotations[2]],
                                      losses2[annotations[2]],
                                      fpses2[annotations[2]])
-                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
+                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps),
                              xy=(x, y),
                              xytext=(-25, 50),
                              xycoords='data',
@@ -224,7 +224,7 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, xlim=N
                                      ys2[annotations[3]],
                                      losses2[annotations[3]],
                                      fpses2[annotations[3]])
-                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
+                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps),
                              xy=(x, y),
                              xytext=(-160, 30),
                              xycoords='data',
@@ -236,7 +236,7 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, xlim=N
                                      ys3[annotations[4]],
                                      losses3[annotations[4]],
                                      fpses3[annotations[4]])
-                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
+                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps),
                              xy=(x, y),
                              xytext=(-15, 25),
                              xycoords='data',
@@ -248,7 +248,7 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, xlim=N
                                      ys3[annotations[5]],
                                      losses3[annotations[5]],
                                      fpses3[annotations[5]])
-                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps), 
+                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps),
                              xy=(x, y),
                              xytext=(-170, 70),
                              xycoords='data',
@@ -302,7 +302,7 @@ def run_combinations_left4pts():
     f_files = [f1]
     titles = [t1]
     plot_dir = "plots/scheduler/atc/maximize-f1"
-    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, xlim=(0, 5), legend=True)
+    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, xlim=(1, 4), legend=True, legend_xargs=dict(loc=0))
 
 
 def run_fairness():
