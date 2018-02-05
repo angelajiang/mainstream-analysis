@@ -34,7 +34,7 @@ def plot_correlation(ms_files, labels, plot_file, plot_dir, version=0):
         plt.savefig(plot_dir + "/" + plot_file + "-correlation.pdf")
         plt.clf()
 
-def plot_x_voting(ms_files, labels, plot_file, plot_dir, dual=False):
+def plot_x_voting(ms_files, labels, plot_file, plot_dir, dual=False, frontier=False):
     colors = plot_util.COLORLISTS[8]
     markers = plot_util.MARKERS[:len(ms_files)]
 
@@ -48,6 +48,7 @@ def plot_x_voting(ms_files, labels, plot_file, plot_dir, dual=False):
                 ax2 = ax1.twinx()
 
             lines = []
+            all_pts = []
             for ms_file, label, c, m in zip(ms_files, labels, colors, markers):
                 if metric == 'f1':
                     xs, ys, errs, losses, fpses = get_f1_data(ms_file)
@@ -55,13 +56,23 @@ def plot_x_voting(ms_files, labels, plot_file, plot_dir, dual=False):
                     xs, ys, errs, losses, fpses = get_recall_data(ms_file, 1)
                 elif metric == 'precision':
                     xs, ys, errs, losses, fpses = get_precision_data(ms_file)
-                lines.append(ax1.errorbar(xs, ys, yerr=errs, label=label, lw=4, markersize=8,
-                                          marker=m,
-                                          color=c))
+                if frontier:
+                    lines.append(ax1.scatter(xs, ys, label=label, s=50,
+                                             edgecolor='black', marker=m, color=c))
+                    all_pts += list(zip(xs, ys))
+                else:
+                    lines.append(ax1.errorbar(xs, ys, yerr=errs, label=label, lw=4, markersize=8,
+                                              marker=m,
+                                              color=c))
                 if dual:
                     ax2.plot(xs, fpses, lw=2, markersize=8, alpha=0.2,
                              marker=m,
                              color=c)
+
+            if frontier:
+                xss, ys = plot_util.frontier(all_pts)
+                ax1.plot(xss, ys, '--', label='Frontier')
+                ax1.set_ylim(0, 1)
 
             if dual:
                 plot_util.format_plot_dual(ax1, ax2, "Number of concurrent apps", "Event " + title, "Average FPS")
@@ -72,6 +83,8 @@ def plot_x_voting(ms_files, labels, plot_file, plot_dir, dual=False):
             filename = plot_dir + "/" + plot_file + "-" + metric
             if dual:
                 filename += "-dual"
+            if frontier:
+                filename += "-frontier"
             labels = [l.get_label() for l in lines]
             leg = ax1.legend(lines, labels, loc=0, fontsize=15)
             leg.get_frame().set_alpha(0.5)
@@ -333,6 +346,7 @@ def run_x_voting():
             f_name ="voting-{}-500-{}".format(dataset, metric)
             plot_dir = "plots/scheduler/"
             plot_x_voting(mses, lines, f_name, plot_dir)
+            plot_x_voting(mses, lines, f_name, plot_dir, frontier=True)
             plot_x_voting(mses, lines, f_name, plot_dir, dual=True)
 
 

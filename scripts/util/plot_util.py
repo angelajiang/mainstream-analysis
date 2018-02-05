@@ -1,4 +1,5 @@
-
+from scipy.interpolate import PchipInterpolator, CubicSpline
+import numpy as np
 from matplotlib import colors
 
 MARKERS = ["o", "v", "D", "*", "p", "8", "h"]
@@ -127,3 +128,21 @@ def format_plot_dual(ax1, ax2, xlabel, ylabel1, ylabel2):
     plt.gca().xaxis.grid(True)
     plt.gca().yaxis.grid(True)
 
+
+def frontier(all_pts):
+    pts = []
+    highest = -1
+    for x, y in sorted(all_pts, reverse=True):
+        if y > highest:
+            highest = y
+            pts.append((x, y))
+    pts = sorted(pts)
+    xs, ys = zip(*pts)
+
+    all_xs = [pt[0] for pt in all_pts]
+
+    xss = np.linspace(min(all_xs), max(all_xs), 100)
+
+    spl = PchipInterpolator(xs, ys)
+    ys = spl(xss)
+    return xss, ys

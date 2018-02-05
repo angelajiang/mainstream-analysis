@@ -69,8 +69,8 @@ scheduler_dual.plot_precision_dual(ms_files, max_files, min_files, f_files, titl
 ############## COMBINATIONS ############
 scheduler.run_combinations()
 
-############## COMBINATIONS ############
-scheduler.run_combinations_left4pts()
+############## X-voting ############
+scheduler.run_x_voting()
 
 ############## Fairness ############
 scheduler.run_fairness()
