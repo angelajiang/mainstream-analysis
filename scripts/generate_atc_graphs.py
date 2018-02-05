@@ -2,6 +2,8 @@ import sys
 sys.path.append("scripts/scheduler")
 import scheduler
 import scheduler_dual
+from data_util import collect_comb_csvs
+
 
 
 ################## Maximize F1 Score ##################
