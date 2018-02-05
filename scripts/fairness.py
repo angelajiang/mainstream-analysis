@@ -10,7 +10,7 @@ from scipy.stats import linregress
 sys.path.append("scripts/util")
 import plot_util
 sys.path.append("notebooks")
-from data_util import load_dfs, filter_dfs
+from data_util_fair import load_dfs, filter_dfs
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -80,7 +80,8 @@ def plot(prefix, f_files, titles, plot_dir, annotated=False):
 if __name__ == "__main__":
 
     # prefix = "../mainstream/log"
-    prefix = "output/streamer/scheduler/combinations"
+    #prefix = "output/streamer/scheduler/combinations"
+    prefix = "../data"
 
     f1 = "scheduler-apps-fairness"
     t1 = ""

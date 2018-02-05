@@ -1,0 +1,40 @@
+# pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_cars_cars_cars_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_cats_cats_cats_cats,0.9898,0.1819,0.0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0.399918,0.66653,1.199755,0.399919,0.399919,0.799839,0.39992,0.399921,0.333268,0.73319,0.399922,0.399923,0.33327,0.599886,0.33327,0.399925,0.333271,0.599888,0.733198,0.399926,0.399927,0.599891,0.799857,0.799858,0.399929,0.333275,0.866516,0.533241,0.333276,1.266451
+# pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_cats_cats_cats_cats_cats_cats_cats_cats,0.9896,0.2585,0.0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1.199758,0.599879,0.933147,0.466574,0.733188,0.399921,0.599883,0.333268,0.733191,0.999807,0.666539,0.533232,0.66654,0.866503,0.399925,0.333271,0.333271,0.599889,0.333272,0.399927,0.399927,0.399928,0.933165,0.466583,0.399929,0.333274,0.599894,0.39993,0.39993,0.533241
+# pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_cats_cats_cats_cats_cats_cats_cats_cats_cats_cats,0.9889,0.2524,0.0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0.333314,0.266652,0.933282,0.866621,0.866622,1.19994,0.866624,0.799962,0.399981,1.133282,0.599974,0.333319,0.466647,0.266656,0.33332,0.399985,0.399985,0.333321,0.399986,0.799973,0.733309,0.999968,0.333323,0.333323,0.333324,0.599983,0.533319,0.39999,0.333325,0.399991
+# pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_pedestrian_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers_cats_cats_cats_cats_cats_cats_cats,0.9895,0.2136,0.0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0.333315,0.533304,0.599968,1.2666,0.799959,0.39998,0.533307,0.39998,0.733298,0.333318,0.333318,0.53331,0.599974,0.333319,0.333319,0.933295,0.399984,0.599977,0.533313,0.79997,0.399985,0.333321,0.533315,0.399987,0.466651,0.333323,0.333323,0.866641,0.999971,0.999972
+# pedestrian_cars_cars_cars_cars_cars_cars_cars_cars_cars_cars_cars_cars_cars_cars_cars_cars_cars_cars_cars_cars_cars_flowers_flowers_flowers_flowers_flowers_flowers_flowers_flowers,0.9872,0.0654,0.0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,1.333079,0.33327,0.399925,0.599888,0.666543,0.799852,0.333272,0.399927,0.733199,0.399927,0.399928,0.333273,0.333274,0.399929,0.599894,0.333275,0.466585,0.39993,0.999827,0.533241,0.466587,0.399932,0.99983,0.333277,0.533244,1.066488,0.533245,1.466424,0.333278,0.666557
+cats_cats_cats_cats,0.5057,0.191,0.0,3,3,3,3,4.399787,4.199863,4.333212,4.333221
+pedestrian_pedestrian_pedestrian_pedestrian,0.47,0.2831,0.0,3,3,3,3,4.333194,4.266545,4.333215,4.33322
+pedestrian_cars_flowers_cats,0.4725,0.1664,0.0,3,3,3,3,4.266602,4.266619,4.33329,4.333295
+pedestrian_pedestrian_flowers_cats,0.4871,0.2344,0.0,3,3,3,3,4.266516,4.333196,4.3332,4.266539
+pedestrian_pedestrian_pedestrian_cats,0.479,0.2601,0.0,3,3,3,3,4.333174,4.266521,4.3332,4.333204
+pedestrian_flowers_flowers_cats,0.4952,0.2086,0.0,3,3,3,3,4.333272,4.266617,4.266633,4.266642
+flowers_flowers_cats_cats,0.5003,0.1856,0.0,3,3,3,3,4.333164,4.266516,4.333191,4.266535
+pedestrian_cars_flowers_flowers,0.4838,0.1637,0.0,3,3,3,3,4.333292,4.199966,4.19997,4.199974
+cars_cars_flowers_flowers,0.4562,0.0958,0.0,3,3,3,3,4.2666,4.333282,4.266619,4.266633
+cars_flowers_flowers_cats,0.492,0.1407,0.0,3,3,3,3,4.26658,4.19993,4.2666,4.199939
+pedestrian_pedestrian_cats_cats,0.4882,0.237,0.0,3,3,3,3,4.266547,4.266557,4.333227,4.399901
+flowers_flowers_flowers_cats,0.5111,0.1829,0.0,3,3,3,3,4.266587,4.199935,4.266618,4.199968
+pedestrian_cars_cars_cars,0.4464,0.0793,0.0,3,3,3,3,4.266617,4.199963,4.266633,4.19998
+pedestrian_cats_cats_cats,0.5084,0.214,0.0,3,3,3,3,4.266527,4.266539,4.266554,4.266562
+pedestrian_pedestrian_cars_cats,0.4715,0.1921,0.0,3,3,3,3,4.266517,4.26653,4.333206,4.266552
+flowers_flowers_flowers_flowers,0.4988,0.1803,0.0,3,3,3,3,4.266606,4.199956,4.26663,4.333301
+cars_flowers_cats_cats,0.485,0.1434,0.0,3,3,3,3,4.266604,4.333282,4.266626,4.266636
+pedestrian_pedestrian_pedestrian_cars,0.4713,0.2151,0.0,3,3,3,3,4.199942,4.266622,4.266632,4.266636
+cars_cars_cats_cats,0.4691,0.1012,0.0,3,3,3,3,4.333151,4.266498,4.266512,4.199861
+pedestrian_flowers_flowers_flowers,0.5182,0.206,0.0,3,3,3,3,4.133154,4.199842,4.199854,4.1332
+pedestrian_pedestrian_pedestrian_flowers,0.4904,0.2574,0.0,3,3,3,3,4.199931,4.266611,4.266622,4.266636
+cars_cars_cars_cars,0.427,0.0113,0.0,3,3,3,3,4.266602,4.199951,4.266631,4.266642
+pedestrian_cars_cats_cats,0.4848,0.1691,0.0,3,3,3,3,4.266577,4.266588,4.266598,4.266612
+pedestrian_pedestrian_cars_cars,0.4478,0.1472,0.0,3,3,3,3,4.266518,4.266533,4.333209,4.266553
+cars_flowers_flowers_flowers,0.4798,0.138,0.0,3,3,3,3,4.266602,4.266613,4.266627,4.266631
+pedestrian_pedestrian_flowers_flowers,0.4945,0.2317,0.0,3,3,3,3,4.266501,4.266527,4.266536,4.199875
+cars_cats_cats_cats,0.4897,0.1461,0.0,3,3,3,3,4.266493,4.199844,4.333176,4.333181
+cars_cars_cars_cats,0.4507,0.0562,0.0,3,3,3,3,4.266576,4.199931,4.266606,4.26662
+pedestrian_cars_cars_flowers,0.4565,0.1215,0.0,3,3,3,3,4.266613,4.199963,4.333307,4.26665
+cars_cars_flowers_cats,0.4599,0.0985,0.0,3,3,3,3,4.333168,4.333185,4.266531,4.199882
+pedestrian_pedestrian_cars_flowers,0.4708,0.1894,0.0,3,3,3,3,4.266509,4.266524,4.333191,4.199878
+flowers_cats_cats_cats,0.5088,0.1883,0.0,3,3,3,3,4.266505,4.199857,4.333196,4.333204
+pedestrian_cars_cars_cats,0.4611,0.1242,0.0,3,3,3,3,4.26661,4.266621,4.266625,4.266636
+pedestrian_flowers_cats_cats,0.496,0.2113,0.0,3,3,3,3,4.333175,4.266528,4.266533,4.333207
+cars_cars_cars_flowers,0.4677,0.0536,0.0,3,3,3,3,4.133255,4.133271,4.199947,4.199956

@@ -73,6 +73,12 @@ MAINSTREAM = {"color": COLORLISTS[8][0],
               "label": "Mainstream"
               }
 
+MAINSTREAM_VARIANT = {"color": COLORLISTS[4][1],
+              "marker": "*",
+              "pattern": "---",
+              "label": "Mainstream-Variant",
+              }
+
 NO_SHARING = {"color": colors.colorConverter.to_rgb("#7fbf7b"),
               "marker": "<",
               "pattern": "\\\\",
