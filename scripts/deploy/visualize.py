@@ -9,7 +9,7 @@ import seaborn as sns
 sys.path.append("scripts/util")
 import plot_util
 
-sns.set_style("white")
+# sns.set_style("white")
 
 sizes = {
     'label': 30,
@@ -82,7 +82,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     imagebox = OffsetImage(im)
     imagebox.image.axes = ax
 
-    ab = AnnotationBbox(imagebox, (picture_loc, settings['y_hit_m'] + settings['y_hit_c'] - .004),
+    ab = AnnotationBbox(imagebox, (picture_loc, settings['y_hit_m'] + settings['y_hit_c'] - .004 - .014),
                         xybox=(-30, -153),
                         xycoords='data',
                         boxcoords='offset points',
