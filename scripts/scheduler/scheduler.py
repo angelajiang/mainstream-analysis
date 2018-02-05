@@ -137,13 +137,18 @@ def plot_precision(ms_files, max_files, min_files, plot_files, titles, plot_dir)
             plt.savefig(plot_dir + "/" + plot_file + "-precision.pdf")
             plt.clf()
 
-def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotations = []):
+def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotations = [], ms_variant_files=[], ms_variant_name=None):
     for i in range(2):
-        for ms_file, max_file, min_file, plot_file, title \
-                in zip(ms_files, max_files, min_files, plot_files, titles):
+        for i, (ms_file, max_file, min_file, plot_file, title) \
+                in enumerate(zip(ms_files, max_files, min_files, plot_files, titles)):
+            ms_variant_file = ms_variant_files[i] if ms_variant_files else None
             xs1, ys1, errs1, losses1, fpses1 = get_f1_data(ms_file)
             xs2, ys2, errs2, losses2, fpses2 = get_f1_data(max_file)
             xs3, ys3, errs3, losses3, fpses3 = get_f1_data(min_file)
+            if ms_variant_file:
+                xs4, ys4, errs4, losses4, fpses4 = get_f1_data(ms_variant_file)
+
+
 
             plot_util.format_plot("Number of concurrent apps", "Event F1-score")
             plt.xlim(max(min(xs1),2), max(xs1))
@@ -161,6 +166,12 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
                          marker=plot_util.MAINSTREAM['marker'],
                          color=plot_util.MAINSTREAM['color'],
                          label=plot_util.MAINSTREAM['label'])
+            if ms_variant_file:
+                plt.errorbar(xs4, ys4, yerr=errs4, lw=4, markersize=8,
+                             marker=plot_util.MAINSTREAM_VARIANT['marker'],
+                             color=plot_util.MAINSTREAM_VARIANT['color'],
+                             label=ms_variant_name if ms_variant_name else plot_util.MAINSTREAM_VARIANT['label'])
+
 
             plt.legend()
             plt.savefig(plot_dir + "/" + plot_file + "-f1.pdf")
@@ -275,18 +286,20 @@ def run_combinations():
 
 def run_fairness():
     metric = "f1"
-    ms1 =  "output/streamer/scheduler/atc/f1/f1-fairness-4hybrid-mainstream-simulator"
+    ms1 =  "output/streamer/scheduler/atc/f1/f1-4hybrid-mainstream-simulator"
+    ms_v1 =  "output/streamer/scheduler/atc/f1/f1-fairness-4hybrid-mainstream-simulator"
     max1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-maxsharing"
     min1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-nosharing"
     f1 ="f1-fairness"
-    t1 = ""
+    t1 = "Mainstream with Fairness"
     ms_files = [ms1]
     max_files = [max1]
     min_files = [min1]
     f_files = [f1]
     titles = [t1]
     plot_dir = "plots/scheduler/atc/maximize-f1"
-    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, ms_variant_files=[ms_v1], ms_variant_name="Mainstream-Proportional-Fairness")
+
 
 def run_x_voting():
     for dataset in ["trains", "pedestrian"]:
