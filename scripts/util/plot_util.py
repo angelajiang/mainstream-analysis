@@ -120,6 +120,7 @@ def format_plot_dual(ax1, ax2, xlabel, ylabel1, ylabel2):
     ax2.tick_params(axis='x', which='minor', labelsize=20)
 
     ax1.set_ylim(0, 1)
+    ax2.set_ylim(0, None)
 
     ax1.set_xlabel(xlabel, fontsize=30)
     ax1.set_ylabel(ylabel1, fontsize=30)
