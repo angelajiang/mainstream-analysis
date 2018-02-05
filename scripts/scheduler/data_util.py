@@ -15,12 +15,18 @@ def get_recall_data(csv_file, version):
     errs = []
     as1 = []
     as2 = []
+    combo = False
     with open(csv_file) as f:
         for line in f:
+            if line.startswith('#'):
+                continue
             vals = line.split(',')
             if vals[0].isdigit():
                 num_apps = int(vals[0])
             else:
+                if not combo:
+                    print "Interpreting as combs"
+                    combo = True
                 num_apps = len(vals[0].split("_"))
 
             if version == 0:  # NSDI
@@ -66,14 +72,19 @@ def get_precision_data(csv_file):
     errs = []
     as1 = []
     as2 = []
+    combo = False
 
     with open(csv_file) as f:
         for line in f:
+            if line.startswith('#'):
+                continue
             vals = line.split(',')
             if vals[0].isdigit():
                 num_apps = int(vals[0])
             else:
-                print "Interpreting as combs"
+                if not combo:
+                    print "Interpreting as combs"
+                    combo = True
                 num_apps = len(vals[0].split("_"))
             acc_loss = round(float(vals[3]),2)
             fps_start = num_apps + 5
@@ -112,14 +123,19 @@ def get_f1_data(csv_file):
     avg_fpses = []
     acc_losses = {}
     fpses = {}
+    combo = False
 
     with open(csv_file) as f:
         for line in f:
+            if line.startswith('#'):
+                continue
             vals = line.split(',')
             if vals[0].isdigit():
                 num_apps = int(vals[0])
             else:
-                print "Interpreting as combs"
+                if not combo:
+                    print "Interpreting as combs"
+                    combo = True
                 num_apps = len(vals[0].split("_"))
             # acc_loss = round(float(vals[3]),2)
             fps_start = num_apps + 4
@@ -154,8 +170,11 @@ def get_f1_data(csv_file):
 
 def collect_comb_csvs(comb_files_loc):
     """cat files-*- > files-combined- """
-    new_file_name = comb_files_loc.replace("-*-", "_combined-")
-    files = sorted(glob.glob(comb_files_loc), key=lambda x: int(x.split('-')[-3]))
-    with open(new_file_name, "w") as f:
-        subprocess.call(["cat"] + files, stdout=f)
+    new_file_name = comb_files_loc.replace("-numapps-*-", "-all-")
+    files = sorted(glob.glob(comb_files_loc), key=lambda x: int(x.split('numapps-')[1].split('-')[0]))
+    if len(files) > 1:
+        with open(new_file_name, "w") as f:
+            subprocess.call(["cat"] + files, stdout=f)
+    else:
+        print "Warning, no files found for pattern", comb_files_loc
     return new_file_name

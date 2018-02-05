@@ -137,7 +137,7 @@ def plot_precision(ms_files, max_files, min_files, plot_files, titles, plot_dir)
             plt.savefig(plot_dir + "/" + plot_file + "-precision.pdf")
             plt.clf()
 
-def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotations = [], ms_variant_files=[], ms_variant_name=None):
+def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, xlim=None, annotations = [], ms_variant_files=[], ms_variant_name=None, legend=False):
     for i in range(2):
         for i, (ms_file, max_file, min_file, plot_file, title) \
                 in enumerate(zip(ms_files, max_files, min_files, plot_files, titles)):
@@ -151,7 +151,10 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
 
 
             plot_util.format_plot("Number of concurrent apps", "Event F1-score")
-            plt.xlim(max(min(xs1),2), max(xs1))
+            if xlim:
+                plt.xlim(*xlim)
+            else:
+                plt.xlim(max(min(xs1),2), max(xs1))
             plt.ylim(0, 1)
 
             plt.errorbar(xs3, ys3, yerr=errs3, lw=4, markersize=8,
@@ -172,8 +175,10 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, annota
                              color=plot_util.MAINSTREAM_VARIANT['color'],
                              label=ms_variant_name if ms_variant_name else plot_util.MAINSTREAM_VARIANT['label'])
 
+            if legend:
+                leg = plt.legend(loc=1)
+                leg.get_frame().set_alpha(0.5)
 
-            plt.legend()
             plt.savefig(plot_dir + "/" + plot_file + "-f1.pdf")
 
             if len(annotations) > 0:
@@ -260,17 +265,16 @@ root_dir = "output/streamer/scheduler/atc"
 
 def main():
     # run_combinations()
-    run_fairness()
+    # run_fairness()
+    run_combinations_left4pts()
     # run_x_voting()
 
 
 def run_combinations():
     metric = "f1"
-    comb_files_loc = root_dir + "/{metric}/{metric}-combinations-*-mainstream-simulator".format(metric=metric)
-    comb_file_name = collect_comb_csvs(comb_files_loc)
-    ms0 = comb_file_name
+    ms0 = collect_comb_csvs("{root}/{metric}/combos/{metric}-combo-numapps-*-mainstream-simulator".format(root=root_dir, metric=metric))
     ms1 =  "output/streamer/scheduler/atc/f1/f1-4hybrid-mainstream-simulator"
-    max1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-maxsharing"
+    max1 = "output/streamer/scheduler/atc/f1/combos/f1-4hybrid-combo-all-maxsharing"
     min1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-nosharing"
     f1 ="f1-4hybrid"
     t1 = ""
@@ -281,8 +285,25 @@ def run_combinations():
     titles = [t1]
     hybrid4_annotations = [1, 6, 1, 5, 3, 6]
     plot_dir = "plots/scheduler/atc/maximize-f1"
-    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, annotations = hybrid4_annotations)
-    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, annotations = hybrid4_annotations, legend=True)
+    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, legend=True)
+
+
+def run_combinations_left4pts():
+    metric = "f1"
+    ms1 = collect_comb_csvs("{root}/{metric}/combos/{metric}-4hybrid-combo-numapps-*-mainstream-simulator".format(root=root_dir, metric=metric))
+    max1 = collect_comb_csvs("{root}/{metric}/combos/{metric}-4hybrid-combo-numapps-*-maxsharing".format(root=root_dir, metric=metric))
+    min1 = collect_comb_csvs("{root}/{metric}/combos/{metric}-4hybrid-combo-numapps-*-nosharing".format(root=root_dir, metric=metric))
+    f1 ="f1-4hybrid-combo"
+    t1 = ""
+    ms_files = [ms1]
+    max_files = [max1]
+    min_files = [min1]
+    f_files = [f1]
+    titles = [t1]
+    plot_dir = "plots/scheduler/atc/maximize-f1"
+    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, xlim=(0, 5), legend=True)
+
 
 def run_fairness():
     metric = "f1"
@@ -298,7 +319,7 @@ def run_fairness():
     f_files = [f1]
     titles = [t1]
     plot_dir = "plots/scheduler/atc/maximize-f1"
-    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, ms_variant_files=[ms_v1], ms_variant_name="Mainstream-Proportional-Fairness")
+    plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, ms_variant_files=[ms_v1], ms_variant_name="Mainstream-Proportional-Fairness", legend=True)
 
 
 def run_x_voting():
