@@ -299,7 +299,7 @@ def run_combinations():
     ms1 =  "output/streamer/scheduler/atc/f1/f1-4hybrid-mainstream-simulator"
     max1 = "output/streamer/scheduler/atc/f1/combos/f1-4hybrid-combo-all-maxsharing"
     min1 = "output/streamer/scheduler/atc/f1/f1-4hybrid-nosharing"
-    f1 ="f1-4hybrid"
+    f1 = "f1-4hybrid-combos"
     t1 = ""
     ms_files = [ms1]
     max_files = [max1]

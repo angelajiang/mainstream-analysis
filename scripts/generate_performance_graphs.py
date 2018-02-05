@@ -191,6 +191,16 @@ if __name__ == "__main__":
     labels = ["Fully Independent", "Profiled", "Mainstream Model", "Fully Dependent"]
     false_neg_by_stride.plot_dependence(files, labels, event_lengths, plot_file)
 
+    event_lengths = [49, 9, 42, 52, 77, 18, 90, 9, 76, 111, 149, 66, 34, 30, 77, 31, 28, 31, 8, 2, 151, 44, 33, 44, 30, 40, 38, 115, 55, 23, 257, 5, 32, 1681, 103, 18, 110, 66, 76, 86, 124, 39, 74, 29, 71, 40, 63, 23, 81]
+    plot_file = "plots/frame-rate/frame-rate-pedestrian-dependences-with-correlation.pdf"
+    file_prefix = "output/mainstream/frame-rate/pedestrian/atrium/atrium-mobilenets-84"
+    dependent_file = file_prefix + "-dependent-whole"
+    independent_file = file_prefix + "-independent-whole"
+    empirical_file = file_prefix + "-empirical-random"
+    correlation_file = file_prefix + "-correlation"
+    files = [independent_file, empirical_file, correlation_file, dependent_file]
+    labels = ["Fully Independent", "Profiled", "Mainstream Model", "Fully Dependent"]
+    plot_dependence(files, labels, event_lengths, plot_file)
 
     # False positive frequency
     print "Plotting false positive frequency..."
