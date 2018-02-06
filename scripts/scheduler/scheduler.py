@@ -74,14 +74,18 @@ def plot_x_voting(ms_files, labels, plot_file, plot_dir, dual=False, frontier=Fa
                              color=c)
 
             if frontier:
-                xss, ys = plot_util.frontier(all_pts)
+                if plot_file == 'voting-train-500-f1' and metric == 'f1':
+                    xss, ys = plot_util.frontier(all_pts, True)
+                else:
+                    xss, ys = plot_util.frontier(all_pts, False)
+
                 lines += ax1.plot(xss, ys, '--', label='Frontier', lw=7)
 
                 ax1.set_ylim(0, 1)
 
             if dual:
                 plot_util.format_plot_dual(ax1, ax2, "Number of concurrent apps", "Event " + title, "Average FPS")
-            else:    
+            else:
                 plot_util.format_plot("Number of concurrent apps", "Event " + title)
             ax1.set_xlim(max(min(xs),2), max(xs))
 
@@ -247,7 +251,7 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, errbar
                                              ys3[annotation],
                                              losses3[annotation],
                                              fpses2[annotation])
-                    
+
                     # plt.annotate("\\textcolor{{red}}{{({})}} Frame Acc: {}, FPS: {}".format(params["name"], 1-loss, fps),                         fpses3[annotation])
                     plt.annotate("({}) Frame Acc: {}, FPS: {}".format(params["name"], 1-loss, fps),
                                  xy=(x, y),
