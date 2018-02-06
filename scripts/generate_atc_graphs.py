@@ -60,8 +60,10 @@ def f1_4hybrid():
     f_files = [f1]
     titles = [t1]
     hybrid4_annotations = [2, 6, 1, 5, 0, 6]
+    hybrid4_annotations = [i+2 for i in hybrid4_annotations]  # Because of left 2 points added.
 
-    scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, annotations = hybrid4_annotations, errbars=False)
+    scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir,
+                      annotations = hybrid4_annotations, errbars=False, legend_xargs=dict(loc=3))
     scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, errbars=False)
     scheduler.plot_recall(ms_files, max_files, min_files, f_files, titles, plot_dir)
     scheduler.plot_precision(ms_files, max_files, min_files, f_files, titles, plot_dir)
@@ -71,7 +73,6 @@ def f1_4hybrid():
 
 f1_pedestrian()
 f1_train_500()
-    hybrid4_annotations = [i+2 for i in hybrid4_annotations]  # Because of left 2 points added.
 f1_4hybrid()
 
 ############## COMBINATIONS ############
