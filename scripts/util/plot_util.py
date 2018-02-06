@@ -146,7 +146,6 @@ def frontier(all_pts, voting_train_f1):
     xss = np.linspace(min(all_xs), max(all_xs), 100)
 
     if voting_train_f1:
-        print "xs: ", xs, "ys: ", ys
         xs_l = list(xs)
         ys_l = list(ys)
         for i in range(len(xs_l)):
@@ -155,7 +154,6 @@ def frontier(all_pts, voting_train_f1):
                 xs_l = [x for x in xs if x != 9]
                 ys_l = [y for y in ys if y != to_delete]
                 break
-        print "xs_l, ys_l: ", xs_l, ys_l
         spl = scipy.interpolate.PchipInterpolator(xs_l, ys_l)
     else:
         spl = scipy.interpolate.PchipInterpolator(xs, ys)
