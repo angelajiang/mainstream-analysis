@@ -156,7 +156,11 @@ def plot_precision(ms_files, max_files, min_files, plot_files, titles, plot_dir,
             plt.savefig(plot_dir + "/" + plot_file + "-precision.pdf")
             plt.clf()
 
-def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, errbars=True, xlim=None, annotations = [], ms_variant_files=[], ms_variant_name=None, legend=False, legend_xargs={}):
+def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, errbars=True, xlim=None, annotations = [], ms_variant_files=[], ms_variant_name=None, legend=True, legend_xargs={}):
+    # import matplotlib
+    # matplotlib.use('ps')
+    # matplotlib.rc('text', usetex=True)
+    # matplotlib.rc('text.latex', preamble='\usepackage{xcolor}')
     for i in range(2):
         for i, (ms_file, max_file, min_file, plot_file, title) \
                 in enumerate(zip(ms_files, max_files, min_files, plot_files, titles)):
@@ -192,6 +196,18 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, errbar
                          marker=plot_util.MAINSTREAM['marker'],
                          color=plot_util.MAINSTREAM['color'],
                          label=plot_util.MAINSTREAM['label'])
+
+            # To get calculation for atc2018.
+            diffs = [[],[]]
+            for x1, y1, x2, y2, x3, y3 in zip(xs1, ys1, xs2, ys2, xs3, ys3):
+                # print "should be same", x1, x2, x3
+                assert x1 == x2 == x3
+                print x1, y1, y2, y3, "%", y1/y2, y1/y3
+                diffs[0].append(y1/y2)
+                diffs[1].append(y1/y3)
+                # print "difference", 0., y1 - y2, y1 - y3
+            print "max", max(diffs[0]), max(diffs[1])
+
             if ms_variant_file:
                 plt.errorbar(xs4, ys4, yerr=errs4, lw=4, markersize=8,
                              marker=plot_util.MAINSTREAM_VARIANT['marker'],
@@ -207,77 +223,39 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, errbar
             if len(annotations) > 0:
                 assert len(annotations) == 6
 
-                (x, y, loss, fps) = (xs1[annotations[0]],
-                                     ys1[annotations[0]],
-                                     losses1[annotations[0]],
-                                     fpses1[annotations[0]])
-                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps),
-                             xy=(x, y),
-                             xytext=(20, 30),
-                             xycoords='data',
-                             fontsize=15,
-                             textcoords='offset points',
-                             arrowprops=dict(arrowstyle="->"))
-
-                (x, y, loss, fps) = (xs1[annotations[1]],
-                                     ys1[annotations[1]],
-                                     losses1[annotations[1]],
-                                     fpses1[annotations[1]])
-                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps),
-                             xy=(x, y),
-                             xytext=(-160, 30),
-                             xycoords='data',
-                             fontsize=15,
-                             textcoords='offset points',
-                             arrowprops=dict(arrowstyle="->"))
-
-                (x, y, loss, fps) = (xs2[annotations[2]],
-                                     ys2[annotations[2]],
-                                     losses2[annotations[2]],
-                                     fpses2[annotations[2]])
-                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps),
-                             xy=(x, y),
-                             xytext=(-25, 50),
-                             xycoords='data',
-                             fontsize=15,
-                             textcoords='offset points',
-                             arrowprops=dict(arrowstyle="->"))
-
-                (x, y, loss, fps) = (xs2[annotations[3]],
-                                     ys2[annotations[3]],
-                                     losses2[annotations[3]],
-                                     fpses2[annotations[3]])
-                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps),
-                             xy=(x, y),
-                             xytext=(-160, 30),
-                             xycoords='data',
-                             fontsize=15,
-                             textcoords='offset points',
-                             arrowprops=dict(arrowstyle="->"))
-
-                (x, y, loss, fps) = (xs3[annotations[4]],
-                                     ys3[annotations[4]],
-                                     losses3[annotations[4]],
-                                     fpses3[annotations[4]])
-                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps),
-                             xy=(x, y),
-                             xytext=(-15, 25),
-                             xycoords='data',
-                             fontsize=15,
-                             textcoords='offset points',
-                             arrowprops=dict(arrowstyle="->"))
-
-                (x, y, loss, fps) = (xs3[annotations[5]],
-                                     ys3[annotations[5]],
-                                     losses3[annotations[5]],
-                                     fpses3[annotations[5]])
-                plt.annotate("Frame Acc:" + str(1-loss) + ", FPS:" + str(fps),
-                             xy=(x, y),
-                             xytext=(-170, 70),
-                             xycoords='data',
-                             fontsize=15,
-                             textcoords='offset points',
-                             arrowprops=dict(arrowstyle="->"))
+                annotations_params = [
+                    {'xy': (-30, 30), 'src': 1, 'name': 'a'},
+                    {'xy': (-280, 40), 'src': 1, 'name': 'b'},
+                    {'xy': (15, -70), 'src': 2, 'name': 'e'},
+                    {'xy': (-130, -40), 'src': 2, 'name': 'd'},
+                    {'xy': (35, -25), 'src': 3, 'name': 'c'},
+                    {'xy': (-170, 30), 'src': 3, 'name': 'f'},
+                ]
+                for annotation, params in zip(annotations, annotations_params):
+                    if params['src'] == 1:
+                        (x, y, loss, fps) = (xs1[annotation],
+                                             ys1[annotation],
+                                             losses1[annotation],
+                                             fpses1[annotation])
+                    elif params['src'] == 2:
+                        (x, y, loss, fps) = (xs2[annotation],
+                                             ys2[annotation],
+                                             losses2[annotation],
+                                             fpses2[annotation])
+                    elif params['src'] == 3:
+                        (x, y, loss, fps) = (xs3[annotation],
+                                             ys3[annotation],
+                                             losses3[annotation],
+                                             fpses2[annotation])
+                    
+                    # plt.annotate("\\textcolor{{red}}{{({})}} Frame Acc: {}, FPS: {}".format(params["name"], 1-loss, fps),                         fpses3[annotation])
+                    plt.annotate("({}) Frame Acc: {}, FPS: {}".format(params["name"], 1-loss, fps),
+                                 xy=(x, y),
+                                 xytext=params['xy'],
+                                 xycoords='data',
+                                 fontsize=15,
+                                 textcoords='offset points',
+                                 arrowprops=dict(arrowstyle="->"))
 
                 plt.savefig(plot_dir + "/" + plot_file + "-f1-annotated.pdf")
             plt.clf()

@@ -137,7 +137,7 @@ def get_f1_data(csv_file):
                     print "Interpreting as combs"
                     combo = True
                 num_apps = len(vals[0].split("_"))
-            # acc_loss = round(float(vals[3]),2)
+            acc_loss = round(float(vals[3]),2)
             fps_start = num_apps + 4
             fps_end = (2 *num_apps) + 4
             fps_list = [float(v) for v in vals[fps_start:fps_end]]
@@ -156,7 +156,7 @@ def get_f1_data(csv_file):
                 print "WARNING: No false positives. Set precision to 0"
             f1 = hmean([1 - float(fnr), 1 - float(fpr)])
             metrics[num_apps].append(f1)
-            # acc_losses[num_apps].append(acc_loss)
+            acc_losses[num_apps].append(acc_loss)
             fpses[num_apps].append(average_fps)
 
     for x in xs:
