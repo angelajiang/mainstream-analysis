@@ -255,7 +255,7 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, errbar
                         (x, y, loss, fps) = (xs3[annotation],
                                              ys3[annotation],
                                              losses3[annotation],
-                                             fpses2[annotation])
+                                             fpses3[annotation])
 
                     # plt.annotate("\\textcolor{{red}}{{({})}} Frame Acc: {}, FPS: {}".format(params["name"], 1-loss, fps),                         fpses3[annotation])
                     plt.annotate("({}) Frame Acc: {}, FPS: {}".format(params["name"], 1-loss, fps),
