@@ -58,9 +58,14 @@ def plot_x_voting(ms_files, labels, plot_file, plot_dir, dual=False, frontier=Fa
                 elif metric == 'precision':
                     xs, ys, errs, losses, fpses = get_precision_data(ms_file)
                 if frontier:
-                    lines.append(ax1.errorbar(xs, ys, yerr=errs, label=label, lw=2, markersize=8,
-                                              marker=m,
-                                              color=c))
+                    if label == "7-voting":
+                        lines.append(ax1.errorbar(xs, ys, yerr=errs, label=label, lw=2, markersize=6,
+                                                  marker=m,
+                                                  color=c))
+                    else:
+                        lines.append(ax1.errorbar(xs, ys, yerr=errs, label=label, lw=2, markersize=4,
+                                                  marker=m,
+                                                  color=c))
                     # lines.append(ax1.scatter(xs, ys, label=label, s=50,
                                              # edgecolor='black', marker=m, color=c))
                     all_pts += list(zip(xs, ys))
