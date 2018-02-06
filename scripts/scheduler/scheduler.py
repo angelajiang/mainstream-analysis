@@ -75,7 +75,7 @@ def plot_x_voting(ms_files, labels, plot_file, plot_dir, dual=False, frontier=Fa
 
             if frontier:
                 xss, ys = plot_util.frontier(all_pts)
-                lines += ax1.plot(xss, ys, '--', label='Frontier', lw=7)
+                lines += ax1.plot(xss, ys, '--', label='Pareto Frontier', lw=7)
 
                 ax1.set_ylim(0, 1)
 
@@ -336,7 +336,7 @@ def run_x_voting():
             plot_dir = "plots/scheduler/"
             # plot_x_voting(mses, lines, f_name, plot_dir)
             plot_x_voting(mses, lines, f_name, plot_dir, frontier=True)
-            # plot_x_voting(mses, lines, f_name, plot_dir, dual=True)
+            plot_x_voting(mses, lines, f_name, plot_dir, dual=True)
 
 
 if __name__ == '__main__':
