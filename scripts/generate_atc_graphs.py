@@ -98,7 +98,7 @@ def f1_4hybrid_corr0():
     f_files = [f1]
     titles = [t1]
 
-    scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, legend_xargs=dict(loc=3))
     scheduler.plot_precision(ms_files, max_files, min_files, f_files, titles, plot_dir)
 
 
@@ -114,7 +114,7 @@ def f1_4hybrid_corr_emph():
     f_files = [f1]
     titles = [t1]
 
-    scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, errbars=False)
+    scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, errbars=False, legend_xargs=dict(loc=3))
     scheduler.plot_precision(ms_files, max_files, min_files, f_files, titles, plot_dir, errbars=False)
 
 
@@ -130,7 +130,7 @@ def f1_4hybrid_corr1():
     f_files = [f1]
     titles = [t1]
 
-    scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
+    scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, legend_xargs=dict(loc=3))
     scheduler.plot_precision(ms_files, max_files, min_files, f_files, titles, plot_dir)
 
 f1_4hybrid_corr0()
