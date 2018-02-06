@@ -124,6 +124,8 @@ def plot_dependence(files, labels, event_lengths, plot_file):
     with sns.axes_style('ticks'):
         fps = 1
 
+        min_y = .5
+
         for filename, label in zip(files, labels):
 
             data = get_data(filename)
@@ -135,9 +137,11 @@ def plot_dependence(files, labels, event_lengths, plot_file):
             ys = data["ys"]
             # FNR to Recall
             ys = [1. - y for y in ys]
+            min_y = min(min_y, min(ys))
             plt.plot(xs, ys, label=label, lw=2)
 
-        min_y = .5
+        if min_y < .2:
+            min_y = 0
 
         for length in event_lengths:
             plt.axvline(x=1.0 / length, linestyle="--", color="black", alpha=0.3)
@@ -222,5 +226,17 @@ if __name__ == "__main__":
     empirical_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-empirical-temporal"
     correlation_file = "output/mainstream/frame-rate/no-afn/train/v2/trains-313-correlation"
     files = [independent_file, empirical_file, correlation_file, dependent_file]
-    labels = ["Fully Independent", "Profiled", "Mainstream Model", "Fully Dependent"]
+    labels = ["Fully Independent", "Profiled", "Mainstream Prediction", "Fully Dependent"]
     plot_dependence(files, labels, event_lengths, plot_file)
+
+    event_lengths = [49, 9, 42, 52, 77, 18, 90, 9, 76, 111, 149, 66, 34, 30, 77, 31, 28, 31, 8, 2, 151, 44, 33, 44, 30, 40, 38, 115, 55, 23, 257, 5, 32, 1681, 103, 18, 110, 66, 76, 86, 124, 39, 74, 29, 71, 40, 63, 23, 81]
+    plot_file = "plots/frame-rate/frame-rate-pedestrian-dependences-with-correlation.pdf"
+    file_prefix = "output/mainstream/frame-rate/pedestrian/atrium/atrium-mobilenets-84"
+    dependent_file = file_prefix + "-dependent-whole"
+    independent_file = file_prefix + "-independent-whole"
+    empirical_file = file_prefix + "-empirical-random"
+    correlation_file = file_prefix + "-correlation"
+    files = [independent_file, empirical_file, correlation_file, dependent_file]
+    labels = ["Fully Independent", "Profiled", "Mainstream Prediction", "Fully Dependent"]
+    plot_dependence(files, labels, event_lengths, plot_file)
+

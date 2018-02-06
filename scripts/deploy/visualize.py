@@ -5,11 +5,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 # mpl.style.use("classic")
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
-import seaborn as sns
 sys.path.append("scripts/util")
 import plot_util
-
-sns.set_style("white")
 
 sizes = {
     'label': 30,
@@ -83,7 +80,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     imagebox.image.axes = ax
 
     ab = AnnotationBbox(imagebox, (picture_loc, settings['y_hit_m'] + settings['y_hit_c'] - .004),
-                        xybox=(-30, -153),
+                        xybox=(-30, -160),
                         xycoords='data',
                         boxcoords='offset points',
                         pad=0,
@@ -106,8 +103,6 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     handles, labels = ax.get_legend_handles_labels()
     plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=sizes['legend'], ncol=1, frameon=False)
     plt.tight_layout()
-    plt.gca().xaxis.grid(True)
-    plt.gca().yaxis.grid(True)
     plt.savefig(plot_file)
     plt.clf()
 

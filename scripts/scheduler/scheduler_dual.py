@@ -10,26 +10,6 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 
-def format_plot(ax1, ax2, xlabel, ylabel1, ylabel2):
-    ax1.tick_params(axis='y', which='major', labelsize=23)
-    ax1.tick_params(axis='y', which='minor', labelsize=20)
-    ax1.tick_params(axis='x', which='major', labelsize=23)
-    ax1.tick_params(axis='x', which='minor', labelsize=20)
-
-    ax2.tick_params(axis='y', which='major', labelsize=23)
-    ax2.tick_params(axis='y', which='minor', labelsize=20)
-    ax2.tick_params(axis='x', which='major', labelsize=23)
-    ax2.tick_params(axis='x', which='minor', labelsize=20)
-
-    ax1.set_ylim(0, 1)
-
-    ax1.set_xlabel(xlabel, fontsize=30)
-    ax1.set_ylabel(ylabel1, fontsize=30)
-    ax2.set_ylabel(ylabel2, fontsize=30)
-    plt.tight_layout()
-    plt.gca().xaxis.grid(True)
-    plt.gca().yaxis.grid(True)
-
 def plot_f1_dual(ms_files, max_files, min_files, plot_files, titles, plot_dir, annotated=False):
     fig, ax1 = plt.subplots()
     ax2 = ax1.twinx()
@@ -65,7 +45,7 @@ def plot_f1_dual(ms_files, max_files, min_files, plot_files, titles, plot_dir, a
                          color=plot_util.MAINSTREAM['color'],
                          label=plot_util.MAINSTREAM['label'])
 
-            format_plot(ax1, ax2, "Number of concurrent apps", "Event F1-score", "Average FPS")
+            plot_util.format_plot_dual(ax1, ax2, "Number of concurrent apps", "Event F1-score", "Average FPS")
             ax1.set_xlim(max(min(xs1),2), max(xs1))
 
             lns = l1+l2+l3
@@ -109,7 +89,7 @@ def plot_recall_dual(ms_files, max_files, min_files, plot_files, titles, plot_di
                          color=plot_util.MAINSTREAM['color'],
                          label=plot_util.MAINSTREAM['label'])
 
-            format_plot(ax1, ax2, "Number of concurrent apps", "Event Recall", "Average FPS")
+            plot_util.format_plot_dual(ax1, ax2, "Number of concurrent apps", "Event Recall", "Average FPS")
             ax1.set_xlim(max(min(xs1),2), max(xs1))
             lns = l1+l2+l3
             labels = [l.get_label() for l in lns]
@@ -151,7 +131,7 @@ def plot_precision_dual(ms_files, max_files, min_files, plot_files, titles, plot
                          color=plot_util.MAINSTREAM['color'],
                          label=plot_util.MAINSTREAM['label'])
 
-            format_plot(ax1, ax2, "Number of concurrent apps", "Event Precision", "Average FPS")
+            plot_util.format_plot_dual(ax1, ax2, "Number of concurrent apps", "Event Precision", "Average FPS")
             ax1.set_xlim(max(min(xs1),2), max(xs1))
             lns = l1+l2+l3
             labels = [l.get_label() for l in lns]
