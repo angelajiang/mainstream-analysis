@@ -58,9 +58,14 @@ def plot_x_voting(ms_files, labels, plot_file, plot_dir, dual=False, frontier=Fa
                 elif metric == 'precision':
                     xs, ys, errs, losses, fpses = get_precision_data(ms_file)
                 if frontier:
-                    lines.append(ax1.errorbar(xs, ys, yerr=errs, label=label, lw=2, markersize=8,
-                                              marker=m,
-                                              color=c))
+                    if label == "7-voting":
+                        lines.append(ax1.errorbar(xs, ys, yerr=errs, label=label, lw=2, markersize=6,
+                                                  marker=m,
+                                                  color=c))
+                    else:
+                        lines.append(ax1.errorbar(xs, ys, yerr=errs, label=label, lw=2, markersize=4,
+                                                  marker=m,
+                                                  color=c))
                     # lines.append(ax1.scatter(xs, ys, label=label, s=50,
                                              # edgecolor='black', marker=m, color=c))
                     all_pts += list(zip(xs, ys))
@@ -74,14 +79,18 @@ def plot_x_voting(ms_files, labels, plot_file, plot_dir, dual=False, frontier=Fa
                              color=c)
 
             if frontier:
-                xss, ys = plot_util.frontier(all_pts)
+                if plot_file == 'voting-train-500-f1' and metric == 'f1':
+                    xss, ys = plot_util.frontier(all_pts, True)
+                else:
+                    xss, ys = plot_util.frontier(all_pts, False)
+
                 lines += ax1.plot(xss, ys, '--', label='Pareto Frontier', lw=7)
 
                 ax1.set_ylim(0, 1)
 
             if dual:
                 plot_util.format_plot_dual(ax1, ax2, "Number of concurrent apps", "Event " + title, "Average FPS")
-            else:    
+            else:
                 plot_util.format_plot("Number of concurrent apps", "Event " + title)
             ax1.set_xlim(max(min(xs),2), max(xs))
 
@@ -247,7 +256,7 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, errbar
                                              ys3[annotation],
                                              losses3[annotation],
                                              fpses2[annotation])
-                    
+
                     # plt.annotate("\\textcolor{{red}}{{({})}} Frame Acc: {}, FPS: {}".format(params["name"], 1-loss, fps),                         fpses3[annotation])
                     plt.annotate("({}) Frame Acc: {}, FPS: {}".format(params["name"], 1-loss, fps),
                                  xy=(x, y),

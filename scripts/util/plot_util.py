@@ -1,4 +1,5 @@
-from scipy.interpolate import PchipInterpolator, CubicSpline
+#from scipy.interpolate import PchipInterpolator
+import scipy.interpolate
 import numpy as np
 from matplotlib import colors
 
@@ -130,7 +131,7 @@ def format_plot_dual(ax1, ax2, xlabel, ylabel1, ylabel2):
     plt.gca().yaxis.grid(True)
 
 
-def frontier(all_pts):
+def frontier(all_pts, voting_train_f1):
     pts = []
     highest = -1
     for x, y in sorted(all_pts, reverse=True):
@@ -144,6 +145,17 @@ def frontier(all_pts):
 
     xss = np.linspace(min(all_xs), max(all_xs), 100)
 
-    spl = PchipInterpolator(xs, ys)
+    if voting_train_f1:
+        xs_l = list(xs)
+        ys_l = list(ys)
+        for i in range(len(xs_l)):
+            if xs_l[i] == 9:
+                to_delete = ys_l[i]
+                xs_l = [x for x in xs if x != 9]
+                ys_l = [y for y in ys if y != to_delete]
+                break
+        spl = scipy.interpolate.PchipInterpolator(xs_l, ys_l)
+    else:
+        spl = scipy.interpolate.PchipInterpolator(xs, ys)
     ys = spl(xss)
     return xss, ys
