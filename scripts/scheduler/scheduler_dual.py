@@ -49,7 +49,7 @@ def plot_dual(metric, metric_title, ms_files, max_files, min_files, plot_files, 
                 ax2_lines += ax2.plot(xs, fpses,
                                       marker=util['marker_alt'],
                                       color=util['color'],
-                                      label=util['label'] + ' FPS',
+                                      label=util['label'],
                                       **ax2_params)
             ax1_lines = []
             for row, util in zip(data, utils):
@@ -57,15 +57,17 @@ def plot_dual(metric, metric_title, ms_files, max_files, min_files, plot_files, 
                 ax1_lines += ax1.plot(xs, ys, lw=4, markersize=8,
                                       marker=util['marker'],
                                       color=util['color'],
-                                      label=util['label'] + ' F1')
+                                      label=util['label'])
 
             plot_util.format_plot_dual(ax1, ax2, "Number of concurrent apps", "Event " + metric_title, "Average FPS")
             ax1.set_xlim(max(min(xs),2), max(xs))
-            lns = ax1_lines+ax2_lines
-            labels = [l.get_label() for l in lns]
+            lns = ax1_lines
+            labels = [l.get_label() + ' (FPS, {})'.format(metric_title) for l in lns]
             if metric == "f1":
-                leg = ax1.legend(lns, labels, loc=4, fontsize=13)
-                leg.get_frame().set_alpha(0.7)
+                leg = ax1.legend(lns, labels, loc=4, bbox_to_anchor=[1.01, .1], fontsize=13, borderpad=None)
+                leg.get_frame().set_linewidth(0.0)
+                leg2 = ax2.legend(ax2_lines, [""] * len(lns), loc=4, bbox_to_anchor=[.5, .1], fontsize=13, borderpad=None, frameon=False)
+                leg2.get_frame().set_linewidth(0.0)
 
             plt.savefig(plot_dir + "/" + plot_file + "-" + metric + "-dual.pdf")
 
