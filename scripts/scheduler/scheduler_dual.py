@@ -22,15 +22,23 @@ def plot_f1_dual(ms_files, max_files, min_files, plot_files, titles, plot_dir, a
             xs2, ys2, errs2, losses2, fpses2 = scheduler.get_f1_data(max_file)
             xs3, ys3, errs3, losses3, fpses3 = scheduler.get_f1_data(min_file)
 
-            ax2.plot(xs3, fpses3, lw=2, markersize=8, alpha=0.2,
-                     marker=plot_util.NO_SHARING['marker'],
-                     color=plot_util.NO_SHARING['color'])
-            ax2.plot(xs2, fpses2, lw=2, markersize=8, alpha=0.2,
-                     marker=plot_util.MAX_SHARING['marker'],
-                     color=plot_util.MAX_SHARING['color'])
-            ax2.plot(xs1, fpses1, lw=2, markersize=8, alpha=0.2,
-                     marker=plot_util.MAINSTREAM['marker'],
-                     color=plot_util.MAINSTREAM['color'])
+            ax2_params = dict(lw=3, markersize=8, alpha=0.7, linestyle='--')
+            ax2_lines = []
+            ax2_lines += ax2.plot(xs3, fpses3,
+                                  marker=plot_util.NO_SHARING['marker_alt'],
+                                  color=plot_util.NO_SHARING['color'],
+                                  label=plot_util.NO_SHARING['label'] + ' FPS',
+                                  **ax2_params)
+            ax2_lines += ax2.plot(xs2, fpses2,
+                                  marker=plot_util.MAX_SHARING['marker_alt'],
+                                  color=plot_util.MAX_SHARING['color'],
+                                  label=plot_util.MAX_SHARING['label'] + ' FPS',
+                                  **ax2_params)
+            ax2_lines += ax2.plot(xs1, fpses1,
+                                  marker=plot_util.MAINSTREAM['marker_alt'],
+                                  color=plot_util.MAINSTREAM['color'],
+                                  label=plot_util.MAINSTREAM['label'] + ' FPS',
+                                  **ax2_params)
 
             l1 = ax1.plot(xs3, ys3, lw=4, markersize=8,
                          marker=plot_util.NO_SHARING['marker'],
@@ -48,7 +56,7 @@ def plot_f1_dual(ms_files, max_files, min_files, plot_files, titles, plot_dir, a
             plot_util.format_plot_dual(ax1, ax2, "Number of concurrent apps", "Event F1-score", "Average FPS")
             ax1.set_xlim(max(min(xs1),2), max(xs1))
 
-            lns = l1+l2+l3
+            lns = l1+l2+l3+ax2_lines
             labels = [l.get_label() for l in lns]
             ax1.legend(lns, labels, loc=0, fontsize=15)
 

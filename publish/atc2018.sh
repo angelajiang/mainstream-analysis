@@ -10,6 +10,12 @@ cp plots/frame-rate/frame-rate-afn-dependences-with-correlation.pdf $PLOT_DIR
 # python scripts/generate_atc_graphs.py
 cp plots/scheduler/atc/maximize-f1/f1-4hybrid-f1-annotated.pdf $PLOT_DIR/scheduler
 
+# Fig 7: dual
+# python scripts/generate_atc_graphs.py
+cp plots/scheduler/atc/maximize-f1/f1-4hybrid-f1-dual.pdf $PLOT_DIR/scheduler
+cp plots/scheduler/atc/maximize-f1/f1-4hybrid-recall-dual.pdf $PLOT_DIR/scheduler
+cp plots/scheduler/atc/maximize-f1/f1-4hybrid-precision-dual.pdf $PLOT_DIR/scheduler
+
 # Fig 8: corr
 # python scripts/generate_atc_graphs.py
 cp plots/scheduler/atc/maximize-f1/f1-4hybrid-corr0-f1.pdf $PLOT_DIR/scheduler/0-correlation.pdf

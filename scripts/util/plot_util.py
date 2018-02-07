@@ -70,6 +70,7 @@ COLORS = {"grey": colors.colorConverter.to_rgb("#4D4D4D"),
 
 MAINSTREAM = {"color": COLORLISTS[8][0],
               "marker": "h",
+              "marker_alt": "s",
               "pattern": "---",
               "label": "Mainstream"
               }
@@ -82,12 +83,14 @@ MAINSTREAM_VARIANT = {"color": COLORLISTS[4][1],
 
 NO_SHARING = {"color": colors.colorConverter.to_rgb("#7fbf7b"),
               "marker": "<",
+              "marker_alt": ">",
               "pattern": "\\\\",
               "label": "No Sharing"
               }
 
 MAX_SHARING = {"color": COLORLISTS[8][7],
               "marker": "d",
+              "marker_alt": "D",
               "pattern": "xxxxx",
               "label": "Max Sharing"
               }
@@ -131,7 +134,7 @@ def format_plot_dual(ax1, ax2, xlabel, ylabel1, ylabel2):
     plt.gca().yaxis.grid(True)
 
 
-def frontier(all_pts, voting_train_f1):
+def frontier(all_pts, voting_train_f1=None):
     pts = []
     highest = -1
     for x, y in sorted(all_pts, reverse=True):
