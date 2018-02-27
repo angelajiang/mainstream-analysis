@@ -1,10 +1,10 @@
 import pprint as pp
 import sys
 sys.path.append('include/')
+sys.path.append("scripts/util")
+import plot_util
 import matplotlib
-import numpy as np
 from itertools import cycle
-from scipy.interpolate import PchipInterpolator
 
 import layers_info
 
@@ -105,21 +105,7 @@ def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir
 
                 plt.scatter(xs, ys, s=60, marker=cymark(), color=cycol(), edgecolor='black', label=label)
 
-            pts = []
-            highest = -1
-            for x, y in sorted(all_pts, reverse=True):
-                if y > highest:
-                    highest = y
-                    pts.append((x, y))
-            pts = sorted(pts)
-            xs, ys = zip(*pts)
-
-            all_xs = [pt[0] for pt in all_pts]
-
-            xss = np.linspace(min(all_xs), max(all_xs), 100)
-
-            spl = PchipInterpolator(xs, ys)
-            ys = spl(xss)
+            xss, ys = plot_util.frontier(all_pts)
 
             plt.plot(xss, ys, '--', label='Frontier')
 

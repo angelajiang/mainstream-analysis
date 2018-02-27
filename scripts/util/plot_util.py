@@ -1,5 +1,9 @@
-
+#from scipy.interpolate import PchipInterpolator
+import scipy.interpolate
+import numpy as np
 from matplotlib import colors
+
+MARKERS = ["o", "v", "D", "*", "p", "8", "h"]
 
 # http://colorbrewer2.org/#type=diverging&scheme=Spectral&n=4
 COLORLISTS = {3: [
@@ -66,18 +70,95 @@ COLORS = {"grey": colors.colorConverter.to_rgb("#4D4D4D"),
 
 MAINSTREAM = {"color": COLORLISTS[8][0],
               "marker": "h",
+              "marker_alt": "s",
               "pattern": "---",
               "label": "Mainstream"
               }
 
+MAINSTREAM_VARIANT = {"color": COLORLISTS[4][1],
+              "marker": "*",
+              "pattern": "---",
+              "label": "Mainstream-Variant",
+              }
+
 NO_SHARING = {"color": colors.colorConverter.to_rgb("#7fbf7b"),
               "marker": "<",
+              "marker_alt": ">",
               "pattern": "\\\\",
               "label": "No Sharing"
               }
 
 MAX_SHARING = {"color": COLORLISTS[8][7],
               "marker": "d",
+              "marker_alt": "D",
               "pattern": "xxxxx",
               "label": "Max Sharing"
               }
+
+def format_plot(xlabel, ylabel):
+    import matplotlib.pyplot as plt
+    plt.tick_params(axis='y', which='major', labelsize=28)
+    plt.tick_params(axis='y', which='minor', labelsize=20)
+    plt.tick_params(axis='x', which='major', labelsize=28)
+    plt.tick_params(axis='x', which='minor', labelsize=20)
+
+    plt.legend(loc=0, fontsize=15)
+
+    plt.xlabel(xlabel, fontsize=35)
+    plt.ylabel(ylabel, fontsize=35)
+    plt.tight_layout()
+    plt.gca().xaxis.grid(True)
+    plt.gca().yaxis.grid(True)
+
+
+def format_plot_dual(ax1, ax2, xlabel, ylabel1, ylabel2):
+    import matplotlib.pyplot as plt
+    ax1.tick_params(axis='y', which='major', labelsize=23)
+    ax1.tick_params(axis='y', which='minor', labelsize=20)
+    ax1.tick_params(axis='x', which='major', labelsize=23)
+    ax1.tick_params(axis='x', which='minor', labelsize=20)
+
+    ax2.tick_params(axis='y', which='major', labelsize=23)
+    ax2.tick_params(axis='y', which='minor', labelsize=20)
+    ax2.tick_params(axis='x', which='major', labelsize=23)
+    ax2.tick_params(axis='x', which='minor', labelsize=20)
+
+    ax1.set_ylim(0, 1)
+    ax2.set_ylim(0, None)
+
+    ax1.set_xlabel(xlabel, fontsize=30)
+    ax1.set_ylabel(ylabel1, fontsize=30)
+    ax2.set_ylabel(ylabel2, fontsize=30)
+    plt.tight_layout()
+    plt.gca().xaxis.grid(True)
+    plt.gca().yaxis.grid(True)
+
+
+def frontier(all_pts, voting_train_f1=None):
+    pts = []
+    highest = -1
+    for x, y in sorted(all_pts, reverse=True):
+        if y > highest:
+            highest = y
+            pts.append((x, y))
+    pts = sorted(pts)
+    xs, ys = zip(*pts)
+
+    all_xs = [pt[0] for pt in all_pts]
+
+    xss = np.linspace(min(all_xs), max(all_xs), 100)
+
+    if voting_train_f1:
+        xs_l = list(xs)
+        ys_l = list(ys)
+        for i in range(len(xs_l)):
+            if xs_l[i] == 9:
+                to_delete = ys_l[i]
+                xs_l = [x for x in xs if x != 9]
+                ys_l = [y for y in ys if y != to_delete]
+                break
+        spl = scipy.interpolate.PchipInterpolator(xs_l, ys_l)
+    else:
+        spl = scipy.interpolate.PchipInterpolator(xs, ys)
+    ys = spl(xss)
+    return xss, ys
