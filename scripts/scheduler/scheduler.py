@@ -34,9 +34,86 @@ def plot_correlation(ms_files, labels, plot_file, plot_dir, version=0):
         plt.savefig(plot_dir + "/" + plot_file + "-correlation.pdf")
         plt.clf()
 
-def plot_x_voting(ms_files, labels, plot_file, plot_dir, dual=False, frontier=False):
-    colors = plot_util.COLORLISTS[4]
-    colors = [colors[0], colors[3], colors[1], colors[2]]
+def plot_distributed(ms_files_list, labels, plot_file, plot_dir, dual=False, frontier=False, average_weights=None):
+    colors = plot_util.COLORLISTS[12]
+    #colors = [colors[0], colors[3], colors[1], colors[2]]
+    markers = plot_util.MARKERS[:len(ms_files_list)]
+
+    metrics = ["f1", "recall", "precision"]
+    titles = ["F1-score", "Recall", "Precision"]
+
+    for metric, title in zip(metrics, titles):
+        for i in range(2):
+            fig, ax1 = plt.subplots()
+            if dual:
+                ax2 = ax1.twinx()
+
+            lines = []
+            all_pts = []
+            for ms_files, label, c, m in zip(ms_files_list, labels, colors, markers):             
+                if metric == 'f1':
+                    get_data = get_f1_data
+                elif metric == 'recall':
+                    get_data = lambda x: get_recall_data(x, 1)
+                elif metric == 'precision':
+                    get_data = get_precision_data
+
+                all_xs = []
+                all_ys = []
+                all_errs = []
+                all_losses = []
+                all_fpses = []
+
+                for ms_file in ms_files:
+                    xs, ys, errs, losses, fpses = get_data(ms_file)
+                    all_xs.append(xs)
+                    all_ys.append(ys)
+                    all_errs.append(errs)
+                    all_losses.append(losses)
+                    all_fpses.append(fpses)
+                
+                min_len = min(len(ys) for ys in all_ys)
+                for i in range(len(all_ys)):
+                    del all_ys[i][min_len:]
+                    del all_errs[i][min_len:]
+                    del all_losses[i][min_len:]
+                    del all_fpses[i][min_len:]                
+                xs = []
+                for i in range(min_len):
+                    xs.append(sum(x[i] for x in all_xs))
+
+                ys_mean = np.average(all_ys, weights=average_weights, axis=0)
+                errs_mean = np.average(all_errs, weights=average_weights, axis=0)
+                losses_mean = np.average(all_losses, weights=average_weights, axis=0)
+                fpses_mean = np.average(all_fpses, weights=average_weights, axis=0)
+                lines.append(ax1.errorbar(xs, ys_mean, yerr=errs_mean, label=label, lw=4, markersize=8,
+                                              marker=m,
+                                              color=c))
+                if dual:
+                    ax2.plot(xs, fpses_mean, lw=2, markersize=8, alpha=0.2,
+                             marker=m,
+                             color=c)
+
+
+            if dual:
+                plot_util.format_plot_dual(ax1, ax2, "Number of concurrent apps", "Event " + title, "Average FPS")
+            else:
+                plot_util.format_plot("Number of concurrent apps", "Event " + title)
+            ax1.set_xlim(max(min(xs),2), max(xs))
+            ax1.set_ylim(ymin=0)
+            filename = plot_dir + "/" + plot_file + "-" + metric
+            if dual:
+                filename += "-dual"
+            labels = [l.get_label() for l in lines]
+            leg = ax1.legend(lines, labels, loc=0, fontsize=15)
+            leg.get_frame().set_alpha(0.5)
+            plt.savefig(filename + ".pdf")
+
+
+
+def plot_variants(ms_files, labels, plot_file, plot_dir, dual=False, frontier=False):
+    colors = plot_util.COLORLISTS[12]
+    #colors = [colors[0], colors[3], colors[1], colors[2]]
     markers = plot_util.MARKERS[:len(ms_files)]
 
     metrics = ["f1", "recall", "precision"]
@@ -343,9 +420,9 @@ def run_x_voting():
             lines = ["{}-voting".format(i) for i in selected_x]
             f_name ="voting-{}-500-{}".format(dataset, metric)
             plot_dir = "plots/scheduler/"
-            # plot_x_voting(mses, lines, f_name, plot_dir)
-            plot_x_voting(mses, lines, f_name, plot_dir, frontier=True)
-            plot_x_voting(mses, lines, f_name, plot_dir, dual=True)
+            # plot_variants(mses, lines, f_name, plot_dir)
+            plot_variants(mses, lines, f_name, plot_dir, frontier=True)
+            plot_variants(mses, lines, f_name, plot_dir, dual=True)
 
 
 if __name__ == '__main__':
