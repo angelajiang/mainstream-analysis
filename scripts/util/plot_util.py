@@ -3,7 +3,7 @@ import scipy.interpolate
 import numpy as np
 from matplotlib import colors
 
-MARKERS = ["o", "v", "D", "*", "p", "8", "h"]
+MARKERS = ["o", "v", "D", "*", "p", "8", "h", "x", "d", "+", "P", "1", "2"]
 
 # http://colorbrewer2.org/#type=diverging&scheme=Spectral&n=4
 COLORLISTS = {3: [
