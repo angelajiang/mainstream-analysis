@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 plt.ioff()
 
 import seaborn as sns
-sns.set_style("whitegrid")
 
 do_flip = False
 num_layers = 314
@@ -119,32 +118,39 @@ if __name__ == "__main__":
     cr = "output/mainstream/accuracy/cats/cats-resnet-accuracy"
     ai = "output/mainstream/accuracy/pedestrian/atrium/inception/atrium-40-0.0001"
     am = "output/mainstream/accuracy/pedestrian/atrium/mobilenets/atrium-mobilenets-accuracy"
+    cari = "output/mainstream/accuracy/cars/cars-stanford-inception-accuracy"
+    carm = "output/mainstream/accuracy/cars/cars-stanford-mobilenets-accuracy"
 
-    accuracy_files = [fr,
-                      pr,
-                      cr,
+    accuracy_files = [#fr,
+                      #pr,
+                      #cr,
                       fi,
-                      pi,
+                      #pi,
                       ci,
                       ai,
                       fm,
-                      pm,
+                      #pm,
                       cm,
-                      am]
+                      am,
+                      cari,
+                      carm,
+                      ]
 
     labels = [
-              "Flowers-ResNet50",
-              "Paris-ResNet50",
-              "Cats-ResNet50",
+              #"Flowers-ResNet50",
+              #"Paris-ResNet50",
+              #"Cats-ResNet50",
               "Flowers-InceptionV3",
-              "Paris-InceptionV3",
+              #j"Paris-InceptionV3",
               "Cats-InceptionV3",
               "Pedestrian-InceptionV3",
               "Flowers-MobileNets-224",
-              "Paris-MobileNets-224",
+              #"Paris-MobileNets-224",
               "Cats-MobileNets-224",
-              "Pedestrian-MobileNets-224"
+              "Pedestrian-MobileNets-224",
+              "Cars-MobileNets-224",
+              "Cars-InceptionV3"
               ]
-    plot_file = "plots/accuracy/accuracy-by-layer.pdf"
+    plot_file = "plots/accuracy/accuracy-by-layer-4hybrid.pdf"
 
     plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
