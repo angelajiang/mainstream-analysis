@@ -6,7 +6,12 @@ from matplotlib import colors
 MARKERS = ["o", "v", "D", "*", "p", "8", "h"]
 
 # http://colorbrewer2.org/#type=diverging&scheme=Spectral&n=4
-COLORLISTS = {3: [
+COLORLISTS = {
+             2: [
+                colors.colorConverter.to_rgb("#a6cee3"),
+                colors.colorConverter.to_rgb("#7fbf7b"),
+              ],
+             3: [
                 colors.colorConverter.to_rgb("#a6cee3"),
                 colors.colorConverter.to_rgb("#1f78b4"),
                 colors.colorConverter.to_rgb("#b2df8a"),
