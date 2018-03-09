@@ -4,6 +4,59 @@ import subprocess
 import glob
 
 
+def get_exhaustive_data(csv_file):
+    # Assumes Version 0
+    # Version 0: num_apps, 1-F1, frozen_list..., fps_list..., cost
+
+    metrics = {}
+    xs = []
+    ys = []
+    errs = []
+    avg_fpses = []
+    fpses = {}
+    combo = False
+
+    with open(csv_file) as f:
+        for line in f:
+            if line.startswith('#'):
+                continue
+            vals = line.split(',')
+            if vals[0].isdigit():
+                num_apps = int(vals[0])
+            fps_start = num_apps + 2
+            fps_end = (2 *num_apps) + 2
+            fps_list = [float(v) for v in vals[fps_start:fps_end]]
+            average_fps = round(np.average(fps_list), 2)
+            cost = float(vals[fps_end])
+
+            if cost not in metrics.keys():
+                metrics[cost] = {}
+                fpses[cost] = {}
+
+            if num_apps not in metrics[cost].keys():
+                metrics[cost][num_apps] = []
+                fpses[cost][num_apps] = []
+
+            metric = float(vals[1])
+            f1 =  1 - metric
+
+            metrics[cost][num_apps].append(f1)
+            fpses[cost][num_apps].append(average_fps)
+
+    ys = []
+    avg_fpses = []
+    labels = []
+    for cost in sorted(metrics.keys()):
+        for num_apps in sorted(metrics[cost].keys()):
+            ys.append(np.average(metrics[cost][num_apps]))
+            avg_fpses.append(round(np.average(fpses[cost][num_apps]), 2))
+            labels.append(str(num_apps) + "-" + str(cost))
+
+    xs = range(len(ys))
+
+    return xs, ys, avg_fpses, labels
+
+
 def get_recall_data(csv_file, version):
     # Version 0: num_apps,fnr,acc_loss,fps_list...,frozen_list...
     # Version 1: num_apps,fnr,fpr,acc_loss,fps_list...,frozen_list...
