@@ -14,14 +14,14 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 
-def plot_exhaustive_v0(ms_files, label_prefixes, plot_file, plot_dir):
+def plot_bar_v0(ms_files, label_prefixes, plot_file, plot_dir, limit=20):
     colors = plot_util.COLORLISTS[len(ms_files)]
     markers = plot_util.MARKERS
 
     metric = "F1"
     title = "F1"
 
-    width = 0.35
+    width = 0.3
 
     for j in range(2):
 
@@ -29,9 +29,18 @@ def plot_exhaustive_v0(ms_files, label_prefixes, plot_file, plot_dir):
         all_pts = []
 
         for i, (ms_file, label_prefix, c) in enumerate(zip(ms_files, label_prefixes,  colors)):
-            xs, ys, fpses, labels = data_util.get_exhaustive_data(ms_file)
+            metrics, fpses = data_util.get_scheduler_data(ms_file)
+
+            ys = []
+            avg_fpses = []
+            for num_apps in sorted(metrics.keys()):
+                ys += metrics[num_apps]
+                avg_fpses += fpses[num_apps]
+
+            xs = range(len(ys))
+
             xs_bar = [x + (i * width) for x in xs]
-            plt.bar(xs_bar, ys, width,
+            plt.bar(xs_bar[:limit], ys[:limit], width,
                             color=c,
                             alpha=0.5,
                             label = label_prefix)
@@ -42,7 +51,8 @@ def plot_exhaustive_v0(ms_files, label_prefixes, plot_file, plot_dir):
 
         filename = os.path.join(plot_dir, plot_file + "-" + metric)
 
-        plt.legend(loc=3, fontsize=15)
+        plt.legend(loc=0, fontsize=15)
         plt.savefig(filename + ".pdf")
 
         plt.clf()
+
