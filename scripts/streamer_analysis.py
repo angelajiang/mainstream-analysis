@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pprint as pp
 import sys
 import matplotlib
@@ -143,13 +144,15 @@ def plot_processor_latency(processors_file, plot_dir):
             plt.bar(xs, c, width, bottom=b2, color = "darkorchid", label="Base")
             plt.bar(xs, d, width, bottom=b3, color = "palevioletred", label="Task")
 
-            plt.ylim(0,750)
-            plt.xticks(xs, layers, rotation="vertical")
+            #plt.xticks(xs, layers, rotation="vertical")
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
-            plt.legend(loc=0, fontsize=15, ncol=2)
-            plt.ylabel("Processor Latency (ms)", fontsize=20)
-            plt.title(str(num_NN) + " NNs", fontsize=30)
+            plt.legend(loc=0, fontsize=20, ncol=2)
+            plt.ylim(0,750)
+            plt.xlabel(u"More sharing →", fontsize=28)
+            plt.ylabel("Processor Latency (ms)", fontsize=25)
+            plt.grid()
+            plt.title(str(num_NN) + " DNNs", fontsize=30)
             plt.tight_layout()
             plt.savefig(plot_dir +"/processors-"+str(num_NN)+"-NN.pdf")
             plt.clf()

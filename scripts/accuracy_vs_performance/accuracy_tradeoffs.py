@@ -1,8 +1,9 @@
 import pprint as pp
 import sys
 sys.path.append('include/')
+sys.path.append("scripts/util")
+import plot_util
 import matplotlib
-import numpy as np
 from itertools import cycle
 
 import layers_info
@@ -11,10 +12,14 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
 
+import seaborn as sns
+sns.set_style("whitegrid")
+
 def op_to_layer(op_full):
     tensor_name = (op_full.split(":"))[0]
     layer = tensor_name.split("/")[0]
     return layer
+
 
 def get_layers(csv_file, layers_index):
     layers = []
@@ -27,6 +32,7 @@ def get_layers(csv_file, layers_index):
                 layers.append(layer)
     return layers
 
+
 def get_num_NNs(csv_file):
     num_NNs = []
     with open(csv_file) as f:
@@ -37,7 +43,8 @@ def get_num_NNs(csv_file):
                 num_NNs.append(num_NN)
     return num_NNs
 
-def get_latency_data(csv_file):
+
+def get_max_fps_data(csv_file):
     data = {}
     with open(csv_file) as f:
         for line in f:
@@ -52,10 +59,9 @@ def get_latency_data(csv_file):
             if layer not in data[num_NN].keys():
                 data[num_NN][layer] = {}
 
-            data[num_NN][layer]["base"] = base
-            data[num_NN][layer]["task"] = task
-            data[num_NN][layer]["total"] = base + task
+            data[num_NN][layer]["total"] = 1 / (float(task + base) / 1000)
     return data
+
 
 def get_accuracy_data(architecture, csv_file):
     if architecture == "iv3":
@@ -75,39 +81,113 @@ def get_accuracy_data(architecture, csv_file):
             data[layer] = acc
     return data
 
-def plot_accuracy_vs_ms(arch, latency_files, accuracy_files, labels, plot_dir):
+def plot_accuracy_vs_fps(arches, latency_files, accuracy_files, labels, plot_dir):
     num_NNs = get_num_NNs(latency_files[0])
-    for i in range(2): # Hack to get dimensions to match between 1st and 2nd graph
+
+    for i in range(2):  # Hack to get dimensions to match between 1st and 2nd graph
         for num_NN in num_NNs:
             cycol = cycle('rcmkbg').next
+            cymark = cycle('ovDxh1*').next
+            all_pts = []
+            pts_by_net = {}
             for arch, latency_file, accuracy_file, label in \
                     zip(arches, latency_files, accuracy_files, labels):
                 layers = get_layers(latency_file, 0)
 
-                latency_data = get_latency_data(latency_file)
+                latency_data = get_max_fps_data(latency_file)
                 acc_data = get_accuracy_data(arch, accuracy_file)
 
-                xs  = [latency_data[num_NN][layer]["total"] for layer in layers]
-                ys  = [acc_data[layer] for layer in layers]
+                xs = [latency_data[num_NN][layer]["total"] for layer in layers]
+                ys = [acc_data[layer] for layer in layers]
 
-                plt.scatter(xs, ys, s=50, color=cycol(), edgecolor='black', label=label)
+                all_pts += list(zip(xs, ys))
+                pts_by_net[label] = list(zip(xs, ys))
 
-                plt.tick_params(axis='y', which='major', labelsize=24)
-                plt.tick_params(axis='y', which='minor', labelsize=20)
-                plt.tick_params(axis='x', which='major', labelsize=24)
-                plt.tick_params(axis='x', which='minor', labelsize=20)
+                plt.scatter(xs, ys, s=60, marker=cymark(), color=cycol(), edgecolor='black', label=label)
 
-                plt.xlim(0, 600)
-                plt.ylim(.2, 1)
+            xss, ys = plot_util.frontier(all_pts)
 
-                plt.xlabel("Latency (ms)", fontsize=20)
-                plt.ylabel("Top-1 Accuracy", fontsize=20)
-                plt.legend(loc=4, fontsize=15)
-                plt.title(str(num_NN) + " apps", fontsize=30)
-                plt.tight_layout()
-                plt.savefig(plot_dir +"/acc-ms-"+str(num_NN)+"-NN.pdf")
+            plt.plot(xss, ys, '--', label='Frontier')
+
+            pt_a = sorted(pts_by_net['MobileNets-224'])[0]
+            # B: Closest point on Inception curve above A.
+            pt_b = sorted(pts_by_net["InceptionV3"], key=lambda x: abs(pt_a[0] - x[0]))[0]
+
+            # print(pt_a, pt_b)
+            plt.annotate("A: Run 4 full MobileNets-224",
+                         xy=pt_a,
+                         xytext=(-20, -90),
+                         xycoords='data',
+                         fontsize=20,
+                         textcoords='offset points',
+                         arrowprops=dict(arrowstyle="->", connectionstyle="angle3,angleA=105,angleB=10", relpos=(.02, .5)))
+
+            plt.annotate("B: Share partial InceptionV3s",
+                         xy=pt_b,
+                         xytext=(+30, 10),
+                         xycoords='data',
+                         fontsize=20,
+                         textcoords='offset points',
+                         arrowprops=dict(arrowstyle="->", connectionstyle="angle3,angleA=0,angleB=55", relpos=(0, .5)))
+            
+            plt.tick_params(axis='y', which='major', labelsize=28)
+            plt.tick_params(axis='y', which='minor', labelsize=24)
+            plt.tick_params(axis='x', which='major', labelsize=28)
+            plt.tick_params(axis='x', which='minor', labelsize=24)
+
+            plt.ylim(0, 1)
+
+            plt.xlabel("Throughput (FPS)", fontsize=30)
+            plt.ylabel("Top-1 Accuracy", fontsize=30)
+            plt.legend(loc=4, fontsize=20)
+            #plt.title(str(num_NN) + " applications", fontsize=30)
+            plt.gca().xaxis.grid(True)
+            plt.gca().yaxis.grid(True)
+            plt.tight_layout()
+            plt.savefig(plot_dir + "/acc-fps-" + str(num_NN) + "-NN.pdf")
             plt.clf()
 
+def plot_accuracy_vs_fps_partial(arches, latency_files, accuracy_files, labels, plot_dir, suffix):
+    num_NNs = get_num_NNs(latency_files[0])
+
+    for i in range(2):  # Hack to get dimensions to match between 1st and 2nd graph
+        for num_NN in num_NNs:
+            cycol = cycle('rcmkbg').next
+            cymark = cycle('ovDxh1*').next
+            all_pts = []
+            pts_by_net = {}
+            for arch, latency_file, accuracy_file, label in \
+                    zip(arches, latency_files, accuracy_files, labels):
+                layers = get_layers(latency_file, 0)
+
+                latency_data = get_max_fps_data(latency_file)
+                acc_data = get_accuracy_data(arch, accuracy_file)
+
+                xs = [latency_data[num_NN][layer]["total"] for layer in layers]
+                ys = [acc_data[layer] for layer in layers]
+
+                all_pts += list(zip(xs, ys))
+                pts_by_net[label] = list(zip(xs, ys))
+
+                plt.scatter(xs, ys, s=60, marker=cymark(), color=cycol(), edgecolor='black', label=label)
+
+            plt.tick_params(axis='y', which='major', labelsize=28)
+            plt.tick_params(axis='y', which='minor', labelsize=24)
+            plt.tick_params(axis='x', which='major', labelsize=28)
+            plt.tick_params(axis='x', which='minor', labelsize=24)
+
+            plt.ylim(0, 1)
+
+            plt.xlim(0,18)
+            plt.xlabel("Throughput (FPS)", fontsize=30)
+            plt.ylabel("Top-1 Accuracy", fontsize=30)
+            plt.legend(loc=4, fontsize=20)
+            #plt.title(str(num_NN) + " applications", fontsize=30)
+            plt.gca().xaxis.grid(True)
+            plt.gca().yaxis.grid(True)
+            plt.tight_layout()
+            plt.savefig(plot_dir + "/acc-fps-" + str(num_NN) + "-NN-" + suffix + ".pdf")
+            plt.clf()
 
 if __name__ == "__main__":
 
@@ -126,9 +206,15 @@ if __name__ == "__main__":
     arches = [arch1, arch2, arch3]
     latency_files = [latency_file1, latency_file2, latency_file3]
     accuracy_files = [accuracy_file1, accuracy_file2, accuracy_file3]
-    labels = ["InceptionV3", "ResNet50", "MobileNets"]
+    labels = ["InceptionV3", "ResNet50", "MobileNets-224"]
 
     plot_dir = "plots/tradeoffs/flowers"
 
-    plot_accuracy_vs_ms(arches, latency_files, accuracy_files, labels, plot_dir)
+    plot_accuracy_vs_fps_partial(arches, latency_files, accuracy_files, labels, plot_dir, "2")
 
+    arches = [arch1]
+    latency_files = [latency_file1]
+    accuracy_files = [accuracy_file1]
+    labels = ["InceptionV3"]
+
+    plot_accuracy_vs_fps_partial(arches, latency_files, accuracy_files, labels, plot_dir, "1")

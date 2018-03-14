@@ -1,11 +1,24 @@
+# -*- coding: utf-8 -*-
 import pprint as pp
 import sys
 import matplotlib
 import numpy as np
 
+sys.path.append('scripts/util/')
+import preprocess
+import plot_util
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 plt.ioff()
+
+do_flip = False
+if do_flip:
+    more_sharing_label = "No. of unspecialized layers"
+else:
+    # more_sharing_label = u"More sharing →"
+    more_sharing_label = u"% of layers that are unspecialized (shared)"
+do_norm = True
 
 # CSV file needs to be of format
 # layer1,camera_fps,transformer_fps,base_fps,task_fps
@@ -34,31 +47,7 @@ LAYERS = ["input_1",
           "mixed10/concat"]
           #"dense_2/Softmax:0"]
 
-def op_to_layer(op_full):
-    tensor_name = (op_full.split(":"))[0]
-    layer = tensor_name.split("/")[0]
-    return layer
-
-def get_layers(csv_file):
-    layers = []
-    with open(csv_file) as f:
-        for line in f:
-            vals = line.split(',')
-            op_full = vals[0]
-            layer = op_to_layer(op_full)
-            if layer not in layers:
-                layers.append(layer)
-    return layers
-
-def get_num_NNs(csv_file):
-    num_NNs = []
-    with open(csv_file) as f:
-        for line in f:
-            vals = line.split(',')
-            num_NN = int(vals[1])
-            if num_NN not in num_NNs:
-                num_NNs.append(num_NN)
-    return num_NNs
+MARKERS = ["o", "h", "D", "x", "1", "*", "p","8"]
 
 def get_data(csv_file, experiment_name):
     data = {}
@@ -66,7 +55,7 @@ def get_data(csv_file, experiment_name):
         for line in f:
             vals = line.split(',')
             op_full = vals[0]
-            layer = op_to_layer(op_full)
+            layer = preprocess.op_to_layer(op_full)
             num_NN = int(vals[1])
             base = float(vals[2])
             tasks = [float(i) for i in vals[3:]]
@@ -87,76 +76,104 @@ def get_data(csv_file, experiment_name):
     return data
 
 def plot_max_throughput(csv_file, plot_file):
-    layers = get_layers(csv_file)
-    num_NNs = get_num_NNs(csv_file)
+    layers = preprocess.get_layers(csv_file, 0)
+    num_NNs = preprocess.get_num_NNs(csv_file)
     data = get_data(csv_file, "throughput")
     labels = ["No sharing", "Max sharing"]
 
-    for layer, label in zip(layers, labels):
-        task_fps = [np.average(data[num_NN][layer]["task"]) for num_NN in num_NNs]
-        plt.plot(num_NNs, task_fps, label=label, lw=2)
+    colors = [plot_util.COLORS["red"], plot_util.COLORS["grey"]]
+
+    fpses1 = []
+    fpses2 = []
+    errs1 = []
+    errs2 = []
+
+    for num_NN in num_NNs:
+        fps1 = np.average(data[num_NN][layers[0]]["task"])
+        err1 = np.std(data[num_NN][layers[0]]["task"])
+
+        fps2 = np.average(data[num_NN][layers[1]]["task"]) - fps1
+        err2 = np.std(data[num_NN][layers[1]]["task"])
+
+        fpses1.append(fps1)
+        fpses2.append(fps2)
+        errs1.append(err1)
+        errs2.append(err2)
+
+    width = 0.5
+    plt.bar(num_NNs, fpses1, width, yerr=errs1,
+            label="No sharing",
+            color=plot_util.NO_SHARING["color"],
+            hatch=plot_util.NO_SHARING["pattern"],
+            error_kw={'ecolor':'green', 'linewidth':3})
+
+    plt.bar(num_NNs, fpses2, width, yerr=errs2, bottom=fpses1,
+            label="Max sharing",
+            color=plot_util.MAX_SHARING["color"],
+            hatch=plot_util.MAX_SHARING["pattern"],
+            error_kw={'ecolor':'green', 'linewidth':3})
 
     # Format plot
     plt.tick_params(axis='x', which='major', labelsize=28)
     plt.tick_params(axis='x', which='minor', labelsize=20)
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
-    plt.xlabel("Number of applications", fontsize=28)
+    plt.xlabel("Number of concurrent applications", fontsize=28)
     plt.ylabel("Throughput (FPS)", fontsize=28)
-    plt.ylim(0,20)
+    plt.xlim(1, 30)
+    plt.ylim(0, 20)
     plt.legend(loc=0, fontsize=15)
     plt.tight_layout()
+    plt.gca().yaxis.grid(True)
     plt.savefig(plot_file)
-    print plot_file
     plt.clf()
 
 def plot_throughput(csv_file, plot_dir):
-    layers = [op_to_layer(l) for l in LAYERS]
-    num_NNs = get_num_NNs(csv_file)
+    layers = [preprocess.op_to_layer(l) for l in LAYERS]
+    num_NNs = preprocess.get_num_NNs(csv_file)
     data = get_data(csv_file, "throughput")
+    num_NNs = [1,2,4,8]
 
     xs = range(len(layers))
+    if do_flip:
+        xs = list(reversed(xs))
+    if do_norm:
+        xs = [int(round(x*100. / len(layers))) for x in xs]
 
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
-        for num_NN in num_NNs:
-
+        for num_NN, marker, c in zip(num_NNs, MARKERS, plot_util.COLORLISTS[4]):
             task_fps = [np.average(data[num_NN][layer]["task"]) for layer in layers]
-            plt.plot(xs, task_fps, label=str(num_NN)+" apps", lw=2)
+            plt.plot(xs, task_fps, marker=marker, label=str(num_NN)+" apps", lw=4, markersize=8, color=c)
 
         # Format plot
-        plt.xticks(xs, layers, rotation="vertical")
-        plt.tick_params(axis='y', which='major', labelsize=28)
-        plt.tick_params(axis='y', which='minor', labelsize=20)
+        plt.xlabel(more_sharing_label, fontsize=25)
+        # plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
         plt.ylabel("Throughput (FPS)", fontsize=28)
+
+        plt.tick_params(axis='y', which='major', labelsize=30)
+        plt.tick_params(axis='y', which='minor', labelsize=24)
+        plt.tick_params(axis='x', which='major', labelsize=30)
+        plt.tick_params(axis='x', which='minor', labelsize=24)
         plt.ylim(0,20)
-        plt.legend(loc=0, fontsize=15)
+        if do_norm:
+            plt.xlim(0, 115)
+        else:
+            plt.xlim(1, len(layers) + 4)
+
+        if do_flip:
+            plt.legend(loc=0, fontsize=20, frameon=True)
+        else:
+            plt.legend(loc=4, fontsize=20)
+        plt.gca().xaxis.grid(True)
+        plt.gca().yaxis.grid(True)
         plt.tight_layout()
-        plt.savefig(plot_dir + "/task-throughput.pdf")
+        plt.savefig(plot_dir + "/task-throughput-partial.pdf")
+
         plt.clf()
 
-    for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
-        for num_NN in num_NNs:
-
-            base_fps = [np.average(data[num_NN][layer]["base"]) for layer in layers]
-            task_fps = [np.average(data[num_NN][layer]["task"]) for layer in layers]
-            plt.plot(xs, base_fps, label="Base-"+str(num_NN))
-            plt.plot(xs, task_fps, label="Task-"+str(num_NN))
-
-            # Format plot
-            plt.xticks(xs, layers, rotation="vertical")
-            plt.tick_params(axis='y', which='major', labelsize=28)
-            plt.tick_params(axis='y', which='minor', labelsize=20)
-            plt.ylabel("Throughput (FPS)", fontsize=28)
-            plt.ylim(0,20)
-            plt.legend(loc=0, fontsize=15)
-            plt.title(str(num_NN)+" split NN", fontsize=30)
-            plt.tight_layout()
-            plt.savefig(plot_dir + "/throughput-"+str(num_NN)+"-NN.pdf")
-            plt.clf()
-
 def plot_processor_latency(processors_file, plot_dir):
-    layers = get_layers(processors_file)
-    num_NNs = get_num_NNs(processors_file)
+    layers = preprocess.get_layers(processors_file, 0)
+    num_NNs = preprocess.get_num_NNs(processors_file)
     data = get_data(processors_file, "latency-processors")
     width = 0.4
     for i in range(2):              # Hack to get dimensions to match between 1st and 2nd graph
@@ -165,15 +182,30 @@ def plot_processor_latency(processors_file, plot_dir):
 
             base_fps = [np.average(data[num_NN][layer]["base"]) for layer in layers]
             task_fps = [np.average(data[num_NN][layer]["task"]) for layer in layers]
-            plt.bar(xs, base_fps, width, color = "seagreen", label="Base NNE")
-            plt.bar(xs, task_fps, width, bottom=base_fps, color = "dodgerblue", label="Task NNE")
+            base_errs = [np.std(data[num_NN][layer]["base"]) for layer in layers]
+            task_errs = [np.std(data[num_NN][layer]["task"]) for layer in layers]
 
-            plt.ylim(0,400)
-            plt.xticks(xs, layers, rotation="vertical")
+            plt.bar(xs, base_fps, width, yerr=base_errs,
+                    label="Shared NNE",
+                    color=plot_util.NO_SHARING["color"],
+                    hatch=plot_util.NO_SHARING["pattern"],
+                    error_kw={'ecolor':'green', 'linewidth':3})
+
+            plt.bar(xs, task_fps, width, bottom=base_fps, yerr=task_errs,
+                    label="Task NNE",
+                    color=plot_util.MAINSTREAM["color"],
+                    hatch=plot_util.MAINSTREAM["pattern"],
+                    error_kw={'ecolor':'green', 'linewidth':3})
+
+            plt.xlabel(more_sharing_label, fontsize=28)
+            plt.ylabel("CPU per frame (ms)", fontsize=28)
+            plt.ylim(0, 300)
+            plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
             plt.tick_params(axis='y', which='major', labelsize=28)
             plt.tick_params(axis='y', which='minor', labelsize=20)
-            plt.legend(loc=0, fontsize=15, ncol=2)
-            plt.ylabel("Processor Latency (ms)", fontsize=20)
+            plt.legend(loc=0, fontsize=20, ncol=2)
+            plt.gca().xaxis.grid(True)
+            plt.gca().yaxis.grid(True)
             plt.title(str(num_NN) + " NNs", fontsize=30)
             plt.tight_layout()
             plot_file = plot_dir + "/latency-" + str(num_NN) + "-NN.pdf"
@@ -182,13 +214,9 @@ def plot_processor_latency(processors_file, plot_dir):
 
 
 if __name__ == "__main__":
-    cmd = sys.argv[1]
-    plot_dir = sys.argv[2]
-    csv_file = sys.argv[3]
-    if cmd == "throughput":
-        plot_throughput(csv_file, plot_dir)
-    elif cmd == "latency":
-        plot_processor_latency(csv_file, plot_dir)
-    else:
-        print "cmd must be in {throughput, latency}"
+    plot_dir = "plots/performance/throughput/inception/flow_control"
+    csv_file = "output/streamer/throughput/inception/flow_control/multi-app"
+    plot_throughput(csv_file, plot_dir)
+    #plot_throughput(csv_file, plot_dir)
+    #plot_processor_latency(csv_file, plot_dir)
 
