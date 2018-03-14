@@ -16,7 +16,6 @@ plt.ioff()
 
 def plot_bar_v0(ms_files, label_prefixes, plot_file, plot_dir, limit=20):
     colors = plot_util.COLORLISTS[len(ms_files)]
-    markers = plot_util.MARKERS
 
     metric = "F1"
     title = "F1"
@@ -46,6 +45,49 @@ def plot_bar_v0(ms_files, label_prefixes, plot_file, plot_dir, limit=20):
                             label = label_prefix)
 
         plot_util.format_plot("Config ID", "Event " + title)
+
+        plt.ylim(0,1)
+
+        filename = os.path.join(plot_dir, plot_file + "-" + metric)
+
+        plt.legend(loc=0, fontsize=15)
+        plt.savefig(filename + ".pdf")
+
+        plt.clf()
+
+def plot_by_num_apps_v0(ms_files, labels, plot_file, plot_dir):
+    colors = plot_util.COLORLISTS[len(ms_files)]
+    markers = plot_util.MARKERS
+
+    metric = "F1"
+    title = "F1"
+
+    width = 0.3
+
+    for j in range(2):
+
+        lines = []
+        all_pts = []
+
+        for i, (ms_file, label, m, c) in enumerate(zip(ms_files, labels, markers, colors)):
+            metrics, fpses = data_util.get_scheduler_data(ms_file)
+
+            xs = []
+            ys = []
+            errs = []
+            for num_apps in sorted(metrics.keys()):
+                xs.append(num_apps)
+                ys.append(np.average(metrics[num_apps]))
+                errs.append(np.std(metrics[num_apps]))
+
+            xs = range(len(ys))
+            plt.plot(xs, ys, label=label,
+                             lw=4,
+                             markersize=8,
+                             marker=m,
+                             color=c)
+
+        plot_util.format_plot("Num Apps", "Average Event " + title)
 
         plt.ylim(0,1)
 
