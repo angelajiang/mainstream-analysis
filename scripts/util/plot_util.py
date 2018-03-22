@@ -100,17 +100,17 @@ MAX_SHARING = {"color": COLORLISTS[8][7],
               "label": "Max Sharing"
               }
 
-def format_plot(xlabel, ylabel):
+def format_plot(xlabel, ylabel, label_size=28):
     import matplotlib.pyplot as plt
-    plt.tick_params(axis='y', which='major', labelsize=28)
-    plt.tick_params(axis='y', which='minor', labelsize=20)
-    plt.tick_params(axis='x', which='major', labelsize=28)
-    plt.tick_params(axis='x', which='minor', labelsize=20)
+    plt.tick_params(axis='y', which='major', labelsize=label_size)
+    plt.tick_params(axis='y', which='minor', labelsize=label_size * .8)
+    plt.tick_params(axis='x', which='major', labelsize=label_size)
+    plt.tick_params(axis='x', which='minor', labelsize=label_size * .8)
 
     plt.legend(loc=0, fontsize=15)
 
-    plt.xlabel(xlabel, fontsize=35)
-    plt.ylabel(ylabel, fontsize=35)
+    plt.xlabel(xlabel, fontsize=label_size * 1.2)
+    plt.ylabel(ylabel, fontsize=label_size * 1.2)
     plt.tight_layout()
     plt.gca().xaxis.grid(True)
     plt.gca().yaxis.grid(True)

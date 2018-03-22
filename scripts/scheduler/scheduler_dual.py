@@ -8,6 +8,7 @@ import plot_util
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import matplotlib.ticker as plticker
 plt.ioff()
 
 def plot_f1_dual(*args, **kwargs):
@@ -62,12 +63,20 @@ def plot_dual(metric, metric_title, ms_files, max_files, min_files, plot_files, 
             plot_util.format_plot_dual(ax1, ax2, "Number of concurrent apps", "Event " + metric_title, "Average FPS")
             ax1.set_xlim(max(min(xs),2), max(xs))
             lns = ax1_lines
-            labels = [l.get_label() + ' (FPS, {})'.format(metric_title) for l in lns]
-            if metric == "f1":
-                leg = ax1.legend(lns, labels, loc=4, bbox_to_anchor=[1.01, .1], fontsize=13, borderpad=None)
-                leg.get_frame().set_linewidth(0.0)
-                leg2 = ax2.legend(ax2_lines, [""] * len(lns), loc=4, bbox_to_anchor=[.5, .1], fontsize=13, borderpad=None, frameon=False)
-                leg2.get_frame().set_linewidth(0.0)
+            labels = [l.get_label() + ' {}'.format(metric_title) for l in lns]
+
+            ax1.grid(linestyle='dotted', linewidth=.1)
+            ax2.grid(None)
+            ax2.set_ylim(0, max(20, max(ys)))
+            ax2.yaxis.set_major_locator(plticker.MultipleLocator(base=4.))
+
+
+            leg = ax1.legend(lns, labels, loc=4, bbox_to_anchor=[.84, .1], fontsize=13, borderpad=None)
+            leg2 = ax2.legend(ax2_lines, ["FPS"] * len(lns), loc=4, bbox_to_anchor=[.99, .1], fontsize=13, borderpad=None)
+            leg.get_frame().set_facecolor('white')
+            leg.get_frame().set_linewidth(0.0)
+            leg2.get_frame().set_facecolor('white')
+            leg2.get_frame().set_linewidth(0.0)
 
             plt.savefig(plot_dir + "/" + plot_file + "-" + metric + "-dual.pdf")
 

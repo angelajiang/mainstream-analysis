@@ -14,7 +14,6 @@ def get_scheduler_data(csv_file):
     errs = []
     avg_fpses = []
     fpses = {}
-    combo = False
 
     with open(csv_file) as f:
         for line in f:
@@ -40,6 +39,38 @@ def get_scheduler_data(csv_file):
             fpses[num_apps].append(average_fps)
 
     return metrics, fpses
+
+def get_performance_data(csv_file):
+    # TODO: Turn this into v1
+    # Version 0: num_apps, 1-F1, frozen_list..., fps_list..., cost, latency_us
+
+    data = {}
+    xs = []
+    ys = []
+    errs = []
+
+    with open(csv_file) as f:
+        for line in f:
+            if line.startswith('#'):
+                continue
+            vals = line.split(',')
+            if vals[0].isdigit():
+                num_apps = int(vals[0])
+            fps_end = (2 *num_apps) + 2
+            latency_us = float(vals[fps_end+1])
+
+            if num_apps not in data.keys():
+                data[num_apps] = []
+                xs.append(num_apps)
+
+            data[num_apps].append(latency_us)
+    for x in xs:
+        y = np.average(data[x])
+        std = np.std(data[x])
+        ys.append(y)
+        errs.append(std)
+
+    return xs, ys, errs
 
 
 def get_recall_data(csv_file, version):
