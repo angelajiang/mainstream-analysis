@@ -26,6 +26,22 @@ def compare_avg():
 
     scheduler_comparison.plot_bar_v0(ms_files, labels, plot_file, plot_dir)
 
+def setups_9hybrid():
+    plot_dir = "plots/scheduler/debug/"
+
+    # greedy
+    m1 =  "output/streamer/scheduler/setups/greedy.mainstream.sim.041118.v0"
+    m2 =  "output/streamer/scheduler/setups/greedy.maxsharing.sim.041118.v0"
+    m3 =  "output/streamer/scheduler/setups/greedy.nosharing.sim.041118.v0"
+    l1 = "Mainstream"
+    l2 = "Max Sharing"
+    l3 = "No Sharing"
+    plot_file ="f1-9hybrid-greedy"
+    ms_files = [m1,m2,m3]
+    labels = [l1,l2,l3]
+
+    scheduler_comparison.plot_by_num_apps_v0(ms_files, labels, 10, plot_file, plot_dir)
+
 def iii_f1():
     plot_dir = "plots/scheduler/debug/"
 
@@ -36,14 +52,16 @@ def iii_f1():
     l2 = "maxsharing"
     l3 = "nosharing"
 
-    f1 ="f1-iii-greedy"
     ms_files = [ms1]
     max_files = [max1]
     min_files = [min1]
-    f_files = [f1]
     titles = [t1]
 
+    f_files = ["f1-iii-greedy"]
     scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir)
+
+    f_files = ["f1-iii-greedy-normalized"]
+    scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, normalize=True)
 
 def iii_accuracy():
 
@@ -68,4 +86,6 @@ def iii_accuracy():
     accuracy_vs_layer.plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
 
 #compare_avg()
+setups_9hybrid()
+iii_f1()
 iii_accuracy()

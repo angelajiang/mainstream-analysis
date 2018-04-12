@@ -165,7 +165,14 @@ def plot_precision(ms_files, max_files, min_files, plot_files, titles, plot_dir,
             plt.savefig(plot_dir + "/" + plot_file + "-precision.pdf")
             plt.clf()
 
-def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, errbars=True, xlim=None, annotations = [], ms_variant_files=[], ms_variant_name=None, legend=True, legend_xargs={}):
+def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, errbars=True,
+                                                                          xlim=None,
+                                                                          annotations = [],
+                                                                          ms_variant_files=[],
+                                                                          ms_variant_name=None,
+                                                                          legend=True,
+                                                                          legend_xargs={},
+                                                                          normalize=False):
     # import matplotlib
     # matplotlib.use('ps')
     # matplotlib.rc('text', usetex=True)
@@ -182,21 +189,28 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, errbar
 
 
 
-            plot_util.format_plot("Number of concurrent apps", "Event F1-score")
             if xlim:
                 plt.xlim(*xlim)
             else:
                 plt.xlim(max(min(xs1),2), max(xs1))
-            plt.ylim(0, 1)
 
             if not errbars:
                 errs3 = None
                 errs2 = None
                 errs1 = None
-            plt.errorbar(xs3, ys3, yerr=errs3, lw=4, markersize=8,
-                         marker=plot_util.NO_SHARING['marker'],
-                         color=plot_util.NO_SHARING['color'],
-                         label=plot_util.NO_SHARING['label'])
+
+            if normalize:
+                ys2 = [y2 / float(y3) for y2, y3 in zip(ys2, ys3)]
+                ys1 = [y1 / float(y3) for y1, y3 in zip(ys1, ys3)]
+                plot_util.format_plot("Number of concurrent apps", "Benefit over NS")
+            else:
+                plt.ylim(0, 1)
+                plot_util.format_plot("Number of concurrent apps", "Event F1-score")
+                plt.errorbar(xs3, ys3, yerr=errs3, lw=4, markersize=8,
+                             marker=plot_util.NO_SHARING['marker'],
+                             color=plot_util.NO_SHARING['color'],
+                             label=plot_util.NO_SHARING['label'])
+
             plt.errorbar(xs2, ys2, yerr=errs2, lw=4, markersize=8,
                          marker=plot_util.MAX_SHARING['marker'],
                          color=plot_util.MAX_SHARING['color'],

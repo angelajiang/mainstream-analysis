@@ -80,7 +80,7 @@ def plot_by_num_apps_v0(ms_files, labels, num_setups, plot_file, plot_dir):
             plt.plot(xs, ys, label=label,
                              lw=4,
                              markersize=8,
-                             alpha=0.5,
+                             alpha=0.8,
                              marker=m,
                              color=c)
 
