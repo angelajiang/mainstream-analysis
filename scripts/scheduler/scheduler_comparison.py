@@ -1,6 +1,7 @@
 import os
 import pprint as pp
 import math
+import seaborn as sns
 import sys
 import math
 import matplotlib
@@ -11,6 +12,7 @@ import plot_util
 import data_util
 
 import matplotlib.pyplot as plt
+
 
 def plot_bar_v0(ms_files, label_prefixes, plot_file, plot_dir, limit=20):
     colors = plot_util.COLORLISTS[len(ms_files)]
@@ -53,7 +55,9 @@ def plot_bar_v0(ms_files, label_prefixes, plot_file, plot_dir, limit=20):
 
         plt.clf()
 
+
 def plot_by_num_apps_v0(ms_files, labels, num_setups, plot_file, plot_dir):
+
     colors = plot_util.COLORLISTS[len(ms_files)]
     markers = plot_util.MARKERS
 
@@ -80,7 +84,7 @@ def plot_by_num_apps_v0(ms_files, labels, num_setups, plot_file, plot_dir):
             plt.plot(xs, ys, label=label,
                              lw=4,
                              markersize=8,
-                             alpha=0.8,
+                             alpha=0.5,
                              marker=m,
                              color=c)
 
@@ -101,6 +105,126 @@ def plot_by_num_apps_v0(ms_files, labels, num_setups, plot_file, plot_dir):
         plt.savefig(filename + ".pdf")
 
         plt.clf()
+
+def plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir, verbose=0, version="v0"):
+
+    sns.set_style("darkgrid")
+
+    markers = plot_util.MARKERS
+
+    metric = "F1"
+
+    xs = []
+    all_xs = {}
+    all_ys = {}
+
+    max_setup_index = -1
+    min_setup_index = -1
+
+    if version == "v0":
+        for budget, files in sorted(files_by_budget.iteritems()):
+            ms_files = files["data"]
+            labels = files["labels"]
+            xs.append(budget)
+
+            for i, (ms_file, label) in enumerate(zip(ms_files, labels)):
+                f1s, fpses = data_util.get_scheduler_data(ms_file)
+
+                if verbose:
+                    if max_setup_index < 0:
+                        max_setup_index = np.argmax(f1s[num_apps])
+                        min_setup_index = np.argmin(f1s[num_apps])
+                        print "File: {}, Min Setup:{}, Max Setup: {}".format(ms_file,
+                                                                             min_setup_index,
+                                                                             max_setup_index)
+                    label_max = label + "-max"
+                    label_min = label + "-min"
+
+                    if label_max not in all_ys.keys():
+                        all_ys[label_max] = []
+                        all_ys[label_min] = []
+                    all_ys[label_max].append(f1s[num_apps][max_setup_index])
+                    all_ys[label_min].append(f1s[num_apps][min_setup_index])
+
+                else:
+                    if label not in all_ys.keys():
+                        all_ys[label] = []
+                    all_ys[label].append(np.average(f1s[num_apps]))
+
+    elif version == "v1":
+        ms_files = files_by_budget["data"]
+        labels = files_by_budget["labels"]
+
+        for i, (ms_file, label) in enumerate(zip(ms_files, labels)):
+            data_by_budget = data_util.get_scheduler_data_by_budget(ms_file)
+            for budget, data in sorted(data_by_budget.iteritems()):
+                f1s = data["f1s"]
+                fpses = data["fpses"]
+
+                if verbose:
+                    if max_setup_index < 0:
+                        max_setup_index = np.argmax(f1s)
+                        min_setup_index = np.argmin(f1s)
+                        print "File: {}, Min Setup:{}, Max Setup: {}".format(ms_file,
+                                                                             min_setup_index,
+                                                                             max_setup_index)
+                    label_max = label + "-max"
+                    label_min = label + "-min"
+
+                    if label_max not in all_ys.keys():
+                        all_ys[label_max] = []
+                        all_ys[label_min] = []
+                        all_xs[label_max] = []
+                        all_xs[label_min] = []
+                    all_ys[label_max].append(f1s[max_setup_index])
+                    all_ys[label_min].append(f1s[min_setup_index])
+                    all_xs[label_max].append(budget)
+                    all_xs[label_min].append(budget)
+
+                else:
+                    if label not in all_ys.keys():
+                        all_ys[label] = []
+                        all_xs[label] = []
+                    all_ys[label].append(np.average(f1s))
+                    all_xs[label].append(budget)
+
+    i = 0
+    for label, ys in sorted(all_ys.iteritems()):
+        if version == "v1":
+            xs = all_xs[label]
+
+        if verbose:
+            colors = [plot_util.COLORLISTS[8][0], plot_util.COLORLISTS[8][7]]
+            c_i = i % 2
+        else:
+            colors = plot_util.COLORLISTS[12]
+            c_i = i
+
+        c = colors[c_i]
+        m = markers[i]
+        plt.plot(xs, ys, label=label,
+                         lw=2,
+                         markersize=8,
+                         alpha=1,
+                         marker=m,
+                         color=c)
+
+        i += 1
+
+    filename = os.path.join(plot_dir, plot_file)
+    ylabel = "Average Event "
+    if verbose:
+        filename += "-v"
+        ylabel = "Event "
+
+    plot_util.format_plot("Budget", ylabel + metric, 20)
+    plt.ylim(0, 1)
+    plt.tight_layout()
+    plt.legend(loc=0, fontsize=15)
+    plt.savefig(filename + ".pdf")
+
+    plt.clf()
+
 
 def plot_latency_v0(ms_files, labels, plot_file, plot_dir):
 
