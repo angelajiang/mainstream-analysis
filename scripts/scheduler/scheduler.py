@@ -187,8 +187,6 @@ def plot_f1(ms_files, max_files, min_files, plot_files, titles, plot_dir, errbar
             if ms_variant_file:
                 xs4, ys4, errs4, losses4, fpses4 = get_f1_data(ms_variant_file)
 
-
-
             if xlim:
                 plt.xlim(*xlim)
             else:
