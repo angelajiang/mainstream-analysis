@@ -36,38 +36,6 @@ def get_scheduler_data(csv_file):
 
     return metrics, fpses
 
-def get_scheduler_data_by_budget(csv_file):
-    # Assumes Version 1
-    # Version 1: num_apps, 1-F1, frozen_list..., fps_list..., budget
-
-    data = {}
-
-    with open(csv_file) as f:
-        for line in f:
-            if line.startswith('#'):
-                continue
-            vals = line.split(',')
-            if not vals[0].isdigit():
-                vals = vals[1:]
-            if vals[0].isdigit():
-                num_apps = int(vals[0])
-            fps_start = num_apps + 2
-            fps_end = (2 *num_apps) + 2
-            fps_list = [float(v) for v in vals[fps_start:fps_end]]
-            average_fps = round(np.average(fps_list), 2)
-            budget = float(vals[fps_end])
-
-            if budget not in data.keys():
-                data[budget] = {"f1s": [], "fpses": []}
-
-            metric = float(vals[1])
-            f1 =  1 - metric
-
-            data[budget]["f1s"].append(f1)
-            data[budget]["fpses"].append(average_fps)
-
-    return data
-
 def get_performance_data(csv_file):
     # TODO: Turn this into v1
     # Version 0: num_apps, 1-F1, frozen_list..., fps_list..., cost, latency_us

@@ -106,7 +106,7 @@ def plot_by_num_apps_v0(ms_files, labels, num_setups, plot_file, plot_dir):
 
         plt.clf()
 
-def plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir, verbose=0, version="v0"):
+def plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir, verbose=0):
 
     sns.set_style("darkgrid")
 
@@ -121,77 +121,38 @@ def plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir, verbose=0, ve
     max_setup_index = -1
     min_setup_index = -1
 
-    if version == "v0":
-        for budget, files in sorted(files_by_budget.iteritems()):
-            ms_files = files["data"]
-            labels = files["labels"]
-            xs.append(budget)
-
-            for i, (ms_file, label) in enumerate(zip(ms_files, labels)):
-                f1s, fpses = data_util.get_scheduler_data(ms_file)
-
-                if verbose:
-                    if max_setup_index < 0:
-                        max_setup_index = np.argmax(f1s[num_apps])
-                        min_setup_index = np.argmin(f1s[num_apps])
-                        print "File: {}, Min Setup:{}, Max Setup: {}".format(ms_file,
-                                                                             min_setup_index,
-                                                                             max_setup_index)
-                    label_max = label + "-max"
-                    label_min = label + "-min"
-
-                    if label_max not in all_ys.keys():
-                        all_ys[label_max] = []
-                        all_ys[label_min] = []
-                    all_ys[label_max].append(f1s[num_apps][max_setup_index])
-                    all_ys[label_min].append(f1s[num_apps][min_setup_index])
-
-                else:
-                    if label not in all_ys.keys():
-                        all_ys[label] = []
-                    all_ys[label].append(np.average(f1s[num_apps]))
-
-    elif version == "v1":
-        ms_files = files_by_budget["data"]
-        labels = files_by_budget["labels"]
+    for budget, files in sorted(files_by_budget.iteritems()):
+        ms_files = files["data"]
+        labels = files["labels"]
+        xs.append(budget)
 
         for i, (ms_file, label) in enumerate(zip(ms_files, labels)):
-            data_by_budget = data_util.get_scheduler_data_by_budget(ms_file)
-            for budget, data in sorted(data_by_budget.iteritems()):
-                f1s = data["f1s"]
-                fpses = data["fpses"]
+            f1s, fpses = data_util.get_scheduler_data(ms_file)
 
-                if verbose:
-                    if max_setup_index < 0:
-                        max_setup_index = np.argmax(f1s)
-                        min_setup_index = np.argmin(f1s)
-                        print "File: {}, Min Setup:{}, Max Setup: {}".format(ms_file,
-                                                                             min_setup_index,
-                                                                             max_setup_index)
-                    label_max = label + "-max"
-                    label_min = label + "-min"
+            if verbose:
+                if max_setup_index < 0:
+                    max_setup_index = np.argmax(f1s[num_apps])
+                    min_setup_index = np.argmin(f1s[num_apps])
+                    print "File: {}, Min Setup:{}, Max Setup: {}".format(ms_file,
+                                                                         min_setup_index,
+                                                                         max_setup_index)
+                label_max = label + "-max"
+                label_min = label + "-min"
 
-                    if label_max not in all_ys.keys():
-                        all_ys[label_max] = []
-                        all_ys[label_min] = []
-                        all_xs[label_max] = []
-                        all_xs[label_min] = []
-                    all_ys[label_max].append(f1s[max_setup_index])
-                    all_ys[label_min].append(f1s[min_setup_index])
-                    all_xs[label_max].append(budget)
-                    all_xs[label_min].append(budget)
+                if label_max not in all_ys.keys():
+                    all_ys[label_max] = []
+                    all_ys[label_min] = []
+                all_ys[label_max].append(f1s[num_apps][max_setup_index])
+                all_ys[label_min].append(f1s[num_apps][min_setup_index])
 
-                else:
-                    if label not in all_ys.keys():
-                        all_ys[label] = []
-                        all_xs[label] = []
-                    all_ys[label].append(np.average(f1s))
-                    all_xs[label].append(budget)
+            else:
+                if label not in all_ys.keys():
+                    all_ys[label] = []
+                all_ys[label].append(np.average(f1s[num_apps]))
+
 
     i = 0
     for label, ys in sorted(all_ys.iteritems()):
-        if version == "v1":
-            xs = all_xs[label]
 
         if verbose:
             colors = [plot_util.COLORLISTS[8][0], plot_util.COLORLISTS[8][7]]
