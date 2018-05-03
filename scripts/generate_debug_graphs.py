@@ -1,4 +1,5 @@
 
+import os
 import sys
 sys.path.append("scripts/goodness")
 import accuracy_vs_layer
@@ -26,9 +27,13 @@ def compare_avg():
 
     scheduler_comparison.plot_bar_v0(ms_files, labels, plot_file, plot_dir)
 
+def setups_correlation():
+
+    plot_dir = "plots/scheduler/debug/correlation"
+
 def setups_7hybrid():
 
-    plot_dir = "plots/scheduler/debug/"
+    plot_dir = "plots/scheduler/debug/sweep"
 
     # 043018 budget sweep
 
@@ -103,7 +108,8 @@ def setups_7hybrid():
 
 
 def iii_f1():
-    plot_dir = "plots/scheduler/debug/"
+
+    plot_dir = "plots/scheduler/debug/iii"
 
     ms1 =  "output/streamer/scheduler/debug/iii-greedy-mainstream-simulator"
     max1 =  "output/streamer/scheduler/debug/iii-greedy-maxsharing-simulator"
@@ -128,7 +134,9 @@ def iii_f1():
     f_files = ["f1-iii-greedy-normalized"]
     scheduler.plot_f1(ms_files, max_files, min_files, f_files, titles, plot_dir, normalize=True)
 
-def iii_accuracy():
+def accuracy_7hybrid():
+
+    plot_dir = "plots/scheduler/debug/accuracy"
 
     redcar = "output/mainstream/accuracy/iii/redcar/iii-redcar-accuracy"
     scramble = "output/mainstream/accuracy/iii/scramble/iii-scramble-accuracy"
@@ -158,10 +166,11 @@ def iii_accuracy():
               "Cars-MobileNets-224"
               ]
 
-    plot_file = "plots/scheduler/debug/7hybrid-mobilenets-accuracy.pdf"
+    plot_file = os.path.join(plot_dir, "7hybrid-mobilenets-accuracy.pdf")
     accuracy_vs_layer.plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
 
 #compare_avg()
+setups_correlation()
 setups_7hybrid()
 iii_f1()
-iii_accuracy()
+accuracy_7hybrid()
