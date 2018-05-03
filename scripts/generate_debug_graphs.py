@@ -26,89 +26,9 @@ def compare_avg():
 
     scheduler_comparison.plot_bar_v0(ms_files, labels, plot_file, plot_dir)
 
-def setups_9hybrid():
+def setups_7hybrid():
+
     plot_dir = "plots/scheduler/debug/"
-
-    # 041118 greedy
-    m1 =  "output/streamer/scheduler/setups/greedy.mainstream.sim.041118.v0"
-    m2 =  "output/streamer/scheduler/setups/greedy.maxsharing.sim.041118.v0"
-    m3 =  "output/streamer/scheduler/setups/greedy.nosharing.sim.041118.v0"
-    m4 =  "output/streamer/scheduler/setups/stems.mainstream.sim.041118.v0"
-    l1 = "Mainstream"
-    l2 = "Max Sharing"
-    l3 = "No Sharing"
-    l4 = "Mainstream DP"
-    plot_file ="f1-9hybrid-greedy"
-    ms_files = [m1,m2,m3, m4]
-    labels = [l1,l2,l3,l4]
-
-    scheduler_comparison.plot_by_num_apps_v0(ms_files, labels, 10, plot_file, plot_dir)
-
-    # 041718 4 apps
-
-    num_apps = 4
-
-    files_by_budget = {}
-    files_by_budget_v = {}
-    budgets = [100, 150, 200, 250, 300]
-
-    for budget in budgets:
-
-        m1 =  "output/streamer/scheduler/osdi/041718/greedy.mainstream.sim.041718-"+str(budget) + "-" + str(num_apps) + ".v0"
-        m2 =  "output/streamer/scheduler/osdi/041718/stems_cpp.mainstream.sim.041718-"+str(budget) + "-" + str(num_apps) + ".v0"
-        m3 =  "output/streamer/scheduler/osdi/041718/greedy.nosharing.sim.041718-"+str(budget) + "-" + str(num_apps) + ".v0"
-        m4 =  "output/streamer/scheduler/osdi/041718/greedy.maxsharing.sim.041718-"+str(budget) + "-" + str(num_apps) + ".v0"
-        m5 =  "output/streamer/scheduler/osdi/041718/exhaustive.mainstream.sim.041718-"+str(budget) + "-" + str(num_apps) + ".v0"
-        l1 = "Mainstream-greedy"
-        l2 = "Mainstream-stems"
-        l3 = "No Sharing"
-        l4 = "Max Sharing"
-        l5 = "Mainstream-exhaustive"
-        ms_files = [m1,m2,m3,m4,m5]
-        labels = [l1,l2,l3,l4,l5]
-        files_by_budget[budget] = {"data": ms_files, "labels": labels}
-
-        ms_files = [m1,m3,m4]
-        labels = [l1,l3,l4]
-        files_by_budget_v[budget] = {"data": ms_files, "labels": labels}
-
-    plot_file ="f1-9hybrid-041718-" + str(num_apps)
-    scheduler_comparison.plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir)
-    scheduler_comparison.plot_by_budget(files_by_budget_v, num_apps, plot_file, plot_dir, verbose=1)
-
-    # 041718 apps sweep
-
-    num_apps_list = [5, 15, 20, 25, 30]
-    for num_apps in num_apps_list:
-
-        files_by_budget = {}
-        files_by_budget_v = {}
-        budgets = [100, 150, 200, 250, 300]
-
-        for budget in budgets:
-
-            m1 =  "output/streamer/scheduler/osdi/041718/greedy.mainstream.sim.041718-"+str(budget) + "-" + str(num_apps) + ".v0"
-            m2 =  "output/streamer/scheduler/osdi/041718/stems_cpp.mainstream.sim.041718-"+str(budget) + "-" + str(num_apps) + ".v0"
-            m3 =  "output/streamer/scheduler/osdi/041718/greedy.nosharing.sim.041718-"+str(budget) + "-" + str(num_apps) + ".v0"
-            m4 =  "output/streamer/scheduler/osdi/041718/greedy.maxsharing.sim.041718-"+str(budget) + "-" + str(num_apps) + ".v0"
-            l1 = "Mainstream-greedy"
-            l2 = "Mainstream-stems"
-            l3 = "No Sharing"
-            l4 = "Max Sharing"
-            ms_files = [m1,m2,m3,m4]
-            labels = [l1,l2,l3,l4]
-            ms_files = [m1,m3,m4]
-            labels = [l1,l3,l4]
-            files_by_budget[budget] = {"data": ms_files, "labels": labels}
-
-            ms_files = [m1,m3,m4]
-            labels = [l1,l3,l4]
-            files_by_budget_v[budget] = {"data": ms_files, "labels": labels}
-
-        plot_file ="f1-9hybrid-041718-" + str(num_apps)
-
-        scheduler_comparison.plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir)
-        scheduler_comparison.plot_by_budget(files_by_budget_v, num_apps, plot_file, plot_dir, verbose=1)
 
     # 043018 budget sweep
 
@@ -175,6 +95,11 @@ def setups_9hybrid():
                                                  budget,
                                                  plot_file,
                                                  plot_dir)
+        scheduler_comparison.plot_by_num_apps_v1(files_by_apps,
+                                                 budget,
+                                                 plot_file,
+                                                 plot_dir,
+                                                 dual=True)
 
 
 def iii_f1():
@@ -237,6 +162,6 @@ def iii_accuracy():
     accuracy_vs_layer.plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
 
 #compare_avg()
-setups_9hybrid()
+setups_7hybrid()
 iii_f1()
 iii_accuracy()
