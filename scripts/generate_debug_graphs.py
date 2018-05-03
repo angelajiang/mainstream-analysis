@@ -107,42 +107,40 @@ def setups_9hybrid():
 
         plot_file ="f1-9hybrid-041718-" + str(num_apps)
 
-        scheduler_comparison.plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir, version="v0")
-        scheduler_comparison.plot_by_budget(files_by_budget_v, num_apps, plot_file, plot_dir, verbose=1, version="v0")
+        scheduler_comparison.plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir)
+        scheduler_comparison.plot_by_budget(files_by_budget_v, num_apps, plot_file, plot_dir, verbose=1)
 
-    # 042518
+    # 043018 apps sweep
 
-    num_apps_list = [4, 10]
+    num_apps_list = [2, 4, 6, 8, 10, 15, 20]
     for num_apps in num_apps_list:
 
-        version = "v1"
-        m1 =  "output/streamer/scheduler/atc/042518/greedy.mainstream.sim.042518-"+str(num_apps)+"."+version
-        m2 =  "output/streamer/scheduler/atc/042518/greedy.nosharing.sim.042518-"+str(num_apps) +"."+version
-        m3 =  "output/streamer/scheduler/atc/042518/greedy.maxsharing.sim.042518-"+str(num_apps)+"."+version
-        m4 =  "output/streamer/scheduler/atc/042518/stems_cpp.mainstream.sim.042518-"+str(num_apps)+"."+version
-        l1 = "Mainstream-greedy"
-        l2 = "No Sharing"
-        l3 = "Max Sharing"
-        l4 = "Stems CPP"
+        files_by_budget = {}
+        files_by_budget_v = {}
+        budgets = [100, 150, 200, 250, 300]
 
-        ms_files = [m1,m2,m3]
-        labels = [l1,l2,l3]
-        data =  {"data": ms_files, "labels": labels}
-        data_v =  {"data": ms_files, "labels": labels}
+        for budget in budgets:
 
-        plot_file ="f1-9hybrid-042518-" + str(num_apps)
+            m1 =  "output/streamer/scheduler/atc/043018/greedy.mainstream.sim.{}.043018-{}.v1".format(budget, num_apps)
+            m2 =  "output/streamer/scheduler/atc/043018/stems_cpp.mainstream.sim.{}.043018-{}.v1".format(budget, num_apps)
+            m3 =  "output/streamer/scheduler/atc/043018/greedy.nosharing.sim.{}.043018-{}.v1".format(budget, num_apps)
+            m4 =  "output/streamer/scheduler/atc/043018/greedy.maxsharing.sim.{}.043018-{}.v1".format(budget, num_apps)
+            l1 = "Mainstream-greedy"
+            l2 = "Mainstream-stems"
+            l3 = "No Sharing"
+            l4 = "Max Sharing"
+            ms_files = [m1,m3,m4]
+            labels = [l1,l3,l4]
+            files_by_budget[budget] = {"data": ms_files, "labels": labels}
 
-        if num_apps == 4:
-            ms_files = [m1,m2,m3,m4]
-            labels = [l1,l2,l3,l4]
-            data =  {"data": ms_files, "labels": labels}
+            ms_files = [m1,m3,m4]
+            labels = [l1,l3,l4]
+            files_by_budget_v[budget] = {"data": ms_files, "labels": labels}
 
-            ms_files = [m2,m3,m4]
-            labels = [l2,l3,l4]
-            data_v = {"data": ms_files, "labels": labels}
+        plot_file ="f1-7hybrid-043018-" + str(num_apps)
 
-        scheduler_comparison.plot_by_budget(data, num_apps, plot_file, plot_dir, version=version)
-        scheduler_comparison.plot_by_budget(data_v, num_apps, plot_file, plot_dir, verbose=1, version=version)
+        scheduler_comparison.plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir)
+        scheduler_comparison.plot_by_budget(files_by_budget_v, num_apps, plot_file, plot_dir, verbose=1)
 
 def iii_f1():
     plot_dir = "plots/scheduler/debug/"
@@ -172,27 +170,35 @@ def iii_f1():
 
 def iii_accuracy():
 
-    redcar0 = "output/mainstream/accuracy/iii/redcar/iii-redcar-accuracy-small"
-    redcar1 = "output/mainstream/accuracy/iii/redcar/iii-redcar-accuracy"
+    redcar = "output/mainstream/accuracy/iii/redcar/iii-redcar-accuracy"
     scramble = "output/mainstream/accuracy/iii/scramble/iii-scramble-accuracy"
     bus = "output/mainstream/accuracy/iii/bus/iii-bus-accuracy"
     schoolbus = "output/mainstream/accuracy/iii/schoolbus/iii-schoolbus-accuracy"
+    pedestrian = "output/mainstream/accuracy/pedestrian/atrium/atrium-mobilenets-accuracy"
+    train = "output/mainstream/accuracy/trains/train-easy/train-easy-mobilenets"
+    cars = "output/mainstream/accuracy/cars/cars-stanford-mobilenets-accuracy"
+    flowers = "output/mainstream/accuracy/flowers/mobilenets/flowers-40-0.0001"
+    cats = "output/mainstream/accuracy/cats/cats-mobilenets-accuracy"
 
-    accuracy_files = [redcar0,
-                      redcar1,
+    accuracy_files = [redcar,
                       scramble,
                       bus,
-                      schoolbus]
+                      schoolbus,
+                      pedestrian,
+                      train,
+                      cars]
 
     labels = [
               "Red-Car-MobileNets-224",
-              "Red-Car-Better-MobileNets-224",
               "Scramble-MobileNets-224",
               "Bus-MobileNets-224",
-              "Schoolbus-MobileNets-224"
+              "Schoolbus-MobileNets-224",
+              "Pedestrian-MobileNets-224",
+              "Train-MobileNets-224",
+              "Cars-MobileNets-224"
               ]
-    plot_file = "plots/scheduler/debug/iii-mobilenets-accuracy.pdf"
 
+    plot_file = "plots/scheduler/debug/7hybrid-mobilenets-accuracy.pdf"
     accuracy_vs_layer.plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
 
 #compare_avg()
