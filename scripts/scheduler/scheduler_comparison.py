@@ -106,12 +106,64 @@ def plot_by_num_apps_v0(ms_files, labels, num_setups, plot_file, plot_dir):
 
         plt.clf()
 
+
+def plot_by_num_apps_v1(files_by_apps, budget, plot_file, plot_dir):
+
+    sns.set_style("darkgrid")
+
+    markers = plot_util.MARKERS
+    metric = "F1"
+
+    xs = []
+    all_xs = {}
+    all_ys = {}
+
+    max_setup_index = -1
+    min_setup_index = -1
+
+    for num_apps, files in sorted(files_by_apps.iteritems()):
+        ms_files = files["data"]
+        labels = files["labels"]
+        xs.append(num_apps)
+
+        for ms_file, label in zip(ms_files, labels):
+            f1s, fpses = data_util.get_scheduler_data(ms_file, by_budget=True)
+            if label not in all_ys.keys():
+                all_ys[label] = []
+            all_ys[label].append(np.average(f1s[budget]))
+
+    i = 0
+    for i, (label, ys) in enumerate(sorted(all_ys.iteritems())):
+
+        colors = plot_util.COLORLISTS[12]
+
+        c = colors[i]
+        m = markers[i]
+        plt.plot(xs, ys, label=label,
+                         lw=2,
+                         markersize=8,
+                         alpha=1,
+                         marker=m,
+                         color=c)
+
+        i += 1
+
+    filename = os.path.join(plot_dir, plot_file)
+    ylabel = "Average Event "
+
+    plot_util.format_plot("Number of Apps", ylabel + metric, 20)
+    plt.ylim(0, 1)
+    plt.tight_layout()
+    plt.legend(loc=0, fontsize=15)
+    plt.savefig(filename + ".pdf")
+
+    plt.clf()
+
 def plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir, verbose=0):
 
     sns.set_style("darkgrid")
 
     markers = plot_util.MARKERS
-
     metric = "F1"
 
     xs = []

@@ -4,7 +4,7 @@ import subprocess
 import glob
 
 
-def get_scheduler_data(csv_file):
+def get_scheduler_data(csv_file, by_budget=False):
     # Assumes Version 0
     # Version 0: num_apps, 1-F1, frozen_list..., fps_list..., cost
 
@@ -24,15 +24,21 @@ def get_scheduler_data(csv_file):
             average_fps = round(np.average(fps_list), 2)
             cost = float(vals[fps_end])
 
-            if num_apps not in metrics.keys():
-                metrics[num_apps] = []
-                fpses[num_apps] = []
+            if by_budget:
+                budget = int(vals[fps_end])
+                index = budget
+            else:
+                index = num_apps
+
+            if index not in metrics.keys():
+                metrics[index] = []
+                fpses[index] = []
 
             metric = float(vals[1])
             f1 =  1 - metric
 
-            metrics[num_apps].append(f1)
-            fpses[num_apps].append(average_fps)
+            metrics[index].append(f1)
+            fpses[index].append(average_fps)
 
     return metrics, fpses
 

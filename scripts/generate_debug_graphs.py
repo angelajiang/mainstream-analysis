@@ -110,9 +110,9 @@ def setups_9hybrid():
         scheduler_comparison.plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir)
         scheduler_comparison.plot_by_budget(files_by_budget_v, num_apps, plot_file, plot_dir, verbose=1)
 
-    # 043018 apps sweep
+    # 043018 budget sweep
 
-    num_apps_list = [2, 4, 6, 8, 10, 15, 20]
+    num_apps_list = [2, 4, 6, 8, 10, 15, 20, 25, 30]
     for num_apps in num_apps_list:
 
         files_by_budget = {}
@@ -129,18 +129,53 @@ def setups_9hybrid():
             l2 = "Mainstream-stems"
             l3 = "No Sharing"
             l4 = "Max Sharing"
-            ms_files = [m1,m3,m4]
-            labels = [l1,l3,l4]
-            files_by_budget[budget] = {"data": ms_files, "labels": labels}
+            if num_apps in [2, 4]:
+                ms_files = [m1,m2,m3,m4]
+                labels = [l1,l2,l3,l4]
+                ms_files_v = [m2,m3,m4]
+                labels_v = [l2,l3,l4]
+            else:
+                ms_files = [m1,m3,m4]
+                labels = [l1,l3,l4]
+                ms_files_v = [m1,m3,m4]
+                labels_v = [l1,l3,l4]
 
-            ms_files = [m1,m3,m4]
-            labels = [l1,l3,l4]
-            files_by_budget_v[budget] = {"data": ms_files, "labels": labels}
+            files_by_budget[budget] = {"data": ms_files, "labels": labels}
+            files_by_budget_v[budget] = {"data": ms_files_v, "labels": labels_v}
 
         plot_file ="f1-7hybrid-043018-" + str(num_apps)
 
         scheduler_comparison.plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir)
         scheduler_comparison.plot_by_budget(files_by_budget_v, num_apps, plot_file, plot_dir, verbose=1)
+
+    # 043018 apps sweep
+
+    for budget in budgets:
+
+        files_by_apps = {}
+        files_by_apps_v = {}
+
+        for num_apps in num_apps_list:
+
+            m1 =  "output/streamer/scheduler/atc/043018/greedy.mainstream.sim.{}.043018-{}.v1".format(budget, num_apps)
+            m2 =  "output/streamer/scheduler/atc/043018/stems_cpp.mainstream.sim.{}.043018-{}.v1".format(budget, num_apps)
+            m3 =  "output/streamer/scheduler/atc/043018/greedy.nosharing.sim.{}.043018-{}.v1".format(budget, num_apps)
+            m4 =  "output/streamer/scheduler/atc/043018/greedy.maxsharing.sim.{}.043018-{}.v1".format(budget, num_apps)
+            l1 = "Mainstream-greedy"
+            l2 = "Mainstream-stems"
+            l3 = "No Sharing"
+            l4 = "Max Sharing"
+
+            ms_files = [m1,m3,m4]
+            labels = [l1,l3,l4]
+            files_by_apps[num_apps] = {"data": ms_files, "labels": labels}
+
+        plot_file ="f1-7hybrid-043018-" + str(budget)
+        scheduler_comparison.plot_by_num_apps_v1(files_by_apps,
+                                                 budget,
+                                                 plot_file,
+                                                 plot_dir)
+
 
 def iii_f1():
     plot_dir = "plots/scheduler/debug/"
