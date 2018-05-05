@@ -31,6 +31,28 @@ def setups_correlation():
 
     plot_dir = "plots/scheduler/debug/correlation"
 
+    # 050218 budget sweep
+    num_apps = 20
+    corrs = ["dep", "emp", "ind"]
+    budgets = [50, 100, 150, 200, 250, 300]
+    files_by_budget = {}
+
+    for corr in corrs:
+        for budget in budgets:
+            m1 =  "output/streamer/scheduler/atc/050218/greedy.mainstream.sim.{}.050218-{}-{}.v1".format(budget, num_apps, corr)
+            m2 =  "output/streamer/scheduler/atc/050218/greedy.nosharing.sim.{}.050218-{}-{}.v1".format(budget, num_apps, corr)
+            m3 =  "output/streamer/scheduler/atc/050218/greedy.maxsharing.sim.{}.050218-{}-{}.v1".format(budget, num_apps, corr)
+            l1 = "Mainstream-greedy"
+            l2 = "No Sharing"
+            l3 = "Max Sharing"
+            ms_files = [m1,m2,m3]
+            labels = [l1,l2,l3]
+            files_by_budget[budget] = {"data": ms_files, "labels": labels}
+
+        plot_file ="f1-7hybrid-050218-" + corr
+        scheduler_comparison.plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir, version="v1")
+
+
 def setups_7hybrid():
 
     plot_dir = "plots/scheduler/debug/sweep"
@@ -86,7 +108,7 @@ def setups_7hybrid():
             m2 =  "output/streamer/scheduler/atc/043018/stems_cpp.mainstream.sim.{}.043018-{}.v1".format(budget, num_apps)
             m3 =  "output/streamer/scheduler/atc/043018/greedy.nosharing.sim.{}.043018-{}.v1".format(budget, num_apps)
             m4 =  "output/streamer/scheduler/atc/043018/greedy.maxsharing.sim.{}.043018-{}.v1".format(budget, num_apps)
-            l1 = "Mainstream-greedy"
+            l1 = "Mainstream"
             l2 = "Mainstream-stems"
             l3 = "No Sharing"
             l4 = "Max Sharing"
@@ -157,13 +179,13 @@ def accuracy_7hybrid():
                       cars]
 
     labels = [
-              "Red-Car-MobileNets-224",
-              "Scramble-MobileNets-224",
-              "Bus-MobileNets-224",
-              "Schoolbus-MobileNets-224",
-              "Pedestrian-MobileNets-224",
-              "Train-MobileNets-224",
-              "Cars-MobileNets-224"
+              "Red-Car",
+              "Scramble",
+              "Bus",
+              "Schoolbus",
+              "Pedestrian",
+              "Train",
+              "Cars"
               ]
 
     plot_file = os.path.join(plot_dir, "7hybrid-mobilenets-accuracy.pdf")

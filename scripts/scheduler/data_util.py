@@ -4,7 +4,7 @@ import subprocess
 import glob
 
 
-def get_scheduler_data(csv_file, by_budget=False):
+def get_scheduler_data(csv_file, by_budget=False, version="v0"):
     # Assumes Version 0
     # Version 0: num_apps, 1-F1, frozen_list..., fps_list..., cost
 
@@ -16,10 +16,16 @@ def get_scheduler_data(csv_file, by_budget=False):
             if line.startswith('#'):
                 continue
             vals = line.split(',')
-            if vals[0].isdigit():
-                num_apps = int(vals[0])
-            fps_start = num_apps + 2
-            fps_end = (2 *num_apps) + 2
+
+            if version == "v0":
+                offset = 0
+            elif version == "v1":
+                offset = 1
+
+            if vals[0 + offset].isdigit():
+                num_apps = int(vals[0 + offset])
+            fps_start = num_apps + 2 + offset
+            fps_end = (2 *num_apps) + 2 + offset
             fps_list = [float(v) for v in vals[fps_start:fps_end]]
             average_fps = round(np.average(fps_list), 2)
             cost = float(vals[fps_end])
@@ -34,7 +40,7 @@ def get_scheduler_data(csv_file, by_budget=False):
                 metrics[index] = []
                 fpses[index] = []
 
-            metric = float(vals[1])
+            metric = float(vals[1 + offset])
             f1 =  1 - metric
 
             metrics[index].append(f1)
