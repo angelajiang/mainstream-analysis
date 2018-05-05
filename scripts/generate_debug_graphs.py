@@ -129,6 +129,51 @@ def setups_7hybrid():
                                                  dual=True)
 
 
+def pdl_setups_7hybrid():
+
+    plot_dir = "plots/scheduler/debug/sweep"
+
+    # 050318 budget sweep
+
+    budgets = [100, 150, 200, 250, 300]
+    num_apps_list = [2, 4, 6, 8, 10, 15, 20, 25]
+
+    for budget in budgets:
+
+        files_by_apps = {}
+        files_by_apps_v = {}
+
+        for num_apps in num_apps_list:
+
+            m1 =  "output/streamer/scheduler/atc/050318/greedy.mainstream.sim.{}.050318-{}.v1".format(budget, num_apps)
+            m2 =  "output/streamer/scheduler/atc/050318/stems_cpp.mainstream.sim.{}.050318-{}.v1".format(budget, num_apps)
+            m3 =  "output/streamer/scheduler/atc/050318/greedy.nosharing.sim.{}.050318-{}.v1".format(budget, num_apps)
+            m4 =  "output/streamer/scheduler/atc/050318/greedy.maxsharing.sim.{}.050318-{}.v1".format(budget, num_apps)
+            l1 = "Mainstream"
+            l2 = "Mainstream-stems"
+            l3 = "No Sharing"
+            l4 = "Max Sharing"
+
+            ms_files = [m1,m3,m4]
+            labels = [l1,l3,l4]
+            files_by_apps[num_apps] = {"data": ms_files, "labels": labels}
+
+        plot_file ="f1-7hybrid-050318-" + str(budget)
+        for metric in ["F1", "recall", "precision"]:
+            scheduler_comparison.plot_by_num_apps_v1(files_by_apps,
+                                                     budget,
+                                                     plot_file,
+                                                     plot_dir,
+                                                     version="v1",
+                                                     metric=metric)
+            scheduler_comparison.plot_by_num_apps_v1(files_by_apps,
+                                                     budget,
+                                                     plot_file,
+                                                     plot_dir,
+                                                     version="v1",
+                                                     metric=metric,
+                                                     dual=True)
+
 def iii_f1():
 
     plot_dir = "plots/scheduler/debug/iii"
@@ -194,5 +239,6 @@ def accuracy_7hybrid():
 #compare_avg()
 setups_correlation()
 setups_7hybrid()
+pdl_setups_7hybrid()
 iii_f1()
 accuracy_7hybrid()

@@ -107,12 +107,11 @@ def plot_by_num_apps_v0(ms_files, labels, num_setups, plot_file, plot_dir):
         plt.clf()
 
 
-def plot_by_num_apps_v1(files_by_apps, budget, plot_file, plot_dir, dual=False):
+def plot_by_num_apps_v1(files_by_apps, budget, plot_file, plot_dir, dual=False, metric="F1", version="v0"):
 
     sns.set_style("white")
 
     markers = plot_util.MARKERS
-    metric = "F1"
 
     xs = []
     all_xs = {}
@@ -132,7 +131,9 @@ def plot_by_num_apps_v1(files_by_apps, budget, plot_file, plot_dir, dual=False):
         xs.append(num_apps)
 
         for ms_file, label in zip(ms_files, labels):
-            f1s, fpses = data_util.get_scheduler_data(ms_file, by_budget=True)
+            f1s, fpses = data_util.get_scheduler_data(ms_file, by_budget=True,
+                                                               metric=metric,
+                                                               version=version)
             if label not in all_ys.keys():
                 all_ys[label] = []
                 all_ys_dual[label] = []
@@ -166,7 +167,7 @@ def plot_by_num_apps_v1(files_by_apps, budget, plot_file, plot_dir, dual=False):
 
         i += 1
 
-    filename = os.path.join(plot_dir, plot_file)
+    filename = os.path.join(plot_dir, plot_file + "-{}".format(metric))
     if dual:
         filename += "-dual"
     ylabel = "Average Event "
