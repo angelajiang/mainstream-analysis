@@ -106,12 +106,87 @@ def plot_by_num_apps_v0(ms_files, labels, num_setups, plot_file, plot_dir):
 
         plt.clf()
 
-def plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir, verbose=0):
 
-    sns.set_style("darkgrid")
+def plot_by_num_apps_v1(files_by_apps, budget, plot_file, plot_dir, dual=False):
+
+    sns.set_style("white")
 
     markers = plot_util.MARKERS
+    metric = "F1"
 
+    xs = []
+    all_xs = {}
+    all_ys = {}
+    all_ys_dual = {}
+
+    max_setup_index = -1
+    min_setup_index = -1
+
+    fig, ax1 = plt.subplots()
+    if dual:
+        ax2 = ax1.twinx()
+
+    for num_apps, files in sorted(files_by_apps.iteritems()):
+        ms_files = files["data"]
+        labels = files["labels"]
+        xs.append(num_apps)
+
+        for ms_file, label in zip(ms_files, labels):
+            f1s, fpses = data_util.get_scheduler_data(ms_file, by_budget=True)
+            if label not in all_ys.keys():
+                all_ys[label] = []
+                all_ys_dual[label] = []
+            all_ys[label].append(np.average(f1s[budget]))
+            all_ys_dual[label].append(np.average(fpses[budget]))
+
+    for i, (label, ys) in enumerate(sorted(all_ys.iteritems())):
+
+        colors = [plot_util.MAINSTREAM["color"],
+                  plot_util.MAX_SHARING["color"],
+                  plot_util.NO_SHARING["color"],
+                  plot_util.MAINSTREAM_VARIANT["color"]]
+
+        c = colors[i]
+        m = markers[i]
+        ax1.plot(xs, ys, label=label,
+                         lw=3,
+                         markersize=8,
+                         alpha=1,
+                         marker=m,
+                         color=c)
+        if dual:
+            fpses = all_ys_dual[label]
+            ax2.plot(xs, fpses, label=label,
+                             lw=3,
+                             markersize=8,
+                             alpha=0.8,
+                             linestyle="--",
+                             marker=m,
+                             color=c)
+
+        i += 1
+
+    filename = os.path.join(plot_dir, plot_file)
+    if dual:
+        filename += "-dual"
+    ylabel = "Average Event "
+
+    if dual:
+        plot_util.format_plot_dual(ax1, ax2, "Number of concurrent apps", ylabel + metric, "Average FPS")
+    else:
+        plot_util.format_plot("Number of concurrent apps", ylabel + metric, 20)
+    ax1.set_ylim(0, 1)
+    ax1.legend(loc=0, fontsize=15)
+    ax1.set_xlim(max(min(xs),2), max(xs))
+    plt.savefig(filename + ".pdf")
+
+    plt.clf()
+
+def plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir, verbose=0, version="v0"):
+
+    sns.set_style("white")
+
+    markers = plot_util.MARKERS
     metric = "F1"
 
     xs = []
@@ -127,7 +202,7 @@ def plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir, verbose=0):
         xs.append(budget)
 
         for i, (ms_file, label) in enumerate(zip(ms_files, labels)):
-            f1s, fpses = data_util.get_scheduler_data(ms_file)
+            f1s, fpses = data_util.get_scheduler_data(ms_file, version=version)
 
             if verbose:
                 if max_setup_index < 0:
@@ -158,7 +233,10 @@ def plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir, verbose=0):
             colors = [plot_util.COLORLISTS[8][0], plot_util.COLORLISTS[8][7]]
             c_i = i % 2
         else:
-            colors = plot_util.COLORLISTS[12]
+            colors = [plot_util.MAINSTREAM["color"],
+                      plot_util.MAX_SHARING["color"],
+                      plot_util.NO_SHARING["color"],
+                      plot_util.MAINSTREAM_VARIANT["color"]]
             c_i = i
 
         c = colors[c_i]

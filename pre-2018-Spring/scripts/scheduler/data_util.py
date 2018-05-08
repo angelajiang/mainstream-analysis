@@ -4,7 +4,7 @@ import subprocess
 import glob
 
 
-def get_scheduler_data(csv_file):
+def get_scheduler_data(csv_file, by_budget=False, version="v0"):
     # Assumes Version 0
     # Version 0: num_apps, 1-F1, frozen_list..., fps_list..., cost
 
@@ -16,23 +16,35 @@ def get_scheduler_data(csv_file):
             if line.startswith('#'):
                 continue
             vals = line.split(',')
-            if vals[0].isdigit():
-                num_apps = int(vals[0])
-            fps_start = num_apps + 2
-            fps_end = (2 *num_apps) + 2
+
+            if version == "v0":
+                offset = 0
+            elif version == "v1":
+                offset = 1
+
+            if vals[0 + offset].isdigit():
+                num_apps = int(vals[0 + offset])
+            fps_start = num_apps + 2 + offset
+            fps_end = (2 *num_apps) + 2 + offset
             fps_list = [float(v) for v in vals[fps_start:fps_end]]
             average_fps = round(np.average(fps_list), 2)
             cost = float(vals[fps_end])
 
-            if num_apps not in metrics.keys():
-                metrics[num_apps] = []
-                fpses[num_apps] = []
+            if by_budget:
+                budget = int(vals[fps_end])
+                index = budget
+            else:
+                index = num_apps
 
-            metric = float(vals[1])
+            if index not in metrics.keys():
+                metrics[index] = []
+                fpses[index] = []
+
+            metric = float(vals[1 + offset])
             f1 =  1 - metric
 
-            metrics[num_apps].append(f1)
-            fpses[num_apps].append(average_fps)
+            metrics[index].append(f1)
+            fpses[index].append(average_fps)
 
     return metrics, fpses
 
