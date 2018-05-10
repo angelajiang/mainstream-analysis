@@ -1,4 +1,19 @@
 import pandas as pd
+import colors
+
+
+def ex(items, each=lambda x: {}, constant={}):
+    rows = []
+    for item in items:
+        dct = each(item)
+        dct.update(constant)
+        rows.append(dct)
+    return rows
+
+
+def comb(rows):
+    # TODO: Add some asserts.
+    return pd.DataFrame(rows)
 
 
 class Series(object):
@@ -8,9 +23,19 @@ class Series(object):
     and metadata (colour, title for plotting line)
     """
     def __init__(self,
-                 data=None,
-                 index=None,
+                 series=None,
+                 y=None,
+                 x=None,
                  name=None,
-                 colour
+                 plotstyle=None,
                  **kwargs):
-        self.series = pd.Series(data=data, index=index, name=name, **kwargs)
+        assert series is None or (x is not None and y is not None)
+        if series is None:
+            self.series = pd.Series(data=y, index=x, name=name, **kwargs)
+        else:
+            self.series = series
+            if name is not None:
+                self.series.name = name
+        if isinstance(plotstyle, str):
+            plotstyle = colors.SERIES[plotstyle]
+        self.plotstyle = plotstyle

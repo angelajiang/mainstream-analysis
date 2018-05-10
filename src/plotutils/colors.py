@@ -101,3 +101,9 @@ MAX_SHARING = {
     "pattern": "xxxxx",
     "label": "Max Sharing",
 }
+
+SERIES = {
+    'mainstream': MAINSTREAM,
+    'maxsharing': MAX_SHARING,
+    'nosharing': NO_SHARING,
+}

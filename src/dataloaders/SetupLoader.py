@@ -16,11 +16,13 @@ import app_data_mobilenets as app_data
 VERSION_SUFFIX = ".v1"
 SETUP_DIR = os.path.join(MAINSTREAM_DIR, "data/setups/{exp_id}")
 CONFIG_FILENAME = os.path.join(SETUP_DIR, "setup/configuration.{setup_id}")
+SETUP_FILE_STR = "/setups.{exp_id}-*{version}.pickle"
 # setup_num_app_file = setup_dir + "/setups.{exp_id}-{num_apps}.v1"
 
 
 def get_scheduler(setup):
-    return Scheduler(None, setup.apps, setup.video_desc.to_map(), app_data.model_desc)
+    # TODO: Make setup or something specify the metric.
+    return Scheduler("f1", setup.apps, setup.video_desc.to_map(), app_data.model_desc)
 
 
 def get_cost_benefits(exp_id, setup, config_filename=CONFIG_FILENAME):
@@ -36,12 +38,12 @@ def get_cost_benefits(exp_id, setup, config_filename=CONFIG_FILENAME):
     return ret
 
 
-def load(exp_id, setup_dir=SETUP_DIR, version_suffix=VERSION_SUFFIX):
+def load(exp_id, setup_dir=SETUP_DIR, setup_file_str=SETUP_FILE_STR, version_suffix=VERSION_SUFFIX):
     print "Loading setups...",
     setup_generator = Setup.SetupGenerator()
     all_setups = {}
     num_setups = 0
-    setup_files = (setup_dir + "/setups.{exp_id}-*{version}.pickle").format(exp_id=exp_id, version=version_suffix)
+    setup_files = (setup_dir + setup_file_str).format(exp_id=exp_id, version=version_suffix)
     for pkl_filename in glob.glob(setup_files):
         setups = setup_generator.deserialize_setups(pkl_filename)
         for setup in setups:
