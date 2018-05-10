@@ -1,4 +1,5 @@
 
+import pprint as pp
 import os
 import sys
 sys.path.append("scripts/goodness")
@@ -10,22 +11,45 @@ from data_util import collect_comb_csvs
 
 
 ################## Maximize F1 Score ##################
-plot_dir = "plots/scheduler/exhaustive/"
+plot_dir = "plots/scheduler/debug/comparison/"
 t1 = ""
 
 def compare_avg():
 
-    m1 =  "output/streamer/scheduler/exhaustive/dp.031318.v0"
-    m2 =  "output/streamer/scheduler/exhaustive/exhaustive.031318.v0"
-    m3 =  "output/streamer/scheduler/exhaustive/greedy.031318.v0"
-    l1 = "DP-hifi"
-    l2 = "Exhaustive"
-    l3 = "Greedy"
-    plot_file ="f1-avg-scheduler-comparison-bar"
-    ms_files = [m1,m2,m3]
-    labels = [l1,l2,l3]
+    num_apps_list = [2, 3, 4, 5, 6, 7, 8, 10, 15, 20, 25]
+    budgets = [100, 150, 200, 250, 300]
 
-    scheduler_comparison.plot_bar_v0(ms_files, labels, plot_file, plot_dir)
+    for budget in budgets:
+        files_by_num_apps = {}
+        files_by_num_apps_v = {}
+
+        for num_apps in num_apps_list:
+
+            m1 =  "output/streamer/scheduler/atc/050318/greedy.mainstream.sim.{}.050318-{}.v1".format(budget, num_apps)
+            m2 =  "output/streamer/scheduler/atc/050318/stems_cpp.mainstream.sim.{}.050318-{}.v1".format(budget, num_apps)
+            m3 =  "output/streamer/scheduler/atc/050318/exhaustive.mainstream.sim.{}.050318-{}.v1".format(budget, num_apps)
+            l1 = "Greedy"
+            l2 = "Stems-CPP"
+            l3 = "Exhaustive"
+
+            ms = [m1,m2,m3]
+            ls = [l1,l2,l3]
+            ms_files = []
+            labels = []
+
+            for m, l in zip(ms, ls):
+                if os.path.isfile(m):
+                    ms_files.append(m)
+                    labels.append(l)
+
+            files_by_num_apps[num_apps] = {"data": ms_files, "labels": labels}
+
+        plot_file ="f1-7hybrid-050318-comparison-{}".format(budget)
+        scheduler_comparison.plot_by_num_apps(files_by_num_apps,
+                                                 budget,
+                                                 plot_file,
+                                                 plot_dir,
+                                                 version="v1")
 
 def setups_correlation():
 
@@ -118,16 +142,65 @@ def setups_7hybrid():
             files_by_apps[num_apps] = {"data": ms_files, "labels": labels}
 
         plot_file ="f1-7hybrid-043018-" + str(budget)
-        scheduler_comparison.plot_by_num_apps_v1(files_by_apps,
+        scheduler_comparison.plot_by_num_apps(files_by_apps,
                                                  budget,
                                                  plot_file,
                                                  plot_dir)
-        scheduler_comparison.plot_by_num_apps_v1(files_by_apps,
+        scheduler_comparison.plot_by_num_apps(files_by_apps,
                                                  budget,
                                                  plot_file,
                                                  plot_dir,
                                                  dual=True)
 
+    # 050318 apps sweep
+
+    print "050318"
+
+    num_apps_list = [2, 4, 6, 8, 10, 15, 20, 25]
+
+    for budget in budgets:
+
+        files_by_apps = {}
+        files_by_apps_v = {}
+
+        for num_apps in num_apps_list:
+
+            m1 =  "output/streamer/scheduler/atc/050318/greedy.mainstream.sim.{}.050318-{}.v1".format(budget, num_apps)
+            m2 =  "output/streamer/scheduler/atc/050318/stems_cpp.mainstream.sim.{}.050318-{}.v1".format(budget, num_apps)
+            m3 =  "output/streamer/scheduler/atc/050318/greedy.nosharing.sim.{}.050318-{}.v1".format(budget, num_apps)
+            m4 =  "output/streamer/scheduler/atc/050318/greedy.maxsharing.sim.{}.050318-{}.v1".format(budget, num_apps)
+            l1 = "Mainstream"
+            l2 = "Mainstream-stems"
+            l3 = "No Sharing"
+            l4 = "Max Sharing"
+
+            if num_apps in [2, 3, 4, 5, 6] and budget in [50, 100, 150, 200, 250]:
+                ms_files = [m1,m2,m3,m4]
+                labels = [l1,l2,l3,l4]
+                ms_files_v = [m2,m3,m4]
+                labels_v = [l2,l3,l4]
+            else:
+                ms_files = [m1,m3,m4]
+                labels = [l1,l3,l4]
+                ms_files_v = [m1,m3,m4]
+                labels_v = [l1,l3,l4]
+
+            files_by_apps[num_apps] = {"data": ms_files, "labels": labels}
+            files_by_apps_v[num_apps] = {"data": ms_files_v, "labels": labels_v}
+
+        plot_file ="f1-7hybrid-050318-" + str(budget)
+        scheduler_comparison.plot_by_num_apps(files_by_apps,
+                                                 budget,
+                                                 plot_file,
+                                                 plot_dir,
+                                                 version="v1",
+                                                 )
+        scheduler_comparison.plot_by_num_apps(files_by_apps,
+                                                 budget,
+                                                 plot_file,
+                                                 plot_dir,
+                                                 version="v1",
+                                                 dual=True)
 
 def pdl_setups_7hybrid():
 
@@ -160,13 +233,13 @@ def pdl_setups_7hybrid():
 
         plot_file ="f1-7hybrid-050318-" + str(budget)
         for metric in ["F1", "recall", "precision"]:
-            scheduler_comparison.plot_by_num_apps_v1(files_by_apps,
-                                                     budget,
-                                                     plot_file,
-                                                     plot_dir,
-                                                     version="v1",
-                                                     metric=metric)
-            scheduler_comparison.plot_by_num_apps_v1(files_by_apps,
+            #scheduler_comparison.plot_by_num_apps(files_by_apps,
+            #                                         budget,
+            #                                         plot_file,
+            #                                         plot_dir,
+            #                                         version="v1",
+            #                                         metric=metric)
+            scheduler_comparison.plot_by_num_apps(files_by_apps_v,
                                                      budget,
                                                      plot_file,
                                                      plot_dir,
@@ -236,7 +309,7 @@ def accuracy_7hybrid():
     plot_file = os.path.join(plot_dir, "7hybrid-mobilenets-accuracy.pdf")
     accuracy_vs_layer.plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
 
-#compare_avg()
+compare_avg()
 setups_correlation()
 setups_7hybrid()
 pdl_setups_7hybrid()
