@@ -1,15 +1,29 @@
+# Each function does one plot
 # Also an example of a script that would appear in a python notebook
 import dataloaders
 import plot
+from plotutils import Series
+from plotutils import COLORS
 
-# Each function does one plot
 
 def f1_7hybrid():
     # TODO: Have some sort of namespacing
     # Make it work regardless of ...
     # Some sort of directory matching? Use glob?
-    setups = dataloaders.load_setups("050318")
-    dataloaders.load_schedule("output/scheduler/setups/050318/greedy.mainstream.sim.50.050318-2.v1", setups=setups)
+    exp_id = "050318"
+    setups = dataloaders.load_setups(exp_id)
+    # schedules = dataloaders.load_schedule("output/scheduler/setups/050318/greedy.mainstream.sim.50.050318-2.v1", setups=setups)
+
+    # TODO: Fix budget.
+    # Group by number of apps (use mean).
+
+    series_names = ["mainstream", "maxsharing", "nosharing"]
+    for series in series_names:
+        schedules = dataloaders.load_schedules("050318", "greedy." + series + ".sim.*.v1", setups=setups)
+        # schedules = dataloaders.load_schedules("050318", "greedy." + series + ".sim.{budget}.{exp_id}-{num_apps}.v1", setups=setups)
+
+    plot.variants(series)
+
 
 if __name__ == '__main__':
     f1_7hybrid()
