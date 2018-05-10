@@ -1,3 +1,5 @@
+import glob
+import os
 
 
 class Schedule(object):
@@ -5,27 +7,54 @@ class Schedule(object):
                  budget=None, setup=None):
         # Calculate F1s using cost benefits loaded from setup file
         self._fpses = fpses
-        self._num_frozens = num_frozens
+        self._frozens = num_frozens
         self._budget = budget
         self._setup = setup
 
-        metric = "f1"
-        for app, num_frozen, fps in zip(self._setup.apps, num_frozens, fpses):
-            setup.scheduler._get_metric(app.to_map(), num_frozen, fps, metric)
-        # cost, benefits
-        # F1s
+        self._f1s = self._metric("f1")
+        self._recalls = [1. - x for x in self._metric("fnr")]
+        self._precisions = [1. - x for x in self._metric("fpr")]
 
-        print(setup)
+        self._costs, self._objectives = [], []
+        for app, num_frozen, fps in zip(self._setup.apps, self._frozens, self._fpses):
+            cost, objective = self._setup.cost_benefits[app.get_id()][(num_frozen, fps)]
+            self._costs.append(cost)
+            self._objectives.append(objective)
+
+    def _metric(self, metric):
+        metrics = []
+        for app, num_frozen, fps in zip(self._setup.apps, self._frozens, self._fpses):
+            metrics.append(self._setup.scheduler._get_metric(app.to_map(), num_frozen, fps, metric))
+        return metrics
 
     def mean_f1(self):
-        pass
+        return sum(self._f1s) / float(len(self._f1s))
 
+    @property
+    def fpses(self):
+        return self._fpses
+    
+    @property
+    def frozens(self):
+        return self.frozens
+
+    @property
+    def costs(self):
+        return self._costs
+
+    @property
+    def objectives(self):
+        return self._objectives
+
+    @property
     def f1s(self):
-        pass
+        return self._f1s
 
+    @property
     def budget(self):
         return self._budget
 
+    @property
     def setup(self):
         return self._setup
 
@@ -39,14 +68,14 @@ def load(filename, setups={}):
             line = line.strip().split(',')
             # parse line
             if filename.endswith(".v0"):
-                pass
+                raise NotImplementedError
             elif filename.endswith(".v1"):
                 idx = 0
                 setup_id = line[idx]
                 idx += 1
                 num_apps = int(line[idx])
                 idx += 1
-                assert len(line) == 1 + 2 + num_apps * 2 + 2 + 3, len(line)                
+                assert len(line) == 1 + 2 + num_apps * 2 + 2 + 3, len(line)
                 metric = float(line[idx])
                 idx += 1
                 frozens = map(int, line[idx:idx + num_apps])
@@ -69,4 +98,11 @@ def load(filename, setups={}):
                 # raise Exception("Unknown file format")
             schedules.append(Schedule(fpses, frozens, budget=budget,
                                       setup=setups[setup_id]))
+    return schedules
+
+
+def load_dir(exp_id, suffix, workspace='output/scheduler/setups/{exp_id}/', **kwargs):
+    schedules = []
+    for filename in glob.glob(os.path.join(workspace.format(exp_id=exp_id), suffix)):
+        schedules += load(filename, **kwargs)
     return schedules
