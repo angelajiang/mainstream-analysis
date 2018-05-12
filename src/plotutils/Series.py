@@ -24,11 +24,14 @@ def agg2xy(aggregated, names=None):
     return xss, yss
 
 
-def get_series(xss, yss, series_names=None, plotstyles=None, plotparams={}):
+def get_series(xss, yss, errs=None, names=None, plotstyles=None, plotparams={}):
     if plotstyles is None:
-        plotstyles = series_names
+        plotstyles = names
+    if errs is not None:
+        return [Series(x=xs, y=ys, yerrs=yerr, name=sn, plotstyle=ps, plotparams=plotparams)
+                for xs, ys, yerr, ps, sn in zip(xss, yss, errs, plotstyles, names)]
     return [Series(x=xs, y=ys, name=sn, plotstyle=ps, plotparams=plotparams)
-            for xs, ys, ps, sn in zip(xss, yss, plotstyles, series_names)]
+            for xs, ys, ps, sn in zip(xss, yss, plotstyles, names)]
 
 
 class Series(object):
@@ -71,6 +74,12 @@ class Series(object):
         for k in ['marker', 'color', 'label']:
             kwargs[k] = self.plotstyle[k]
         self.series.plot(*args, **kwargs)
+
+    def x(self):
+        return self.series.index
+
+    def y(self):
+        return self.series.values
 
     def __repr__(self):
         return str(self.series)

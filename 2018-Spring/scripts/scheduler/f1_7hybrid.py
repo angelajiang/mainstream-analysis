@@ -34,12 +34,13 @@ def f1_7hybrid():
     grouped = df_view.groupby(['sharing', 'num_apps'])
 
     xss, yss = agg2xy(grouped['f1'].mean(), names=series_names)
-    series = get_series(xss, yss, series_names=series_names, plotparams=dict(lw=4, markersize=8))
+    series = get_series(xss, yss, names=series_names, plotparams=dict(lw=4, markersize=8))
 
     xss2, yss2 = agg2xy(grouped['fps'].mean(), names=series_names)
     plotstyles = [styles.SERIES_ALT[series_name] for series_name in series_names]
     plotparams = dict(lw=3, markersize=8, alpha=0.7, linestyle='--')
-    series2 = [Series(x=xs, y=ys, name=sn, plotstyle=ps, plotparams=plotparams) for xs, ys, ps, sn in zip(xss2, yss2, plotstyles, series_names)]
+    series2 = [Series(x=xs, y=ys, name=sn, plotstyle=ps, plotparams=plotparams)
+               for xs, ys, ps, sn in zip(xss2, yss2, plotstyles, series_names)]
 
     ax1, ax2 = plot.variants_dual(series, series2)
     grids.y.f1(yss, ax=ax1)

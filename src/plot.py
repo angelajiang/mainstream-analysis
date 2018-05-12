@@ -3,21 +3,33 @@ import numpy as np
 import scipy.interpolate
 
 
-def variants(series, ax=None, plot_kwargs={}, legend_kwargs={}):
+def _grid_apply(series, grid, ax=None):
+    if grid is not None:
+        pts = series[0].x() if len(series) > 0 else None
+        grid(pts, ax=ax)
+
+
+def variants(series, ax=None,
+             xgrid=None, ygrid=None,
+             plot_kwargs={}, legend_kwargs={}):
     """Comparing different variants of Mainstream"""
     if ax is None:
         ax = plt.gca()
     for line in series:
         line.plot(ax=ax, **plot_kwargs)
+    _grid_apply(series, xgrid, ax=ax)
+    _grid_apply(series, ygrid, ax=ax)
     ax.legend(**legend_kwargs)
     return ax
 
 
-def variants_dual(seriesA, seriesB, plot_kwargs={}, legend_kwargs={}):
+def variants_dual(seriesA, seriesB,
+                  xgrid=None, y1grid=None, y2grid=None,
+                  plot_kwargs={}, legend_kwargs={}):
     fig, ax1 = plt.subplots()
     ax2 = ax1.twinx()
-    variants(seriesA, ax1, plot_kwargs=plot_kwargs)
-    variants(seriesB, ax2, plot_kwargs=plot_kwargs)
+    variants(seriesA, ax1, xgrid=xgrid, ygrid=y1grid, plot_kwargs=plot_kwargs)
+    variants(seriesB, ax2, ygrid=y2grid, plot_kwargs=plot_kwargs)
     ax2.legend(**legend_kwargs)
     return ax1, ax2
 
