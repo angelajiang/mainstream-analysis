@@ -16,6 +16,21 @@ def comb(rows):
     return pd.DataFrame(rows)
 
 
+def agg2xy(aggregated, names=None):
+    unstacked = aggregated.unstack(0)
+    if names is None:
+        names = unstacked.columns
+    xss, yss = zip(*[(unstacked[k].index, unstacked[k].values) for k in names])
+    return xss, yss
+
+
+def get_series(xss, yss, series_names=None, plotstyles=None, plotparams={}):
+    if plotstyles is None:
+        plotstyles = series_names
+    return [Series(x=xs, y=ys, name=sn, plotstyle=ps, plotparams=plotparams)
+            for xs, ys, ps, sn in zip(xss, yss, plotstyles, series_names)]
+
+
 class Series(object):
     """
     Wraps Pandas series (index, data points)

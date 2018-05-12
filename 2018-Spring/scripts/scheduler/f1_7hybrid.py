@@ -3,8 +3,11 @@
 import dataloaders
 import plot
 from plotutils import Series
-from plotutils import ex, comb
-from plotutils import colors
+from plotutils import ex, comb, agg2xy, get_series
+from plotutils import legends
+from plotutils import grids
+from plotutils import styles
+from utils import save
 from utils import mean
 
 
@@ -30,14 +33,20 @@ def f1_7hybrid():
     # Group <setups> by number of apps, aggregate by mean.
     grouped = df_view.groupby(['sharing', 'num_apps'])
 
-    aggregated = grouped['f1'].mean()
-    unstacked = aggregated.unstack(0)
-    xss, yss = zip(*[(unstacked[k].index, unstacked[k].values) for k in series_names])
-    series = [Series(x=xs, y=ys, name=sn, plotstyle=sn) for xs, ys, sn in zip(xss, yss, series_names)]
+    xss, yss = agg2xy(grouped['f1'].mean(), names=series_names)
+    series = get_series(xss, yss, series_names=series_names, plotparams=dict(lw=4, markersize=8))
 
-    plotparams = dict(lw=4, markersize=8)
-    plot.variants(series, plot_kwargs=plotparams)
-    plot.save('scheduler', exp_id, 'f1')
+    xss2, yss2 = agg2xy(grouped['fps'].mean(), names=series_names)
+    plotstyles = [styles.SERIES_ALT[series_name] for series_name in series_names]
+    plotparams = dict(lw=3, markersize=8, alpha=0.7, linestyle='--')
+    series2 = [Series(x=xs, y=ys, name=sn, plotstyle=ps, plotparams=plotparams) for xs, ys, ps, sn in zip(xss2, yss2, plotstyles, series_names)]
+
+    ax1, ax2 = plot.variants_dual(series, series2)
+    grids.y.f1(yss, ax=ax1)
+    grids.y.fps(yss2, ax=ax2)
+    grids.x.num_apps(xss, ax=ax1)
+    legends.dual_fps(ax1, ax2, left='F1')
+    save('scheduler', exp_id, 'f1-7hybrid-dual')
 
 
 if __name__ == '__main__':

@@ -107,3 +107,9 @@ SERIES = {
     'maxsharing': MAX_SHARING,
     'nosharing': NO_SHARING,
 }
+
+SERIES_ALT = {}
+for k, v in SERIES.items():
+    v = dict(v)
+    v['marker'] = v.pop('marker_alt')
+    SERIES_ALT[k] = v
