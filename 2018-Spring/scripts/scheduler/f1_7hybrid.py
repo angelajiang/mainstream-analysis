@@ -3,57 +3,42 @@
 import dataloaders
 import plot
 from plotutils import Series
-from plotutils import COLORS
+from plotutils import ex, comb
+from plotutils import colors
+from utils import mean
 
 
 def f1_7hybrid():
-    # TODO: Have some sort of namespacing
-    # Make it work regardless of ...
-    # Some sort of directory matching? Use glob?
     exp_id = "050318"
-    setups = dataloaders.load_setups(exp_id)
-    # schedules = dataloaders.load_schedule("output/scheduler/setups/050318/greedy.mainstream.sim.50.050318-2.v1", setups=setups)
-
-    # TODO: Fix budget.
-    # Group by number of apps (use mean).
-
     series_names = ["mainstream", "maxsharing", "nosharing"]
-    for series in series_names:
-        schedules = dataloaders.load_schedules("050318", "greedy." + series + ".sim.*.v1", setups=setups)
-        # schedules = dataloaders.load_schedules("050318", "greedy." + series + ".sim.{budget}.{exp_id}-{num_apps}.v1", setups=setups)
 
-    plot.variants(series)
+    setups = dataloaders.load_setups(exp_id, setup_file_str="/setups.{exp_id}-*{version}.pickle")
+
+    rows = []
+    for series_name in series_names:
+        schedules = dataloaders.load_schedules("050318", "greedy." + series_name + ".sim.*.v1", setups=setups)
+        # Extract some attributes from the schedules.
+        # Add on some based on the file name.
+        rows += ex(schedules,
+                   each=lambda s: {'f1': mean(s.f1s), 'fps': mean(s.fpses), 'num_apps': s.num_apps, 'budget': s.budget},
+                   constant={'scheduler': 'greedy', 'sharing': series_name})
+    df = comb(rows)
+
+    # See Pandas: Group By: split-apply-combine
+    # https://pandas.pydata.org/pandas-docs/stable/groupby.html
+    df_view = df[df['budget'] == 100]
+    # Group <setups> by number of apps, aggregate by mean.
+    grouped = df_view.groupby(['sharing', 'num_apps'])
+
+    aggregated = grouped['f1'].mean()
+    unstacked = aggregated.unstack(0)
+    xss, yss = zip(*[(unstacked[k].index, unstacked[k].values) for k in series_names])
+    series = [Series(x=xs, y=ys, name=sn, plotstyle=sn) for xs, ys, sn in zip(xss, yss, series_names)]
+
+    plotparams = dict(lw=4, markersize=8)
+    plot.variants(series, plot_kwargs=plotparams)
+    plot.save('scheduler', exp_id, 'f1')
 
 
 if __name__ == '__main__':
     f1_7hybrid()
-
-# def maxmin():
-#     .. = dataloaders.load_schedules(filename)
-#     # merge files if necessary
-
-#     # get some sort of dataframe-like thing to allow us to filter/etc by
-
-#     # sort/filter (dataframe like syntax)
-
-#     # aggregation (e.g. take the avg, take the mean)
-#     # error bars, if needed
-
-#     series = [.., ..]
-#     Series(schedules)
-
-#     plot.variants(series,
-#                   lambda s: s.mean_f1(),
-#                   lambda s: min(s.f1s),
-#                   lambda s: max(s.f1s),)
-
-
-
-
-
-# def heuristics():
-#     # agg by num_apps
-#     # agg by budget
-
-# # Metadata won't necessarirly propagate on DF filter etc
-# # https://stackoverflow.com/questions/14688306/adding-meta-information-metadata-to-pandas-dataframe

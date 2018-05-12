@@ -2,7 +2,11 @@ import glob
 import os
 import pickle
 import sys
-from constants import MAINSTREAM_DIR
+from dl_constants import MAINSTREAM_DIR
+from dl_constants import VERSION_SUFFIX
+from dl_constants import SETUP_DIR
+from dl_constants import CONFIG_FILENAME
+from dl_constants import SETUP_FILE_STR
 sys.path.append(os.path.join(MAINSTREAM_DIR, "src/scheduler/types"))
 sys.path.append(os.path.join(MAINSTREAM_DIR, "src/scheduler"))
 sys.path.append(os.path.join(MAINSTREAM_DIR, "src/util"))
@@ -13,15 +17,12 @@ from Scheduler import Scheduler
 import app_data_mobilenets as app_data
 
 
-VERSION_SUFFIX = ".v1"
-SETUP_DIR = os.path.join(MAINSTREAM_DIR, "data/setups/{exp_id}")
-CONFIG_FILENAME = os.path.join(SETUP_DIR, "setup/configuration.{setup_id}")
-SETUP_FILE_STR = "/setups.{exp_id}-*{version}.pickle"
 # setup_num_app_file = setup_dir + "/setups.{exp_id}-{num_apps}.v1"
 
 
 def get_scheduler(setup):
     # TODO: Make setup or something specify the metric.
+    # TODO: Load layer costs from file.
     return Scheduler("f1", setup.apps, setup.video_desc.to_map(), app_data.model_desc)
 
 

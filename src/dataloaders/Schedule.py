@@ -1,6 +1,6 @@
 import glob
 import os
-from constants import SEMESTER_DIR
+from dl_constants import SCHEDULE_DIR
 from utils import mean
 
 
@@ -148,7 +148,7 @@ def load(filename, setups={}):
     return schedules
 
 
-def load_dir(exp_id, suffix, workspace=os.path.join(SEMESTER_DIR, 'output/scheduler/setups/{exp_id}/'), **kwargs):
+def load_dir(exp_id, suffix, workspace=SCHEDULE_DIR, **kwargs):
     schedules = []
     for filename in glob.glob(os.path.join(workspace.format(exp_id=exp_id), suffix)):
         schedules += load(filename, **kwargs)
