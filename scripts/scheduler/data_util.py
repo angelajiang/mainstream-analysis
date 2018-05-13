@@ -4,7 +4,7 @@ import subprocess
 import glob
 
 
-def get_scheduler_data(csv_file, by_budget=False, version="v0"):
+def get_scheduler_data(csv_file, by_budget=False, version="v0", metric="F1"):
     # Assumes Version 0
     # Version 0: num_apps, 1-F1, frozen_list..., fps_list..., cost
 
@@ -40,10 +40,19 @@ def get_scheduler_data(csv_file, by_budget=False, version="v0"):
                 metrics[index] = []
                 fpses[index] = []
 
-            metric = float(vals[1 + offset])
-            f1 =  1 - metric
+            if metric == "F1":
+                m = float(vals[1 + offset])
+                f1 =  1 - m
+                metrics[index].append(f1)
+            elif metric == "recall":
+                m = float(vals[fps_end + 2 + offset])
+                recall =  1 - m
+                metrics[index].append(recall)
+            elif metric == "precision":
+                m = float(vals[fps_end + 3 + offset])
+                precision =  1 - m
+                metrics[index].append(precision)
 
-            metrics[index].append(f1)
             fpses[index].append(average_fps)
 
     return metrics, fpses

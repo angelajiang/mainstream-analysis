@@ -14,7 +14,7 @@ import data_util
 import matplotlib.pyplot as plt
 
 
-def plot_bar_v0(ms_files, label_prefixes, plot_file, plot_dir, limit=20):
+def plot_bar(ms_files, label_prefixes, plot_file, plot_dir, limit=20, version="v0"):
     colors = plot_util.COLORLISTS[len(ms_files)]
 
     metric = "F1"
@@ -28,7 +28,7 @@ def plot_bar_v0(ms_files, label_prefixes, plot_file, plot_dir, limit=20):
         all_pts = []
 
         for i, (ms_file, label_prefix, c) in enumerate(zip(ms_files, label_prefixes,  colors)):
-            metrics, fpses = data_util.get_scheduler_data(ms_file)
+            metrics, fpses = data_util.get_scheduler_data(ms_file, version=version)
 
             ys = []
             avg_fpses = []
@@ -56,65 +56,12 @@ def plot_bar_v0(ms_files, label_prefixes, plot_file, plot_dir, limit=20):
         plt.clf()
 
 
-def plot_by_num_apps_v0(ms_files, labels, num_setups, plot_file, plot_dir):
-
-    colors = plot_util.COLORLISTS[len(ms_files)]
-    markers = plot_util.MARKERS
-
-    metric = "F1"
-
-    for j in range(2):
-
-        lines = []
-        all_pts = []
-
-        for i, (ms_file, label, m, c) in enumerate(zip(ms_files, labels, markers, colors)):
-            metrics, fpses = data_util.get_scheduler_data(ms_file)
-
-            xs = []
-            ys = []
-            errs = []
-            for num_apps in sorted(metrics.keys()):
-                if num_setups > len(metrics[num_apps]):
-                    continue
-                xs.append(num_apps)
-                ys.append(np.average(metrics[num_apps]))
-                errs.append(np.std(metrics[num_apps]))
-
-            plt.plot(xs, ys, label=label,
-                             lw=4,
-                             markersize=8,
-                             alpha=0.5,
-                             marker=m,
-                             color=c)
-
-            #plt.errorbar(xs, ys, yerr=errs, label=label,
-            #                 lw=4,
-            #                 markersize=8,
-            #                 marker=m,
-            #                 color=c)
-
-        plot_util.format_plot("Num Apps", "Average Event " + metric)
-        plt.title(str(num_setups) + " setups per point", fontsize=20)
-
-        plt.ylim(0,1)
-
-        filename = os.path.join(plot_dir, plot_file + "-" + metric)
-
-        plt.legend(loc=0, fontsize=15)
-        plt.savefig(filename + ".pdf")
-
-        plt.clf()
-
-
-def plot_by_num_apps_v1(files_by_apps, budget, plot_file, plot_dir, dual=False):
+def plot_by_num_apps(files_by_apps, budget, plot_file, plot_dir, dual=False, metric="F1", version="v0"):
 
     sns.set_style("white")
 
     markers = plot_util.MARKERS
-    metric = "F1"
 
-    xs = []
     all_xs = {}
     all_ys = {}
     all_ys_dual = {}
@@ -129,17 +76,24 @@ def plot_by_num_apps_v1(files_by_apps, budget, plot_file, plot_dir, dual=False):
     for num_apps, files in sorted(files_by_apps.iteritems()):
         ms_files = files["data"]
         labels = files["labels"]
-        xs.append(num_apps)
 
         for ms_file, label in zip(ms_files, labels):
-            f1s, fpses = data_util.get_scheduler_data(ms_file, by_budget=True)
+            f1s, fpses = data_util.get_scheduler_data(ms_file, by_budget=True,
+                                                               metric=metric,
+                                                               version=version)
             if label not in all_ys.keys():
+                all_xs[label] = []
                 all_ys[label] = []
                 all_ys_dual[label] = []
             all_ys[label].append(np.average(f1s[budget]))
+            all_xs[label].append(num_apps)
             all_ys_dual[label].append(np.average(fpses[budget]))
 
+    max_xs = 0
     for i, (label, ys) in enumerate(sorted(all_ys.iteritems())):
+
+        xs = all_xs[label]
+        max_xs = max(max_xs, max(xs))
 
         colors = [plot_util.MAINSTREAM["color"],
                   plot_util.MAX_SHARING["color"],
@@ -148,10 +102,11 @@ def plot_by_num_apps_v1(files_by_apps, budget, plot_file, plot_dir, dual=False):
 
         c = colors[i]
         m = markers[i]
+
         ax1.plot(xs, ys, label=label,
                          lw=3,
                          markersize=8,
-                         alpha=1,
+                         alpha=0.8,
                          marker=m,
                          color=c)
         if dual:
@@ -166,7 +121,7 @@ def plot_by_num_apps_v1(files_by_apps, budget, plot_file, plot_dir, dual=False):
 
         i += 1
 
-    filename = os.path.join(plot_dir, plot_file)
+    filename = os.path.join(plot_dir, plot_file + "-{}".format(metric))
     if dual:
         filename += "-dual"
     ylabel = "Average Event "
@@ -177,7 +132,7 @@ def plot_by_num_apps_v1(files_by_apps, budget, plot_file, plot_dir, dual=False):
         plot_util.format_plot("Number of concurrent apps", ylabel + metric, 20)
     ax1.set_ylim(0, 1)
     ax1.legend(loc=0, fontsize=15)
-    ax1.set_xlim(max(min(xs),2), max(xs))
+    ax1.set_xlim(2, max_xs)
     plt.savefig(filename + ".pdf")
 
     plt.clf()
@@ -244,7 +199,7 @@ def plot_by_budget(files_by_budget, num_apps, plot_file, plot_dir, verbose=0, ve
         plt.plot(xs, ys, label=label,
                          lw=2,
                          markersize=8,
-                         alpha=1,
+                         alpha=0.8,
                          marker=m,
                          color=c)
 
