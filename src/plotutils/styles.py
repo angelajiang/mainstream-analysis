@@ -52,6 +52,14 @@ COLORLISTS = {
     ]
 }
 
+CAPSIZES = [10, 6, 3, 8, 4]
+
+LINEGROUPS = {
+    'fg': dict(lw=4, markersize=8),
+    'fg-e': dict(lw=4, markersize=8, markeredgewidth=3),
+    'bg': dict(lw=3, markersize=8, alpha=0.7, linestyle='--'),
+    'bg-e': dict(lw=3, markersize=8, alpha=0.7, linestyle='--', markeredgewidth=3),
+}
 
 COLORS = {
     "grey": colors.colorConverter.to_rgb("#4D4D4D"),

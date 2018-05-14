@@ -24,10 +24,34 @@ def agg2xy(aggregated, names=None):
     xss, yss = zip(*[(unstacked[k].index, unstacked[k].values) for k in names])
     return xss, yss
 
+# def grouped2series(grouped, data, low, high, **kwargs):
+#     grouped
 
-def agg2series(aggregated, names=None, **kwargs):
+
+def agg2series(aggregated, names=None, errs=None, **kwargs):
     xss, yss = agg2xy(aggregated, names=names)
-    return get_series(xss, yss, names=names, **kwargs)
+    if errs is not None:
+        # TODO: Split up the errors
+        # In: dict(e_delta=[low, high])
+        # Out: [dict(e_delta=[low, high]), ...]
+        assert isinstance(errs, dict) and len(errs) == 1
+        err_type, errs_v = errs.items()[0]
+        try:
+            len(errs_v[0])
+        except TypeError:
+            errs_v = [errs_v]
+        new_errs = []
+        for errA in errs_v:
+            xss_e, yss_e = agg2xy(errA, names=names)
+            assert len(xss) == len(xss_e) == len(yss_e)
+            for xs, xe in zip(xss, xss_e):
+                assert tuple(xs) == tuple(xe), "Order of indexes for data and errors do not match"
+            new_errs.append(yss_e)
+        if len(new_errs) == 1:
+            errs = [{err_type: err_} for err_ in new_errs[0]]
+        else:
+            errs = [{err_type: err_} for err_ in zip(*new_errs)]
+    return get_series(xss, yss, names=names, errs=errs, **kwargs)
 
 
 def get_series(xss, yss, errs=None, names=None, plotstyles=None, plotparams={}):
@@ -35,9 +59,13 @@ def get_series(xss, yss, errs=None, names=None, plotstyles=None, plotparams={}):
         plotstyles = names
     elif isinstance(plotstyles, dict):
         plotstyles = [plotstyles[k] for k in names]
+    if not isinstance(plotparams, dict) and isinstance(plotparams, str):
+        plotparams = styles.LINEGROUPS[plotparams]
     if errs is not None:
-        return [Series(x=xs, y=ys, yerrs=yerr, name=sn, plotstyle=ps, plotparams=plotparams)
-                for xs, ys, yerr, ps, sn in zip(xss, yss, errs, plotstyles, names)]
+        assert len(xss) <= len(styles.CAPSIZES)
+        caps = sorted(styles.CAPSIZES[:len(xss)], reverse=True)
+        return [Series(x=xs, y=ys, yerrs=get_errors(ys, **yerr), name=sn, plotstyle=ps, plotparams=plotparams, capsize=cap)
+                for xs, ys, yerr, ps, sn, cap in zip(xss, yss, errs, plotstyles, names, caps)]
     return [Series(x=xs, y=ys, name=sn, plotstyle=ps, plotparams=plotparams)
             for xs, ys, ps, sn in zip(xss, yss, plotstyles, names)]
 
@@ -69,6 +97,7 @@ class Series(object):
                  name=None,
                  plotstyle=None,
                  plotparams=None,
+                 capsize=None,
                  **kwargs):
         assert series is None or (x is not None and y is not None)
         if series is None:
@@ -78,14 +107,15 @@ class Series(object):
             if name is not None:
                 self.series.name = name
         if yerrs is not None:
-            assert len(yerrs) == len(self.series)
-            if len(yerrs) > 0:
-                assert len(yerrs[0]) in (1, 2)
+            assert len(yerrs) == len(self.series), len(yerrs)
+            # TODO: assert that dimensions are either N or 2xN
         if isinstance(plotstyle, str):
             plotstyle = styles.SERIES[plotstyle]
         self.plotstyle = plotstyle
         self.yerrs = yerrs
-        self.plotparams = plotparams
+        self.plotparams = dict(plotparams)
+        if capsize is not None:
+            self.plotparams['capsize'] = capsize
 
     def plot(self, *args, **kwargs):
         if self.plotparams is not None:

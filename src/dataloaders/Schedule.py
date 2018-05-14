@@ -91,9 +91,10 @@ class Schedule(object):
         return {
             'num_apps': self.num_apps,
             'budget': self._budget,
-            'mean_f1': self.mean_f1(),
-            'mean_recall': self.mean_recall(),
-            'mean_precision': self.mean_precision(),
+            'f1': self.mean_f1(),
+            'recall': self.mean_recall(),
+            'precision': self.mean_precision(),
+            'fps': mean(self.fpses),
         }
 
 

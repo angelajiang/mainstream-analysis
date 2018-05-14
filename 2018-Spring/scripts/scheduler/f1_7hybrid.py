@@ -1,16 +1,15 @@
-# Each function does one plot
-# Also an example of a script that would appear in a python notebook
+# Usage: python -m scripts.scheduler.f1_7hybrid
 import dataloaders
 import plot
-from plotutils import ex, comb, agg2series, get_errors
+from plotutils import ex, comb, agg2series
 from plotutils import legends
 from plotutils import grids
 from plotutils import styles
 from utils import save
-from utils import mean
+from dataloaders.utils import mean
 
 
-def f1_7hybrid():
+def metric_7hybrid(metrics=['f1']):
     exp_id = "050318"
     series_names = ["mainstream", "maxsharing", "nosharing"]
 
@@ -22,7 +21,7 @@ def f1_7hybrid():
         # Extract some attributes from the schedules.
         # Add on some based on the file name.
         rows += ex(schedules,
-                   each=lambda s: {'f1': mean(s.f1s), 'fps': mean(s.fpses), 'num_apps': s.num_apps, 'budget': s.budget},
+                   each=lambda s: s.to_map(),
                    constant={'scheduler': 'greedy', 'sharing': series_name})
     df = comb(rows)
 
@@ -33,25 +32,26 @@ def f1_7hybrid():
         # Group <setups> by number of apps, aggregate by mean.
         grouped = df_view.groupby(['sharing', 'num_apps'])
 
-        bars = [grouped['f1'].min(), grouped['f1'].max()]
+        for metric in metrics:
+            bars = [grouped[metric].min(), grouped[metric].max()]
 
-        series = agg2series(grouped['f1'].mean(),
-                            names=series_names,
-                            yerrs=get_errors(e_abs=bars),
-                            plotparams=dict(lw=4, markersize=8))
+            series = agg2series(grouped[metric].mean(),
+                                names=series_names,
+                                yerrs=dict(e_abs=bars),
+                                plotparams='fg-e')
 
-        series2 = agg2series(grouped['fps'].mean(),
-                             names=series_names,
-                             plotstyles=styles.SERIES_ALT,
-                             plotparams=dict(lw=3, markersize=8, alpha=0.7, linestyle='--'))
+            series2 = agg2series(grouped['fps'].mean(),
+                                 names=series_names,
+                                 plotstyles=styles.SERIES_ALT,
+                                 plotparams='bg')
 
-        ax1, ax2 = plot.variants_dual(series, series2,
-                                      xgrid=grids.x.num_apps,
-                                      y1grid=grids.y.f1,
-                                      y2grid=grids.y.fps)
-        legends.dual_fps(ax1, ax2, left='F1')
-        save('scheduler', exp_id, 'f1-7hybrid-dual-b{}'.format(budget))
+            ax1, ax2 = plot.variants_dual(series, series2,
+                                          xgrid=grids.x.num_apps,
+                                          y1grid=grids.y.get(metric),
+                                          y2grid=grids.y.fps)
+            legends.dual_fps(ax1, ax2, left=metric.capitalize())
+            save('scheduler', exp_id, '{}-7hybrid-dual-b{}'.format(metric, budget))
 
 
 if __name__ == '__main__':
-    f1_7hybrid()
+    metric_7hybrid(metrics=['f1', 'recall', 'precision'])
