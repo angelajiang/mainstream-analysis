@@ -2,8 +2,7 @@
 # Also an example of a script that would appear in a python notebook
 import dataloaders
 import plot
-from plotutils import Series
-from plotutils import ex, comb, agg2xy, get_series
+from plotutils import ex, comb, agg2series, get_errors
 from plotutils import legends
 from plotutils import grids
 from plotutils import styles
@@ -29,25 +28,29 @@ def f1_7hybrid():
 
     # See Pandas: Group By: split-apply-combine
     # https://pandas.pydata.org/pandas-docs/stable/groupby.html
-    df_view = df[df['budget'] == 100]
-    # Group <setups> by number of apps, aggregate by mean.
-    grouped = df_view.groupby(['sharing', 'num_apps'])
+    for budget in set(df['budget'].values):
+        df_view = df[df['budget'] == budget]
+        # Group <setups> by number of apps, aggregate by mean.
+        grouped = df_view.groupby(['sharing', 'num_apps'])
 
-    xss, yss = agg2xy(grouped['f1'].mean(), names=series_names)
-    series = get_series(xss, yss, names=series_names, plotparams=dict(lw=4, markersize=8))
+        bars = [grouped['f1'].min(), grouped['f1'].max()]
 
-    xss2, yss2 = agg2xy(grouped['fps'].mean(), names=series_names)
-    plotstyles = [styles.SERIES_ALT[series_name] for series_name in series_names]
-    plotparams = dict(lw=3, markersize=8, alpha=0.7, linestyle='--')
-    series2 = [Series(x=xs, y=ys, name=sn, plotstyle=ps, plotparams=plotparams)
-               for xs, ys, ps, sn in zip(xss2, yss2, plotstyles, series_names)]
+        series = agg2series(grouped['f1'].mean(),
+                            names=series_names,
+                            yerrs=get_errors(e_abs=bars),
+                            plotparams=dict(lw=4, markersize=8))
 
-    ax1, ax2 = plot.variants_dual(series, series2)
-    grids.y.f1(yss, ax=ax1)
-    grids.y.fps(yss2, ax=ax2)
-    grids.x.num_apps(xss, ax=ax1)
-    legends.dual_fps(ax1, ax2, left='F1')
-    save('scheduler', exp_id, 'f1-7hybrid-dual')
+        series2 = agg2series(grouped['fps'].mean(),
+                             names=series_names,
+                             plotstyles=styles.SERIES_ALT,
+                             plotparams=dict(lw=3, markersize=8, alpha=0.7, linestyle='--'))
+
+        ax1, ax2 = plot.variants_dual(series, series2,
+                                      xgrid=grids.x.num_apps,
+                                      y1grid=grids.y.f1,
+                                      y2grid=grids.y.fps)
+        legends.dual_fps(ax1, ax2, left='F1')
+        save('scheduler', exp_id, 'f1-7hybrid-dual-b{}'.format(budget))
 
 
 if __name__ == '__main__':

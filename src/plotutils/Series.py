@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import styles
 
@@ -12,7 +13,7 @@ def ex(items, each=lambda x: {}, constant={}):
 
 
 def comb(rows):
-    # TODO: Add some asserts.
+    # TODO: Add some asserts, e.g. to check consistency between rows
     return pd.DataFrame(rows)
 
 
@@ -24,14 +25,34 @@ def agg2xy(aggregated, names=None):
     return xss, yss
 
 
+def agg2series(aggregated, names=None, **kwargs):
+    xss, yss = agg2xy(aggregated, names=names)
+    return get_series(xss, yss, names=names, **kwargs)
+
+
 def get_series(xss, yss, errs=None, names=None, plotstyles=None, plotparams={}):
     if plotstyles is None:
         plotstyles = names
+    elif isinstance(plotstyles, dict):
+        plotstyles = [plotstyles[k] for k in names]
     if errs is not None:
         return [Series(x=xs, y=ys, yerrs=yerr, name=sn, plotstyle=ps, plotparams=plotparams)
                 for xs, ys, yerr, ps, sn in zip(xss, yss, errs, plotstyles, names)]
     return [Series(x=xs, y=ys, name=sn, plotstyle=ps, plotparams=plotparams)
             for xs, ys, ps, sn in zip(xss, yss, plotstyles, names)]
+
+
+def get_errors(y, e_delta=None, e_abs=None):
+    assert e_delta is None or e_abs is None, "Supply EITHER e_delta or e_abs"
+    # matplotlib expects either an array of [deltas], or [-delta, +delta]
+    if e_delta is not None:
+        return e_delta
+    else:
+        assert len(e_abs) == 2
+        assert len(e_abs[0]) == len(y) and len(e_abs[1]) == len(y)
+        e_abs = map(np.asarray, e_abs)
+        y = np.asarray(y)
+        return [y - e_abs[0], e_abs[1] - y]
 
 
 class Series(object):

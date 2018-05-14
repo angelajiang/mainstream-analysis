@@ -30,3 +30,15 @@ def fps(ys, ax=None):
     ax.set_ylim(0, max(20, max(ys)))
     ax.grid(None)
     ax.set_ylabel("FPS")
+
+
+__all__ = {
+    'recall': recall,
+    'precision': precision,
+    'f1': f1,
+    'fps': fps,
+}
+
+
+def get(idx):
+    return __all__[idx]
