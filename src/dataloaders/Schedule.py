@@ -22,17 +22,17 @@ class Schedule(object):
         self._costs, self._objectives = [], []
         for app, num_frozen, fps in zip(self._setup.apps, self._frozens, self._fpses):
             try:
-                cost, objective = self._setup.cost_benefits[app.get_id()][(num_frozen, fps)]
+                cost, objective = self._setup.cost_benefits[app['app_id']][(num_frozen, fps)]
             except KeyError:
                 cost = self._setup.scheduler.get_cost(num_frozen, fps)
-                objective = self._setup.scheduler.get_metric(app.to_map(), num_frozen, fps)
+                objective = self._setup.scheduler.get_metric(app, num_frozen, fps)
             self._costs.append(cost)
             self._objectives.append(objective)
 
     def _metric(self, metric):
         metrics = []
         for app, num_frozen, fps in zip(self._setup.apps, self._frozens, self._fpses):
-            metrics.append(self._setup.scheduler._get_metric(app.to_map(), num_frozen, fps, metric))
+            metrics.append(self._setup.scheduler._get_metric(app, num_frozen, fps, metric))
         return metrics
 
     def __len__(self):

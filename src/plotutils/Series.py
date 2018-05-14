@@ -24,10 +24,6 @@ def agg2xy(aggregated, names=None):
     xss, yss = zip(*[(unstacked[k].index, unstacked[k].values) for k in names])
     return xss, yss
 
-# def grouped2series(grouped, data, low, high, **kwargs):
-#     grouped
-
-
 def agg2series(aggregated, names=None, errs=None, **kwargs):
     xss, yss = agg2xy(aggregated, names=names)
     if errs is not None:
@@ -107,8 +103,8 @@ class Series(object):
             if name is not None:
                 self.series.name = name
         if yerrs is not None:
-            assert len(yerrs) == len(self.series), len(yerrs)
-            # TODO: assert that dimensions are either N or 2xN
+            # Assert that dimensions are either N or 2xN
+            assert len(yerrs) == len(self.series) or len(yerrs[0]) == len(self.series)
         if isinstance(plotstyle, str):
             plotstyle = styles.SERIES[plotstyle]
         self.plotstyle = plotstyle

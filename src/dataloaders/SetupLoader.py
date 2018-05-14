@@ -31,8 +31,10 @@ def get_cost_benefits(exp_id, setup, config_filename=CONFIG_FILENAME):
     with open(config_filename.format(exp_id=exp_id, setup_id=setup.uuid)) as f:
         for line in f:
             app_id, frozen, fps, cost, metric = line.split()
-            frozen, fps = map(int, (frozen, fps))
-            cost, metric = map(float, (cost, metric))
+            frozen = int(frozen)
+            fps = int(fps)
+            cost = float(cost)
+            metric = float(metric)
             if app_id not in ret:
                 ret[app_id] = {}
             ret[app_id][(frozen, fps)] = (cost, metric)
@@ -48,6 +50,8 @@ def load(exp_id, setup_dir=SETUP_DIR, setup_file_str=SETUP_FILE_STR, version_suf
     for pkl_filename in glob.glob(setup_files):
         setups = setup_generator.deserialize_setups(pkl_filename)
         for setup in setups:
+            # For performance.
+            setup.apps = [app.to_map() for app in setup.apps]
             setup.scheduler = get_scheduler(setup)
             setup.cost_benefits = get_cost_benefits(exp_id, setup)
         all_setups.update({setup.uuid: setup for setup in setups})

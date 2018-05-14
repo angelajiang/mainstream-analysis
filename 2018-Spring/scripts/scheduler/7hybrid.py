@@ -1,4 +1,4 @@
-# Usage: python -m scripts.scheduler.f1_7hybrid
+# Usage: python -m scripts.scheduler.7hybrid
 import dataloaders
 import plot
 from plotutils import ex, comb, agg2series
@@ -6,7 +6,6 @@ from plotutils import legends
 from plotutils import grids
 from plotutils import styles
 from utils import save
-from dataloaders.utils import mean
 
 
 def metric_7hybrid(metrics=['f1']):
@@ -32,25 +31,25 @@ def metric_7hybrid(metrics=['f1']):
         # Group <setups> by number of apps, aggregate by mean.
         grouped = df_view.groupby(['sharing', 'num_apps'])
 
+        series2 = agg2series(grouped['fps'].mean(),
+                             names=series_names,
+                             plotstyles=styles.SERIES_ALT,
+                             plotparams='bg')
+
         for metric in metrics:
             bars = [grouped[metric].min(), grouped[metric].max()]
 
             series = agg2series(grouped[metric].mean(),
                                 names=series_names,
-                                yerrs=dict(e_abs=bars),
+                                errs=dict(e_abs=bars),
                                 plotparams='fg-e')
-
-            series2 = agg2series(grouped['fps'].mean(),
-                                 names=series_names,
-                                 plotstyles=styles.SERIES_ALT,
-                                 plotparams='bg')
 
             ax1, ax2 = plot.variants_dual(series, series2,
                                           xgrid=grids.x.num_apps,
                                           y1grid=grids.y.get(metric),
                                           y2grid=grids.y.fps)
             legends.dual_fps(ax1, ax2, left=metric.capitalize())
-            save('scheduler', exp_id, '{}-7hybrid-dual-b{}'.format(metric, budget))
+            save('scheduler', exp_id, '{}-7hybrid-dual-b{:g}'.format(metric, budget))
 
 
 if __name__ == '__main__':
