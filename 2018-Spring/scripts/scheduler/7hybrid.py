@@ -18,7 +18,9 @@ def metric_7hybrid(metrics=['f1']):
 
     rows = []
     for series_name in series_names:
-        schedules = dataloaders.load_schedules("050318", "greedy." + series_name + ".sim.*.v1", setups=setups)
+        schedules = dataloaders.load_schedules("050318", "greedy." + series_name + ".sim.*.v1",
+                                               variant='v1+metrics',
+                                               setups=setups)
         # Extract some attributes from the schedules.
         # Add on some based on the file name.
         rows += ex(schedules,

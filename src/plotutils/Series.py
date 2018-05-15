@@ -1,3 +1,4 @@
+import warnings
 import numpy as np
 import pandas as pd
 import styles
@@ -21,6 +22,10 @@ def agg2xy(aggregated, names=None):
     unstacked = aggregated.unstack(0)
     if names is None:
         names = unstacked.columns
+    for k in names:
+        if k not in unstacked.columns:
+            warnings.warn("Missing series " + k)
+    names = [k for k in names if k in unstacked.columns]
     xss, yss = zip(*[(unstacked[k].index, unstacked[k].values) for k in names])
     return xss, yss
 
