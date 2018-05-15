@@ -17,7 +17,7 @@ def variants(series, ax=None,
              plot_kwargs={}, legend_kwargs={}):
     """Comparing different variants of Mainstream"""
     if ax is None:
-        ax = plt.gca()
+        _, ax = plt.subplots()
     for line in series:
         line.plot(ax=ax, **plot_kwargs)
     _grid_apply('x', series, xgrid, ax=ax)
@@ -31,8 +31,8 @@ def variants_dual(seriesA, seriesB,
                   plot_kwargs={}, legend_kwargs={}):
     fig, ax1 = plt.subplots()
     ax2 = ax1.twinx()
-    variants(seriesA, ax1, xgrid=xgrid, ygrid=y1grid, plot_kwargs=plot_kwargs)
-    variants(seriesB, ax2, ygrid=y2grid, plot_kwargs=plot_kwargs)
+    variants(seriesA, ax=ax1, xgrid=xgrid, ygrid=y1grid, plot_kwargs=plot_kwargs)
+    variants(seriesB, ax=ax2, ygrid=y2grid, plot_kwargs=plot_kwargs)
     ax2.legend(**legend_kwargs)
     return ax1, ax2
 

@@ -24,6 +24,7 @@ def agg2xy(aggregated, names=None):
     xss, yss = zip(*[(unstacked[k].index, unstacked[k].values) for k in names])
     return xss, yss
 
+
 def agg2series(aggregated, names=None, errs=None, **kwargs):
     xss, yss = agg2xy(aggregated, names=names)
     if errs is not None:
