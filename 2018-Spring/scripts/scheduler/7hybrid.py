@@ -6,6 +6,8 @@ from plotutils import legends
 from plotutils import grids
 from plotutils import styles
 from utils import save
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 
 def metric_7hybrid(metrics=['f1']):
@@ -30,6 +32,12 @@ def metric_7hybrid(metrics=['f1']):
 
     # See Pandas: Group By: split-apply-combine
     # https://pandas.pydata.org/pandas-docs/stable/groupby.html
+
+    # TODO: refactor
+    mpl.rcParams['axes.labelsize'] = 20
+    mpl.rcParams['xtick.labelsize'] = 20
+    mpl.rcParams['ytick.labelsize'] = 20
+
     for budget in set(df['budget'].values):
         df_view = df[df['budget'] == budget]
         # Group <setups> by number of apps, aggregate by mean.
@@ -45,14 +53,18 @@ def metric_7hybrid(metrics=['f1']):
 
             series = agg2series(grouped[metric].mean(),
                                 names=series_names,
-                                errs=dict(e_abs=bars),
-                                plotparams='fg-e')
+                                #errs=dict(e_abs=bars),
+                                #plotparams='fg-e')
+                                plotparams='fg')
 
             ax1, ax2 = plot.variants_dual(series, series2,
                                           xgrid=grids.x.num_apps,
                                           y1grid=grids.y.get(metric),
                                           y2grid=grids.y.fps)
             legends.dual_fps(ax1, ax2, left=metric.capitalize())
+
+            plt.tight_layout()
+
             save('scheduler', exp_id, '{}-7hybrid-dual-b{:g}'.format(metric, budget))
 
 
