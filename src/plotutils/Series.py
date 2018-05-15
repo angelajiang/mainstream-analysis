@@ -125,12 +125,18 @@ class Series(object):
     def plot(self, *args, **kwargs):
         if self.plotparams is not None:
             kwargs.update(self.plotparams)
-        if self.yerrs is not None:
-            kwargs['yerr'] = self.yerrs
         for k in ['marker', 'color', 'label']:
             if self.plotstyle and k in self.plotstyle:
                 kwargs[k] = self.plotstyle[k]
-        self.series.plot(*args, **kwargs)
+        if self.yerrs is not None:
+            kwargs['yerr'] = self.yerrs
+            ax = kwargs.pop('ax')
+            # Pandas Series plotting with asymmetrical errorbars fix still hasn't been merged in yet
+            # https://github.com/pandas-dev/pandas/issues/9536
+            # https://github.com/kleingeist/pandas/commit/89f3d984ca01100c039cece36aee20569fa60483
+            ax.errorbar(self.x, self.y, **kwargs)
+        else:
+            self.series.plot(*args, **kwargs)
 
     def x(self):
         return self.series.index
