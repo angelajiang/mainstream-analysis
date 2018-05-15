@@ -11,7 +11,7 @@ from data_util import collect_comb_csvs
 
 
 ################## Maximize F1 Score ##################
-plot_dir = "plots/scheduler/debug/comparison/"
+plot_dir = "plots/atc-camera-ready/comparison/"
 t1 = ""
 
 def compare_avg():
@@ -53,7 +53,38 @@ def compare_avg():
 
 def setups_correlation():
 
-    plot_dir = "plots/scheduler/debug/correlation"
+    plot_dir = "plots/atc-camera-ready/correlation"
+
+    # 050318 num apps sweep
+    corrs = ["dep", "emp", "ind"]
+    budgets = [100, 150, 200, 250, 300]
+    files = {}
+
+    num_apps_list = [2, 4, 6, 8, 10, 15, 20, 25]
+    for budget in budgets:
+        for corr in corrs:
+            for num_apps in num_apps_list:
+                m1 =  "output/streamer/scheduler/atc/050318/correlations/greedy.mainstream.sim.{}.050318-{}-{}.v1".format(budget, num_apps, corr)
+                m2 =  "output/streamer/scheduler/atc/050318/correlations/greedy.nosharing.sim.{}.050318-{}-{}.v1".format(budget, num_apps, corr)
+                m3 =  "output/streamer/scheduler/atc/050318/correlations/greedy.maxsharing.sim.{}.050318-{}-{}.v1".format(budget, num_apps, corr)
+                l1 = "Mainstream-greedy"
+                l2 = "No Sharing"
+                l3 = "Max Sharing"
+                ms = [m1,m2,m3]
+                ls = [l1,l2,l3]
+                ms_files = []
+                labels = []
+
+                for m, l in zip(ms, ls):
+                    if os.path.isfile(m):
+                        ms_files.append(m)
+                        labels.append(l)
+
+                files[num_apps] = {"data": ms_files, "labels": labels}
+
+            plot_file ="f1-7hybrid-050318-{}-{}".format(budget, corr)
+            scheduler_comparison.plot_by_num_apps(files, budget, plot_file, plot_dir, version="v1")
+            scheduler_comparison.plot_by_num_apps(files, budget, plot_file, plot_dir, version="v1", dual=True)
 
     # 050218 budget sweep
     num_apps = 20
@@ -79,7 +110,7 @@ def setups_correlation():
 
 def setups_7hybrid():
 
-    plot_dir = "plots/scheduler/debug/sweep"
+    plot_dir = "plots/atc-camera-ready/sweep"
 
     # 043018 budget sweep
 
@@ -204,7 +235,7 @@ def setups_7hybrid():
 
 def pdl_setups_7hybrid():
 
-    plot_dir = "plots/scheduler/debug/sweep"
+    plot_dir = "plots/atc-camera-ready/sweep"
 
     # 050318 budget sweep
 
@@ -249,7 +280,7 @@ def pdl_setups_7hybrid():
 
 def iii_f1():
 
-    plot_dir = "plots/scheduler/debug/iii"
+    plot_dir = "plots/atc-camera-ready/iii"
 
     ms1 =  "output/streamer/scheduler/debug/iii-greedy-mainstream-simulator"
     max1 =  "output/streamer/scheduler/debug/iii-greedy-maxsharing-simulator"
@@ -276,7 +307,7 @@ def iii_f1():
 
 def accuracy_7hybrid():
 
-    plot_dir = "plots/scheduler/debug/accuracy"
+    plot_dir = "plots/atc-camera-ready/accuracy"
 
     redcar = "output/mainstream/accuracy/iii/redcar/iii-redcar-accuracy"
     scramble = "output/mainstream/accuracy/iii/scramble/iii-scramble-accuracy"
@@ -309,8 +340,44 @@ def accuracy_7hybrid():
     plot_file = os.path.join(plot_dir, "7hybrid-mobilenets-accuracy.pdf")
     accuracy_vs_layer.plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
 
-compare_avg()
+    redcar_inception = "output/mainstream/accuracy/iii/redcar/iii-redcar-inception-accuracy"
+    scramble_inception = "output/mainstream/accuracy/iii/scramble/iii-scramble-inception-accuracy"
+    bus_inception = "output/mainstream/accuracy/iii/bus/iii-bus-inception-accuracy"
+    schoolbus_inception = "output/mainstream/accuracy/iii/schoolbus/iii-schoolbus-inception-accuracy"
+    redcar_resnet = "output/mainstream/accuracy/iii/redcar/iii-redcar-resnet-accuracy"
+    scramble_resnet = "output/mainstream/accuracy/iii/scramble/iii-scramble-resnet-accuracy"
+    bus_resnet = "output/mainstream/accuracy/iii/bus/iii-bus-resnet-accuracy"
+    cars_resnet = "output/mainstream/accuracy/cars/cars-resnet-accuracy"
+    schoolbus_resnet = "output/mainstream/accuracy/iii/schoolbus/iii-schoolbus-resnet-accuracy"
+
+    accuracy_files = [#redcar_resnet,
+                      #scramble_resnet,
+                      bus_resnet,
+                      cars_resnet,
+                      #schoolbus_resnet
+                      #redcar_inception,
+                      #scramble_inception,
+                      #bus_inception,
+                      #schoolbus_inception
+                      ]
+
+    labels = [
+              #"Red-Car-Resnet",
+              #"Scramble-Resnet",
+              "Bus-Resnet",
+              "Cars-Resnet",
+              #"Schoolbus-Resnet"
+              #"Red-Car-Inception",
+              #"Scramble-Inception",
+              #"Bus-Inception",
+              #"Schoolbus-Inception",
+              ]
+
+    plot_file = os.path.join(plot_dir, "7hybrid-resnet-inception-accuracy.pdf")
+    accuracy_vs_layer.plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
+
 setups_correlation()
+compare_avg()
 setups_7hybrid()
 pdl_setups_7hybrid()
 iii_f1()
