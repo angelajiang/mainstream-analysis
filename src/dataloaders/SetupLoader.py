@@ -1,8 +1,10 @@
+from collections import OrderedDict
+import hashlib
 import glob
 import os
 import pickle
 import sys
-from dl_constants import MAINSTREAM_DIR
+from dl_constants import MAINSTREAM_DIR 
 from dl_constants import VERSION_SUFFIX
 from dl_constants import SETUP_DIR
 from dl_constants import CONFIG_FILENAME
@@ -27,7 +29,8 @@ def get_scheduler(setup):
 
 
 def get_cost_benefits(exp_id, setup, config_filename=CONFIG_FILENAME):
-    ret = {}
+    # OrderedDict to aid schedule format hack for exhaustive - see schedule loader.
+    ret = OrderedDict()
     with open(config_filename.format(exp_id=exp_id, setup_id=setup.uuid)) as f:
         for line in f:
             app_id, frozen, fps, cost, metric = line.split()
@@ -41,8 +44,26 @@ def get_cost_benefits(exp_id, setup, config_filename=CONFIG_FILENAME):
     return ret
 
 
-def load(exp_id, setup_dir=SETUP_DIR, setup_file_str=SETUP_FILE_STR, version_suffix=VERSION_SUFFIX):
+def _old_id(app):
+    accuracies_str = ",".join([str(round(acc, 4)) for acc in app.accuracies.values()])
+    prob_tnrs_str = ",".join([str(round(prob_tnr, 4)) for prob_tnr in app.prob_tnrs.values()])
+    seed = str(app.architecture) + \
+        accuracies_str + \
+        prob_tnrs_str + \
+        str(round(app.event_length_ms, 4)) + \
+        str(round(app.event_frequency, 4)) + \
+        str(round(app.correlation_coefficient, 4))
+
+    hash_obj = hashlib.sha1(seed)
+    app_uuid = hash_obj.hexdigest()[:8]
+    return app.name + ":" + app_uuid
+
+
+def load(exp_id, setup_dir=SETUP_DIR, setup_file_str=SETUP_FILE_STR, version_suffix=VERSION_SUFFIX, legacy=None):
     print "Loading setups...",
+    if legacy == 'InconsistentIds':
+        print "Using InconsistentIds...",
+
     setup_generator = Setup.SetupGenerator()
     all_setups = {}
     num_setups = 0
@@ -51,7 +72,11 @@ def load(exp_id, setup_dir=SETUP_DIR, setup_file_str=SETUP_FILE_STR, version_suf
         setups = setup_generator.deserialize_setups(pkl_filename)
         for setup in setups:
             # For performance.
-            setup.apps = [app.to_map() for app in setup.apps]
+            setup._apps = setup.apps
+            setup.apps = [app.to_map() for app in setup._apps]
+            if legacy == 'InconsistentIds':
+                for app, app_ in zip(setup.apps, setup._apps):
+                    app['app_id'] = _old_id(app_)
             setup.scheduler = get_scheduler(setup)
             setup.cost_benefits = get_cost_benefits(exp_id, setup)
         all_setups.update({setup.uuid: setup for setup in setups})

@@ -12,7 +12,9 @@ def metric_7hybrid(metrics=['f1']):
     exp_id = "050318"
     series_names = ["mainstream", "maxsharing", "nosharing"]
 
-    setups = dataloaders.load_setups(exp_id, setup_file_str="/setups.{exp_id}-*{version}.pickle")
+    setups = dataloaders.load_setups(exp_id,
+                                     setup_file_str="/setups.{exp_id}-*{version}.pickle",
+                                     legacy='InconsistentIds')
 
     rows = []
     for series_name in series_names:

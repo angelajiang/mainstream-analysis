@@ -3,7 +3,7 @@ import pandas as pd
 import styles
 
 
-def ex(items, each=lambda x: {}, constant={}):
+def ex(items, each=lambda s: s.to_map(), constant={}):
     rows = []
     for item in items:
         dct = each(item)
@@ -51,8 +51,11 @@ def agg2series(aggregated, names=None, errs=None, **kwargs):
     return get_series(xss, yss, names=names, errs=errs, **kwargs)
 
 
-def get_series(xss, yss, errs=None, names=None, plotstyles=None, plotparams={}):
+def get_series(xss, yss, errs=None, names=None, plotstyles='names', plotparams={}):
+    """Pass plotstyles=None for throwaway plots"""
     if plotstyles is None:
+        plotstyles = [None for _ in range(len(xss))]
+    elif plotstyles == 'names':
         plotstyles = names
     elif isinstance(plotstyles, dict):
         plotstyles = [plotstyles[k] for k in names]
@@ -120,7 +123,8 @@ class Series(object):
         if self.yerrs is not None:
             kwargs['yerr'] = self.yerrs
         for k in ['marker', 'color', 'label']:
-            kwargs[k] = self.plotstyle[k]
+            if self.plotstyle and k in self.plotstyle:
+                kwargs[k] = self.plotstyle[k]
         self.series.plot(*args, **kwargs)
 
     def x(self):

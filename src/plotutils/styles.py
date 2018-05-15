@@ -55,7 +55,7 @@ COLORLISTS = {
 CAPSIZES = [10, 6, 3, 8, 4]
 
 LINEGROUPS = {
-    'fg': dict(lw=4, markersize=8),
+    'fg': dict(lw=4, markersize=8, marker='.'),
     'fg-e': dict(lw=4, markersize=8, markeredgewidth=3),
     'bg': dict(lw=3, markersize=8, alpha=0.7, linestyle='--'),
     'bg-e': dict(lw=3, markersize=8, alpha=0.7, linestyle='--', markeredgewidth=3),
@@ -110,14 +110,39 @@ MAX_SHARING = {
     "label": "Max Sharing",
 }
 
+GREEDY = {
+    "color": COLORS["orange"],
+    "marker": "h",
+    "label": "Greedy",
+}
+
+EXHAUSTIVE = {
+    "color": COLORS["red"],
+    "marker": "*",
+    "label": "Exhaustive",
+}
+
+STEMS = {
+    "color": COLORS["blue"],
+    "marker": "<",
+    "label": "Stems",
+}
+
 SERIES = {
+    # Sharing
     'mainstream': MAINSTREAM,
     'maxsharing': MAX_SHARING,
     'nosharing': NO_SHARING,
+
+    # Scheduler
+    'greedy': GREEDY,
+    'exhaustive': EXHAUSTIVE,
+    'stems_cpp': STEMS,
 }
 
 SERIES_ALT = {}
 for k, v in SERIES.items():
     v = dict(v)
-    v['marker'] = v.pop('marker_alt')
+    if 'marker_alt' in v:
+        v['marker'] = v.pop('marker_alt')
     SERIES_ALT[k] = v
