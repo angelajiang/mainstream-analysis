@@ -3,8 +3,8 @@ import dataloaders
 import plot
 from plotutils import ex, comb, agg2series
 from plotutils import legends
-from plotutils import grids
 from plotutils import styles
+from plotutils import grids
 from utils import save
 
 
@@ -56,5 +56,9 @@ def metric_7hybrid(metrics=['f1']):
             save('scheduler', exp_id, '{}-7hybrid-dual-b{:g}'.format(metric, budget))
 
 
-if __name__ == '__main__':
+def main():
     metric_7hybrid(metrics=['f1', 'recall', 'precision'])
+
+
+if __name__ == '__main__':
+    main()

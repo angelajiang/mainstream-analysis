@@ -6,9 +6,9 @@ import scipy.interpolate
 def _grid_apply(x_or_y, series, grid, ax=None):
     if grid is not None:
         if x_or_y == 'x':
-            pts = [s_.x() for s_ in series] if len(series) > 0 else None
+            pts = [s_.x for s_ in series] if len(series) > 0 else None
         else:
-            pts = [s_.y() for s_ in series] if len(series) > 0 else None
+            pts = [s_.y for s_ in series] if len(series) > 0 else None
         grid(pts, ax=ax)
 
 
@@ -23,6 +23,7 @@ def variants(series, ax=None,
     _grid_apply('x', series, xgrid, ax=ax)
     _grid_apply('y', series, ygrid, ax=ax)
     ax.legend(**legend_kwargs)
+    plt.tight_layout()
     return ax
 
 

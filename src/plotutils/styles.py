@@ -56,9 +56,9 @@ CAPSIZES = [10, 6, 3, 8, 4]
 
 LINEGROUPS = {
     'fg': dict(lw=4, markersize=8, marker='.'),
-    'fg-e': dict(lw=4, markersize=8, markeredgewidth=0),
+    'fg-e': dict(lw=4, markersize=8, markeredgewidth=1),
     'bg': dict(lw=4, markersize=8, alpha=0.7, linestyle='--'),
-    'bg-e': dict(lw=3, markersize=8, alpha=0.7, linestyle='--', markeredgewidth=0),
+    'bg-e': dict(lw=3, markersize=8, alpha=0.7, linestyle='--', markeredgewidth=1),
 }
 
 COLORS = {
