@@ -78,6 +78,7 @@ def plot_by_num_apps(files_by_apps, budget, plot_file, plot_dir, dual=False, met
         labels = files["labels"]
 
         for ms_file, label in zip(ms_files, labels):
+            print ms_file
             f1s, fpses = data_util.get_scheduler_data(ms_file, by_budget=True,
                                                                metric=metric,
                                                                version=version)
@@ -85,8 +86,8 @@ def plot_by_num_apps(files_by_apps, budget, plot_file, plot_dir, dual=False, met
                 all_xs[label] = []
                 all_ys[label] = []
                 all_ys_dual[label] = []
-            all_ys[label].append(np.average(f1s[budget]))
             all_xs[label].append(num_apps)
+            all_ys[label].append(np.average(f1s[budget]))
             all_ys_dual[label].append(np.average(fpses[budget]))
 
     max_xs = 0
@@ -104,26 +105,26 @@ def plot_by_num_apps(files_by_apps, budget, plot_file, plot_dir, dual=False, met
         m = markers[i]
 
         ax1.plot(xs, ys, label=label,
-                         lw=3,
+                         lw=1,
                          markersize=8,
-                         alpha=0.8,
+                         alpha=0.7,
                          marker=m,
                          color=c)
         if dual:
             fpses = all_ys_dual[label]
             ax2.plot(xs, fpses, label=label,
-                             lw=3,
+                             lw=1,
                              markersize=8,
-                             alpha=0.8,
+                             alpha=0.7,
                              linestyle="--",
                              marker=m,
                              color=c)
-
         i += 1
 
     filename = os.path.join(plot_dir, plot_file + "-{}".format(metric))
     if dual:
         filename += "-dual"
+        ax2.set_ylim(0, 10)
     ylabel = "Average Event "
 
     if dual:
