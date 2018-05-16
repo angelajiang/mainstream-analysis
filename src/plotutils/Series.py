@@ -138,9 +138,11 @@ class Series(object):
         else:
             self.series.plot(*args, **kwargs)
 
+    @property
     def x(self):
         return self.series.index
 
+    @property
     def y(self):
         return self.series.values
 
