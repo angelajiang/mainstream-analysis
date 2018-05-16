@@ -34,9 +34,9 @@ def metric_7hybrid(metrics=['f1']):
     # https://pandas.pydata.org/pandas-docs/stable/groupby.html
 
     # TODO: refactor
-    mpl.rcParams['axes.labelsize'] = 20
-    mpl.rcParams['xtick.labelsize'] = 20
-    mpl.rcParams['ytick.labelsize'] = 20
+    mpl.rcParams['axes.labelsize'] = 24
+    mpl.rcParams['xtick.labelsize'] = 22
+    mpl.rcParams['ytick.labelsize'] = 22
 
     for budget in set(df['budget'].values):
         df_view = df[df['budget'] == budget]
