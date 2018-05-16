@@ -3,15 +3,15 @@ import matplotlib.ticker as plticker
 
 
 def recall(ys, ax=None):
-    ratio(ys, title="Event Recall", ax=ax)
+    ratio(ys, title="Average Event Recall", ax=ax)
 
 
 def precision(ys, ax=None):
-    ratio(ys, title="Event Precision", ax=ax)
+    ratio(ys, title="Average Event Precision", ax=ax)
 
 
 def f1(ys, ax=None):
-    ratio(ys, title="Event F1", ax=ax)
+    ratio(ys, title="Average Event F1", ax=ax)
 
 
 def ratio(ys, title="??", ax=None):
