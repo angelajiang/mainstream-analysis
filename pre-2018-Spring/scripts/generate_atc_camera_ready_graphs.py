@@ -376,6 +376,30 @@ def accuracy_7hybrid():
     plot_file = os.path.join(plot_dir, "7hybrid-resnet-inception-accuracy.pdf")
     accuracy_vs_layer.plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
 
+    accuracy_files = [redcar,
+                      scramble,
+                      bus,
+                      schoolbus,
+                      pedestrian,
+                      train,
+                      cars,
+                      bus_resnet
+                      ]
+
+    labels = [
+              "Red-Car-MobileNets",
+              "Scramble-MobileNets",
+              "Bus-MobileNets",
+              "Schoolbus-MobileNets",
+              "Pedestrian-MobileNets",
+              "Train-MobileNets",
+              "Cars-MobileNets",
+              "Bus-ResNet"
+              ]
+
+    plot_file = os.path.join(plot_dir, "7hybrid-accuracy.pdf")
+    accuracy_vs_layer.plot_accuracy_vs_layer(accuracy_files, labels, plot_file)
+
 setups_correlation()
 compare_avg()
 setups_7hybrid()
