@@ -1,5 +1,6 @@
 import glob
 import os
+import warnings
 from dl_constants import SCHEDULE_DIR
 from utils import mean
 
@@ -20,38 +21,41 @@ class Schedule(object):
         self._extras = extras
         assert len(fpses) == len(num_frozens)
 
-        self._apps = setup.apps
-        # Hack for exhaustive - use app order of configuration file.
-        if apps_order == 'configurations':
-            key_order = self._setup.cost_benefits.keys()
-            apps_by_id = {app['app_id']: app for app in self._apps}
-            self._apps = [apps_by_id[k] for k in key_order]
+        if setup is not None:
+            self._apps = setup.apps
+            # Hack for exhaustive - use app order of configuration file.
+            if apps_order == 'configurations':
+                key_order = self._setup.cost_benefits.keys()
+                apps_by_id = {app['app_id']: app for app in self._apps}
+                self._apps = [apps_by_id[k] for k in key_order]
 
-        self._f1s = [1. - x for x in self._metric("f1")]
-        self._recalls = [1. - x for x in self._metric("fnr")]
-        self._precisions = [1. - x for x in self._metric("fpr")]
+            self._f1s = [1. - x for x in self._metric("f1")]
+            self._recalls = [1. - x for x in self._metric("fnr")]
+            self._precisions = [1. - x for x in self._metric("fpr")]
 
-        self._costs, self._objectives = [], []
-        for app, num_frozen, fps in zip(self._apps, self._frozens, self._fpses):
-            app_settings = self._setup.cost_benefits[app['app_id']]
-            try:
-                cost, objective = app_settings[(num_frozen, fps)]
-            except KeyError:
-                cost = self._setup.scheduler.get_cost(num_frozen, fps)
-                objective = self._setup.scheduler.get_metric(app, num_frozen, fps)
-            self._costs.append(cost)
-            self._objectives.append(objective)
+            self._costs, self._objectives = [], []
+            for app, num_frozen, fps in zip(self._apps, self._frozens, self._fpses):
+                app_settings = self._setup.cost_benefits[app['app_id']]
+                try:
+                    cost, objective = app_settings[(num_frozen, fps)]
+                except KeyError:
+                    cost = self._setup.scheduler.get_cost(num_frozen, fps)
+                    objective = self._setup.scheduler.get_metric(app, num_frozen, fps)
+                self._costs.append(cost)
+                self._objectives.append(objective)
 
-        # TODO: Refactor to use method in mainstream Scheduler.py
-        self._rel_accs = []
-        for num_frozen, app in zip(self._frozens, self._apps):
-            max_acc = max(app["accuracies"].values())
-            cur_acc = app["accuracies"][num_frozen]
-            rel_acc = (max_acc - cur_acc) / max_acc
-            self._rel_accs.append(rel_acc)
+            # TODO: Refactor to use method in mainstream Scheduler.py
+            self._rel_accs = []
+            self._accs = []
+            for num_frozen, app in zip(self._frozens, self._apps):
+                max_acc = max(app["accuracies"].values())
+                cur_acc = app["accuracies"][num_frozen]
+                self._accs.append(cur_acc)
+                rel_acc = (max_acc - cur_acc) / max_acc
+                self._rel_accs.append(rel_acc)
 
-        if 'metric' in extras:
-            assert abs(extras['metric'] - mean(self._objectives)) < 1e-5
+            if 'metric' in extras:
+                assert abs(extras['metric'] - mean(self._objectives)) < 1e-5
 
     def _metric(self, metric):
         metrics = []
@@ -98,6 +102,10 @@ class Schedule(object):
     def rel_accs(self):
         return self._rel_accs
 
+    @property
+    def accs(self):
+        return self._accs
+
     def extra(self, k):
         return self._extras[k]
 
@@ -136,6 +144,7 @@ class Schedule(object):
             'recall': self.mean_recall(),
             'precision': self.mean_precision(),
             'rel_acc': mean(self.rel_accs),
+            'acc': mean(self.accs),
             'fps': mean(self.fpses),
         }
         dct.update(extras)
@@ -199,9 +208,14 @@ def load(filename, setups={}, variant=None, **kwargs):
                 frozens = map(int, line[4:4 + num_apps])
                 fpses = map(int, line[4 + num_apps:4 + num_apps * 2])
                 # raise Exception("Unknown file format")
+            if setup_id in setups:
+                setup = setups[setup_id]
+            else:
+                warnings.warn("Setup " + setup_id + " not found")
+                setup = None
             schedules.append(Schedule(fpses, frozens, budget=budget,
                                       latency=latency_us,
-                                      setup=setups[setup_id],
+                                      setup=setup,
                                       extras=extras,
                                       **kwargs))
     return schedules

@@ -31,6 +31,8 @@ def agg2xy(aggregated, names=None):
 
 
 def agg2series(aggregated, names=None, errs=None, **kwargs):
+    if len(aggregated) == 0:
+        warnings.warn("series has no rows")
     xss, yss = agg2xy(aggregated, names=names)
     if errs is not None:
         # TODO: Split up the errors

@@ -1,4 +1,6 @@
+import matplotlib.pyplot as plt
 import dataloaders
+from dataloaders.utils import mean
 import plot
 from plotutils import ex, comb, agg2series
 from plotutils import legends
@@ -8,16 +10,19 @@ from utils import save
 
 
 def _get_data(exp_id, series_names, corr_types):
-    setups = dataloaders.load_setups(exp_id,
-                                     setup_file_str="/setups.{exp_id}-*{version}.pickle",
-                                     legacy='InconsistentIds')
+    # setups = dataloaders.load_setups(exp_id,
+    #                                  setup_file_str="/setups.{exp_id}-*{version}.pickle",
+    #                                  legacy='InconsistentIds')
+    setups = {}
 
     rows = []
     for series_name in series_names:
         for corr in corr_types:
             schedules = dataloaders.load_schedules("050318", "correlations/greedy." + series_name + ".sim.*-" + corr + ".v1",
                                                    setups=setups)
+            # Workaround since setups cannot be found.
             rows += ex(schedules,
+                       each=lambda s: {'fps': mean(s.fpses), 'f1': 1. - s.extra('metric'), 'budget': s.budget, 'num_apps': s.num_apps},
                        constant={'scheduler': 'greedy', 'sharing': series_name, 'correlation': corr})
     df = comb(rows)
     return df
@@ -34,6 +39,12 @@ def correlations_7hybrid():
     for corr in corr_types:
         for budget in set(df['budget'].values):
             df_view = df[(df['budget'] == budget) & (df['correlation'] == corr)]
+
+            print budget, corr, len(df_view)
+            if len(df_view) == 0:
+                print "skipping"
+                continue
+
             grouped = df_view.groupby(['sharing', 'num_apps'])
 
             series2 = agg2series(grouped['fps'].mean(),
@@ -51,6 +62,7 @@ def correlations_7hybrid():
                                    ygrid=grids.y.get(metric))
 
                 save('scheduler', exp_id, '{}-7hybrid-corr_{}-b{:g}'.format(metric, corr, budget))
+                plt.close()
 
                 ax1, ax2 = plot.variants_dual(series, series2,
                                               xgrid=grids.x.num_apps,
@@ -59,6 +71,7 @@ def correlations_7hybrid():
                 legends.dual_fps(ax1, ax2, left=metric.capitalize())
 
                 save('scheduler', exp_id, '{}-7hybrid-corr_{}-dual-b{:g}'.format(metric, corr, budget))
+                plt.close()
 
 
 def main():
