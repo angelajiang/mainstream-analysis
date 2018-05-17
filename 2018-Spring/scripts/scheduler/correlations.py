@@ -10,26 +10,23 @@ from utils import save
 
 
 def _get_data(exp_id, series_names, corr_types):
-    # setups = dataloaders.load_setups(exp_id,
-    #                                  setup_file_str="/setups.{exp_id}-*{version}.pickle",
-    #                                  legacy='InconsistentIds')
-    setups = {}
-
+    # Overriding setup_file_str because dir was renamed to have -corr
+    setups = dataloaders.load_setups(exp_id,
+                                     setup_file_str="/setups.*{version}.pickle")
     rows = []
     for series_name in series_names:
         for corr in corr_types:
-            schedules = dataloaders.load_schedules("050318", "correlations/greedy." + series_name + ".sim.*-" + corr + ".v1",
+            schedules = dataloaders.load_schedules(exp_id,
+                                                   "greedy." + series_name + ".sim.*-" + corr + ".v1",
                                                    setups=setups)
-            # Workaround since setups cannot be found.
             rows += ex(schedules,
-                       each=lambda s: {'fps': mean(s.fpses), 'f1': 1. - s.extra('metric'), 'budget': s.budget, 'num_apps': s.num_apps},
                        constant={'scheduler': 'greedy', 'sharing': series_name, 'correlation': corr})
     df = comb(rows)
     return df
 
 
 def correlations_7hybrid():
-    exp_id = "050318"
+    exp_id = "050318-corr"
     series_names = ["mainstream", "maxsharing", "nosharing"]
     corr_types = ["ind", "emp", "dep"]
     metrics = ["f1"]
@@ -39,11 +36,6 @@ def correlations_7hybrid():
     for corr in corr_types:
         for budget in set(df['budget'].values):
             df_view = df[(df['budget'] == budget) & (df['correlation'] == corr)]
-
-            print budget, corr, len(df_view)
-            if len(df_view) == 0:
-                print "skipping"
-                continue
 
             grouped = df_view.groupby(['sharing', 'num_apps'])
 

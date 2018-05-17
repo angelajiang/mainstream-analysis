@@ -4,6 +4,7 @@ import glob
 import os
 import pickle
 import sys
+import warnings
 from dl_constants import MAINSTREAM_DIR 
 from dl_constants import VERSION_SUFFIX
 from dl_constants import SETUP_DIR
@@ -19,18 +20,16 @@ from Scheduler import Scheduler
 import app_data_mobilenets as app_data
 
 
-# setup_num_app_file = setup_dir + "/setups.{exp_id}-{num_apps}.v1"
-
-
-def get_scheduler(setup):
+def get_scheduler(setup, metric="f1"):
     # TODO: Make setup or something specify the metric.
-    # TODO: Load layer costs from file.
-    return Scheduler("f1", setup.apps, setup.video_desc.to_map(), app_data.model_desc)
+    # TODO: Load layer costs from file instead of using app_data.model_desc.
+    return Scheduler(metric, setup.apps, setup.video_desc.to_map(), app_data.model_desc)
 
 
-def get_cost_benefits(exp_id, setup, config_filename=CONFIG_FILENAME):
+def get_cost_benefits(exp_id, setup, setup_dir="", config_filename=CONFIG_FILENAME):
     # OrderedDict to aid schedule format hack for exhaustive - see schedule loader.
     ret = OrderedDict()
+    config_filename = os.path.join(setup_dir, config_filename)
     with open(config_filename.format(exp_id=exp_id, setup_id=setup.uuid)) as f:
         for line in f:
             app_id, frozen, fps, cost, metric = line.split()
@@ -59,14 +58,15 @@ def _old_id(app):
     return app.name + ":" + app_uuid
 
 
-def load(exp_id, setup_dir=SETUP_DIR, setup_file_str=SETUP_FILE_STR, version_suffix=VERSION_SUFFIX, legacy=None):
+def load(exp_id, mainstream_dir=MAINSTREAM_DIR, setup_dir=SETUP_DIR, setup_file_str=SETUP_FILE_STR, version_suffix=VERSION_SUFFIX, legacy=None):
     print "Loading setups...",
     if legacy == 'InconsistentIds':
         print "Using InconsistentIds...",
+    sys.stdout.flush()
 
     setup_generator = Setup.SetupGenerator()
     all_setups = {}
-    num_setups = 0
+    setup_dir = os.path.join(mainstream_dir, setup_dir)
     setup_files = (setup_dir + setup_file_str).format(exp_id=exp_id, version=version_suffix)
     for pkl_filename in glob.glob(setup_files):
         setups = setup_generator.deserialize_setups(pkl_filename)
@@ -78,10 +78,11 @@ def load(exp_id, setup_dir=SETUP_DIR, setup_file_str=SETUP_FILE_STR, version_suf
                 for app, app_ in zip(setup.apps, setup._apps):
                     app['app_id'] = _old_id(app_)
             setup.scheduler = get_scheduler(setup)
-            setup.cost_benefits = get_cost_benefits(exp_id, setup)
-        all_setups.update({setup.uuid: setup for setup in setups})
-        num_setups += len(setups)
-        assert len(all_setups) == num_setups
+            setup.cost_benefits = get_cost_benefits(exp_id, setup, setup_dir=setup_dir)
+        for setup in setups:
+            if setup.uuid in all_setups:
+                warnings.warn("Duplicate setup " + setup.uuid) 
+            all_setups[setup.uuid] = setup
 
-    print "Done"
+    print "Done ({} loaded)".format(len(all_setups))
     return all_setups
