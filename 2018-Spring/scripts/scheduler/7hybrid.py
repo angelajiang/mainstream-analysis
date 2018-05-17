@@ -24,7 +24,6 @@ def _get_data(exp_id, series_names):
         # Extract some attributes from the schedules.
         # Add on some based on the file name.
         rows += ex(schedules,
-                   each=lambda s: s.to_map(),
                    constant={'scheduler': 'greedy', 'sharing': series_name})
     df = comb(rows)
     return df
@@ -65,8 +64,8 @@ def metric_7hybrid(metrics=['f1']):
 
             ax1, ax2 = plot.variants_dual(series, series2,
                                           xgrid=grids.x.num_apps,
-                                          y1grid=grids.y.get(metric),
-                                          y2grid=grids.y.fps)
+                                          ygrid=grids.y.get(metric),
+                                          ygrid2=grids.y.fps)
             legends.dual_fps(ax1, ax2, left=metric.capitalize())
 
             plt.tight_layout()
