@@ -84,7 +84,7 @@ def f1_7hybrid_annotated():
     grouped = df_view.groupby(['sharing', 'num_apps'])
 
     series_fps = agg2series(grouped['fps'].mean(), names=series_names)
-    series_acc = agg2series(grouped['rel_acc'].mean(), names=series_names)
+    series_acc = agg2series(1. - grouped['rel_acc'].mean(), names=series_names)
 
     series = agg2series(grouped['f1'].mean(),
                         names=series_names,
@@ -97,16 +97,16 @@ def f1_7hybrid_annotated():
 
     annotations = [
         [Annotation(pt=1, xy=(10, 30), name='a', arrow_kwargs=dict(shrinkA=3), va='center'),
-         Annotation(pt=10, xy=(-15, 18), name='b', arrow_kwargs=dict(shrinkA=5), ha='center')],
+         Annotation(pt=10, xy=(-25, 18), name='b', arrow_kwargs=dict(shrinkA=5), ha='center')],
         [Annotation(pt=1, xy=(15, 25), name='c', va='center'),
-         Annotation(pt=10, xy=(-20, -20), name='d', ha='center', va='top')],
+         Annotation(pt=10, xy=(-27, -20), name='d', ha='center', va='top')],
         [Annotation(pt=1, xy=(25, -16), name='e', va='center'),
          Annotation(pt=10, xy=(-30, 30), name='f', ha='right', va='center')],
     ]
 
     add_annotations(annotations,
                     series,
-                    fmt_str="({name}) Frame Acc: {acc:.2g}, FPS: {fps:.2g}",
+                    fmt_str="({name}) Frame Rel Acc: {acc:.2g}, FPS: {fps:.2g}",
                     extra={'fps': series_fps, 'acc': series_acc},
                     ax=ax)
     save('scheduler', exp_id, '{}-7hybrid-annotated-b{:g}'.format("f1", 150), bbox_inches="tight")
