@@ -63,11 +63,11 @@ def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
                 indices = [int(round(x * 100. / num_layers)) for x in indices]
             else:
                 indices = [num_layers - x for x in indices]
-            plt.plot(indices, ys, marker=markers[mindex], color=cs[ci], lw=4, markersize=8, label=label)
+            plt.plot(indices, ys, marker=markers[mindex], color=cs[ci], lw=1, markersize=8, label=label)
 
-            plt.tick_params(axis='y', which='major', labelsize=28)
+            plt.tick_params(axis='y', which='major', labelsize=24)
             plt.tick_params(axis='y', which='minor', labelsize=20)
-            plt.tick_params(axis='x', which='major', labelsize=28)
+            plt.tick_params(axis='x', which='major', labelsize=24)
             plt.tick_params(axis='x', which='minor', labelsize=20)
 
             if not do_norm:
@@ -79,13 +79,13 @@ def plot_accuracy_vs_layer(accuracy_files, labels, plot_file):
             # plt.tick_params(axis='x', which='both', bottom='off', top='off', labelbottom='off')
 
             if do_norm:
-                plt.xlabel("% of layers that are unspecialized", fontsize=30)
+                plt.xlabel("% of layers that are unspecialized", fontsize=28)
             elif do_flip:
-                plt.xlabel("No. of unspecialized layers", fontsize=30)
+                plt.xlabel("No. of unspecialized layers", fontsize=28)
             else:
-                plt.xlabel(u"Fewer specialized layers →", fontsize=30)
-            plt.ylabel("Top-1 Accuracy", fontsize=30)
-            plt.legend(loc=0, fontsize=15, frameon=not do_norm)
+                plt.xlabel(u"Fewer specialized layers →", fontsize=28)
+            plt.ylabel("Top-1 Accuracy", fontsize=28)
+            plt.legend(loc=0, fontsize=15, frameon=not do_norm, ncol=2,)
             #plt.gca().invert_xaxis()
             plt.gca().xaxis.grid(True)
             plt.gca().yaxis.grid(True)

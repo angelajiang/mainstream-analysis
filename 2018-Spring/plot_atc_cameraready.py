@@ -1,7 +1,14 @@
 import sys
+from plotutils import contexts
+contexts.use('paper')
 sys.path.append('scripts/scheduler')
-import f1_7hybrid
-# call all the scripts to plot
+import 7hybrid
 
-# Fig 7
-scheduler.f1_7hybrid()
+
+def main():
+    # Fig 7
+    7hybrid.main()
+
+
+if __name__ == '__main__':
+    main()

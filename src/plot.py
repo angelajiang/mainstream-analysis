@@ -6,9 +6,9 @@ import scipy.interpolate
 def _grid_apply(x_or_y, series, grid, ax=None):
     if grid is not None:
         if x_or_y == 'x':
-            pts = [s_.x() for s_ in series] if len(series) > 0 else None
+            pts = [s_.x for s_ in series] if len(series) > 0 else None
         else:
-            pts = [s_.y() for s_ in series] if len(series) > 0 else None
+            pts = [s_.y for s_ in series] if len(series) > 0 else None
         grid(pts, ax=ax)
 
 
@@ -23,16 +23,17 @@ def variants(series, ax=None,
     _grid_apply('x', series, xgrid, ax=ax)
     _grid_apply('y', series, ygrid, ax=ax)
     ax.legend(**legend_kwargs)
+    plt.tight_layout()
     return ax
 
 
 def variants_dual(seriesA, seriesB,
-                  xgrid=None, y1grid=None, y2grid=None,
+                  xgrid=None, ygrid=None, ygrid2=None,
                   plot_kwargs={}, legend_kwargs={}):
     fig, ax1 = plt.subplots()
     ax2 = ax1.twinx()
-    variants(seriesA, ax=ax1, xgrid=xgrid, ygrid=y1grid, plot_kwargs=plot_kwargs)
-    variants(seriesB, ax=ax2, ygrid=y2grid, plot_kwargs=plot_kwargs)
+    variants(seriesA, ax=ax1, xgrid=xgrid, ygrid=ygrid, plot_kwargs=plot_kwargs)
+    variants(seriesB, ax=ax2, ygrid=ygrid2, plot_kwargs=plot_kwargs)
     ax2.legend(**legend_kwargs)
     return ax1, ax2
 

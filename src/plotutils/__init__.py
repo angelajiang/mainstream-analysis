@@ -6,3 +6,6 @@ from .Series import agg2xy
 from .Series import agg2series
 from .Series import get_errors
 from .Series import get_series
+from .contexts import use as set_context
+from .annotations import Annotation
+from .annotations import add_annotations

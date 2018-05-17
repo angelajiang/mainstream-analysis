@@ -42,6 +42,14 @@ class Schedule(object):
             self._costs.append(cost)
             self._objectives.append(objective)
 
+        # TODO: Refactor to use method in mainstream Scheduler.py
+        self._rel_accs = []
+        for num_frozen, app in zip(self._frozens, self._apps):
+            max_acc = max(app["accuracies"].values())
+            cur_acc = app["accuracies"][num_frozen]
+            rel_acc = (max_acc - cur_acc) / max_acc
+            self._rel_accs.append(rel_acc)
+
         if 'metric' in extras:
             assert abs(extras['metric'] - mean(self._objectives)) < 1e-5
 
@@ -86,6 +94,10 @@ class Schedule(object):
     def precisions(self):
         return self._precisions
 
+    @property
+    def rel_accs(self):
+        return self._rel_accs
+
     def extra(self, k):
         return self._extras[k]
 
@@ -113,16 +125,21 @@ class Schedule(object):
     def __str__(self):
         return 'Schedule(f1={:g}, fpses={}, frozens={}, obj={})'.format(self.mean_f1(), self.fpses, self.frozens, self.objectives)
 
-    def to_map(self):
-        return {
+    def to_map(self, extras={}):
+        dct = {
             'num_apps': self.num_apps,
             'budget': self._budget,
             'latency': self._latency,
             'f1': self.mean_f1(),
+            'f1_min': min(self.f1s),
+            'f1_max': max(self.f1s),
             'recall': self.mean_recall(),
             'precision': self.mean_precision(),
+            'rel_acc': mean(self.rel_accs),
             'fps': mean(self.fpses),
         }
+        dct.update(extras)
+        return dct
 
 
 def load(filename, setups={}, variant=None, **kwargs):

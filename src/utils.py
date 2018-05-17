@@ -9,8 +9,8 @@ def save(group='', exp_id='', plot_id='', plot_dir=PLOT_DIR, **kwargs):
     save_exact(os.path.join(plot_dir, group, exp_id, plot_id), **kwargs)
 
 
-def save_exact(filename, pdf=True, png=False):
+def save_exact(filename, pdf=True, png=False, **kwargs):
     if pdf:
-        plt.savefig(filename + ".pdf")
+        plt.savefig(filename + ".pdf", **kwargs)
     if png:
-        plt.savefig(filename + ".png", dpi=72)
+        plt.savefig(filename + ".png", dpi=72, **kwargs)
