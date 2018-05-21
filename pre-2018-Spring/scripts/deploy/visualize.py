@@ -3,10 +3,19 @@ import sys
 from PIL import Image
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-# mpl.style.use("classic")
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 sys.path.append("scripts/util")
 import plot_util
+
+# Restore some aspects of matplotlib 1
+mpl.rcParams['figure.figsize'] = [8.0, 6.0]
+mpl.rcParams['figure.dpi'] = 80
+mpl.rcParams['savefig.dpi'] = 100
+
+mpl.rcParams['font.size'] = 12
+mpl.rcParams['legend.fontsize'] = 'large'
+mpl.rcParams['figure.titlesize'] = 'medium'
+
 
 sizes = {
     'label': 30,
@@ -93,7 +102,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     plt.xlim(0, max(xs1))
     plt.ylim(-.3, .15)
     plt.xlabel(u"Time elapsed (s)", fontsize=sizes['label'])
-    plt.xticks()
+    plt.xticks(range(0, int(max(xs1)), 4))
     plt.tick_params(axis='y', which='major', labelsize=28)
     plt.tick_params(axis='y', which='minor', labelsize=20)
     plt.tick_params(axis='x', which='major', labelsize=35)
