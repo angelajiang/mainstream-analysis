@@ -19,6 +19,8 @@ def main():
     correlations.main()
     # Fig 9
     x_voting.main()
+    # Fig 10
+    subprocess.check_call('python scripts/deploy/visualize.py', cwd='../pre-2018-Spring', shell=True)
 
 
 if __name__ == '__main__':

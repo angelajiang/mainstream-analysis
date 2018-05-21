@@ -27,5 +27,4 @@ cp plots/scheduler/050318-corr/f1-7hybrid-corr_ind-dual-b300.pdf $PLOT_DIR/7hybr
 cp plots/scheduler/x_voting/train-f1-f1-frontier.pdf $PLOT_DIR/scheduler/voting-train-500-f1-f1-frontier.pdf
 
 # Fig 10: deploy-time-series
-# python scripts/deploy/visualize.py
-# cp plots/deploy/deploy-time-series.pdf $PLOT_DIR
+cp ../pre-2018-Spring/plots/deploy/deploy-time-series.pdf $PLOT_DIR

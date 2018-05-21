@@ -112,7 +112,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     handles, labels = ax.get_legend_handles_labels()
     plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=sizes['legend'], ncol=1, frameon=False)
     plt.tight_layout()
-    plt.savefig(plot_file)
+    plt.savefig(plot_file, metadata={'creationDate': None})
     plt.clf()
 
 
