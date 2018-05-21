@@ -58,11 +58,18 @@ def agg2series(aggregated, names=None, errs=None, **kwargs):
     return get_series(xss, yss, names=names, errs=errs, **kwargs)
 
 
+def default_plotstyles(n):
+    idx = min(k for k in styles.COLORLISTS.keys() if k >= n)
+    colors = styles.COLORLISTS[idx]
+    return [{'color': color, 'marker': marker, 'markersize': ms}
+            for color, marker, ms in zip(colors, styles.MARKERS, styles.MARKERSIZES)]
+
+
 # TODO: Rename plotparams to plotstyle and plotstyles to seriesstyles?
 def get_series(xss, yss, errs=None, names=None, plotstyles='names', plotparams={}):
     """Pass plotstyles=None for throwaway plots"""
     if plotstyles is None:
-        plotstyles = [None for _ in range(len(xss))]
+        plotstyles = default_plotstyles(len(xss))
     elif plotstyles == 'names':
         plotstyles = names
     elif isinstance(plotstyles, dict):
@@ -114,6 +121,7 @@ class Series(object):
             self.series = series
             if name is not None:
                 self.series.name = name
+        self.series = self.series.dropna()
         if yerrs is not None:
             # Assert that dimensions are either N or 2xN
             assert len(yerrs) == len(self.series) or len(yerrs[0]) == len(self.series)
@@ -128,9 +136,11 @@ class Series(object):
     def plot(self, *args, **kwargs):
         if self.plotparams is not None:
             kwargs.update(self.plotparams)
-        for k in ['marker', 'color', 'label']:
-            if self.plotstyle and k in self.plotstyle:
-                kwargs[k] = self.plotstyle[k]
+        if self.plotstyle:
+            keys = ['marker', 'color', 'label', 'markersize']
+            assert all(k in keys for k in self.plotstyle)
+            for k, v in self.plotstyle.items():
+                kwargs[k] = v
         if self.yerrs is not None:
             kwargs['yerr'] = self.yerrs
             ax = kwargs.pop('ax')

@@ -6,6 +6,13 @@ def recall(ys, ax=None):
     ratio(ys, title="Average Event Recall", ax=ax)
 
 
+def recall_zoomed(ys, ax=None):
+    ratio(ys, title="Event Recall", ax=ax)
+    min_y = min(y for yss in ys for y in yss)
+    if min_y >= .5:
+        ax.set_ylim(.5, 1)
+
+
 def precision(ys, ax=None):
     ratio(ys, title="Average Event Precision", ax=ax)
 
@@ -22,7 +29,7 @@ def ratio(ys, title="??", ax=None):
     if ax is None:
         ax = plt.gca()
     ax.set_ylim(0, 1)
-    ax.grid(linestyle='dotted', linewidth=.1)
+    ax.grid(linestyle='dotted', linewidth=.1, axis='y')
     ax.set_ylabel(title)
 
 

@@ -4,7 +4,7 @@ import sys
 import warnings
 from dl_constants import SCHEDULE_DIR
 from dl_constants import MAINSTREAM_DIR 
-from utils import mean
+from utils import mean, hmean
 sys.path.append(os.path.join(MAINSTREAM_DIR, "src/scheduler/types"))
 sys.path.append(os.path.join(MAINSTREAM_DIR, "src/scheduler"))
 sys.path.append(os.path.join(MAINSTREAM_DIR, "src/util"))
@@ -226,22 +226,28 @@ def load(filename, setups={}, variant=None, **kwargs):
                         extras['f1'], extras['recall'], extras['precision'] = f1_, recall_, precision_
                         idx += 3
                     assert idx == len(line), idx
+
+                    if setup_id in setups:
+                        setup = setups[setup_id]
+                    elif len(setups) > 0:
+                        warnings.warn("Setup " + setup_id + " not found")
+                        setup = None
                 except:
                     print "Offending line:", line
                     raise
             else:
                 num_apps = int(line[0])
                 assert len(line) == 1 + 3 + num_apps * 2
-                # Note: f1_, if here, is incorrect as it is average of FNR/FPR
                 fnr_, fpr_, acc_ = map(float, line[1:4])
+                extras['recall'], extras['precision'] = 1. - fnr_, 1. - fpr_
+                # Note f1_est is not true f1
+                extras['f1_est'] = hmean([extras['recall'], extras['precision']])
                 frozens = map(int, line[4:4 + num_apps])
                 fpses = map(int, line[4 + num_apps:4 + num_apps * 2])
-                # raise Exception("Unknown file format")
-            if setup_id in setups:
-                setup = setups[setup_id]
-            else:
-                warnings.warn("Setup " + setup_id + " not found")
                 setup = None
+                latency_us = None
+                budget = None
+                # raise Exception("Unknown file format")
             schedules.append(Schedule(fpses, frozens, budget=budget,
                                       latency=latency_us,
                                       setup=setup,

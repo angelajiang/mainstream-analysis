@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.interpolate
+from plotutils import Series
 
 
 def _grid_apply(x_or_y, series, grid, ax=None):
@@ -43,32 +44,33 @@ def variants_dual(seriesA, seriesB,
     return ax1, ax2
 
 
-# TODO: Adapt for new framework.
-# def frontier(all_pts, voting_train_f1=None):
-#     pts = []
-#     highest = -1
-#     for x, y in sorted(all_pts, reverse=True):
-#         if y > highest:
-#             highest = y
-#             pts.append((x, y))
-#     pts = sorted(pts)
-#     xs, ys = zip(*pts)
+def frontier(series, voting_train_f1_hack=False):
+    all_pts = []
+    for s_ in series:
+        all_pts += list(zip(s_.x, s_.y))
+    pts = []
+    highest = -1
+    for x, y in sorted(all_pts, reverse=True):
+        if y > highest:
+            highest = y
+            pts.append((x, y))
+    pts = sorted(pts)
+    xs, ys = zip(*pts)
 
-#     all_xs = [pt[0] for pt in all_pts]
+    all_xs = [pt[0] for pt in all_pts]
 
-#     xss = np.linspace(min(all_xs), max(all_xs), 100)
+    xss = np.linspace(min(all_xs), max(all_xs), 100)
 
-#     if voting_train_f1:
-#         xs_l = list(xs)
-#         ys_l = list(ys)
-#         for i in range(len(xs_l)):
-#             if xs_l[i] == 9:
-#                 to_delete = ys_l[i]
-#                 xs_l = [x for x in xs if x != 9]
-#                 ys_l = [y for y in ys if y != to_delete]
-#                 break
-#         spl = scipy.interpolate.PchipInterpolator(xs_l, ys_l)
-#     else:
-#         spl = scipy.interpolate.PchipInterpolator(xs, ys)
-#     ys = spl(xss)
-#     return xss, ys
+    if voting_train_f1_hack:
+        xs_l = list(xs)
+        ys_l = list(ys)
+        idx = xs_l.index(9)
+        xs_l.pop(idx)
+        ys_l.pop(idx)
+        spl = scipy.interpolate.PchipInterpolator(xs_l, ys_l)
+    else:
+        spl = scipy.interpolate.PchipInterpolator(xs, ys)
+    ys = spl(xss)
+    return Series(x=xss, y=ys,
+                  plotstyle={'label': 'Pareto Frontier', 'color': 'blue'},
+                  plotparams={'lw': 3, 'ls': '--'})

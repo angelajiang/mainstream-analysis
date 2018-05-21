@@ -1,15 +1,24 @@
 import sys
-from scripts.scheduler import s7hybrid
-from scripts.sharing import accuracies
+from scripts.scheduler import *
+from scripts.sharing import *
+from scripts import *
 from plotutils import contexts
 contexts.use('paper')
 
 
 def main():
+    # Fig 4a
+    throughput.main()
     # Fig 4b
     accuracies.main()
-    # Fig 7
+    # Fig 5
+    dependence.main()
+    # Fig 6, 7
     s7hybrid.main()
+    # Fig 8
+    correlations.main()
+    # Fig 9
+    x_voting.main()
 
 
 if __name__ == '__main__':

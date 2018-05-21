@@ -2,14 +2,17 @@ from .colors import COLORLISTS, COLORS
 from matplotlib import colors as mpl_colors
 
 MARKERS = ["o", "v", "D", "*", "p", "8", "h", "x", "x", "d", "|", "2", "3", "4"]
+MARKERSIZES = [4] * len(MARKERS)
+# * is small compared to the others.
+MARKERSIZES[3] *= 1.5
 
 CAPSIZES = [10, 6, 3, 8, 4]
 
 LINEGROUPS = {
-    'fg': dict(lw=2, markersize=8, marker='.'),
-    'fg-e': dict(lw=2, markersize=8, markeredgewidth=1),
-    'bg': dict(lw=1, markersize=8, alpha=0.7, linestyle='--'),
-    'bg-e': dict(lw=1, markersize=8, alpha=0.7, linestyle='--', markeredgewidth=1),
+    'fg': dict(lw=2, markersize=4, marker='.'),
+    'fg-e': dict(lw=2, markersize=4, markeredgewidth=1),
+    'bg': dict(lw=1, markersize=4, alpha=0.7, linestyle='--'),
+    'bg-e': dict(lw=1, markersize=4, alpha=0.7, linestyle='--', markeredgewidth=1),
 }
 
 

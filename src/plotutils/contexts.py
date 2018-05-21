@@ -13,6 +13,11 @@ def single():
         'xtick.labelsize': 15,
         'ytick.labelsize': 15,
         'legend.fontsize': 13,
+
+        'mathtext.fontset': 'custom',
+        'mathtext.rm': 'Bitstream Vera Sans',
+        'mathtext.it': 'Bitstream Vera Sans:italic',
+        'mathtext.bf': 'Bitstream Vera Sans:bold',
     }
 
 
@@ -40,7 +45,8 @@ def paper():
 
 
 def rescale(params, factor=1.):
-    return {k: v * factor for k, v in params.items()}
+    return {k: v * factor if k.endswith('size') else v
+            for k, v in params.items()}
 
 
 def use(name):
