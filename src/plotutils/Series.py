@@ -19,6 +19,7 @@ def comb(rows):
 
 
 def agg2xy(aggregated, names=None):
+    # 'names' argument is meant to help with ordering of lines.
     unstacked = aggregated.unstack(0)
     if names is None:
         names = unstacked.columns
@@ -35,7 +36,6 @@ def agg2series(aggregated, names=None, errs=None, **kwargs):
         warnings.warn("series has no rows")
     xss, yss = agg2xy(aggregated, names=names)
     if errs is not None:
-        # TODO: Split up the errors
         # In: dict(e_delta=[low, high])
         # Out: [dict(e_delta=[low, high]), ...]
         assert isinstance(errs, dict) and len(errs) == 1
@@ -58,6 +58,7 @@ def agg2series(aggregated, names=None, errs=None, **kwargs):
     return get_series(xss, yss, names=names, errs=errs, **kwargs)
 
 
+# TODO: Rename plotparams to plotstyle and plotstyles to seriesstyles?
 def get_series(xss, yss, errs=None, names=None, plotstyles='names', plotparams={}):
     """Pass plotstyles=None for throwaway plots"""
     if plotstyles is None:
@@ -103,10 +104,10 @@ class Series(object):
                  yerrs=None,
                  name=None,
                  plotstyle=None,
-                 plotparams=None,
+                 plotparams={},
                  capsize=None,
                  **kwargs):
-        assert series is None or (x is not None and y is not None)
+        assert series is None or (x is None and y is None)
         if series is None:
             self.series = pd.Series(data=y, index=x, name=name, **kwargs)
         else:
@@ -120,7 +121,7 @@ class Series(object):
             plotstyle = styles.SERIES[plotstyle]
         self.plotstyle = plotstyle
         self.yerrs = yerrs
-        self.plotparams = dict(plotparams)
+        self.plotparams = plotparams.copy()
         if capsize is not None:
             self.plotparams['capsize'] = capsize
 

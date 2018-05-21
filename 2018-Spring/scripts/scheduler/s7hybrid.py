@@ -93,7 +93,7 @@ def f1_7hybrid_annotated():
     ax = plot.variants(series,
                        xgrid=grids.x.num_apps,
                        ygrid=grids.y.f1,
-                       legend_kwargs=dict(bbox_to_anchor=(0.5, 1.2), fontsize=12, ncol=3, loc='upper center'))
+                       legend=legends.above_fig)
 
     annotations = [
         [Annotation(pt=1, xy=(10, 30), name='a', arrow_kwargs=dict(shrinkA=3), va='center'),

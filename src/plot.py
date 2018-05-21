@@ -14,6 +14,7 @@ def _grid_apply(x_or_y, series, grid, ax=None):
 
 def variants(series, ax=None,
              xgrid=None, ygrid=None,
+             legend=None,
              plot_kwargs={}, legend_kwargs={}):
     """Comparing different variants of Mainstream"""
     if ax is None:
@@ -22,7 +23,11 @@ def variants(series, ax=None,
         line.plot(ax=ax, **plot_kwargs)
     _grid_apply('x', series, xgrid, ax=ax)
     _grid_apply('y', series, ygrid, ax=ax)
-    ax.legend(**legend_kwargs)
+    assert legend is None or len(legend_kwargs) == 0, "Use either legend or legend_kwargs"
+    if legend is None:
+        ax.legend(**legend_kwargs)
+    else:
+        legend(ax)
     plt.tight_layout()
     return ax
 

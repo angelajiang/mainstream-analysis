@@ -1,8 +1,16 @@
 import glob
 import os
+import sys
 import warnings
 from dl_constants import SCHEDULE_DIR
+from dl_constants import MAINSTREAM_DIR 
 from utils import mean
+sys.path.append(os.path.join(MAINSTREAM_DIR, "src/scheduler/types"))
+sys.path.append(os.path.join(MAINSTREAM_DIR, "src/scheduler"))
+sys.path.append(os.path.join(MAINSTREAM_DIR, "src/util"))
+sys.path.append(os.path.join(MAINSTREAM_DIR, "data"))
+sys.path.append(os.path.join(MAINSTREAM_DIR, "data/mpackages"))
+from scheduler_util import SharedStem
 
 
 class Schedule(object):
@@ -57,11 +65,24 @@ class Schedule(object):
             if 'metric' in extras:
                 assert abs(extras['metric'] - mean(self._objectives)) < 1e-5
 
+            self._shared_stem()
+            self._stem = SharedStem(self._shared_stem(), self._setup.scheduler.model)
+            self._stem_cost = self._stem.cost
+
     def _metric(self, metric):
         metrics = []
         for app, num_frozen, fps in zip(self._apps, self._frozens, self._fpses):
             metrics.append(self._setup.scheduler._get_metric(app, num_frozen, fps, metric))
         return metrics
+
+    def _shared_stem(self):
+        max_fps = 0
+        stem = {}
+        for frozen, fps in sorted(zip(self.frozens, self.fpses), reverse=True):
+            max_fps = max(max_fps, fps)
+            if max_fps not in stem:
+                stem[max_fps] = frozen
+        return sorted((v, k) for k, v in stem.items())
 
     def __len__(self):
         return len(self._fpses)
@@ -129,6 +150,14 @@ class Schedule(object):
     @property
     def setup(self):
         return self._setup
+
+    @property
+    def stem(self):
+        return self._stem
+
+    @property
+    def stem_cost(self):
+        return self._stem_cost
 
     def __str__(self):
         return 'Schedule(f1={:g}, fpses={}, frozens={}, obj={})'.format(self.mean_f1(), self.fpses, self.frozens, self.objectives)

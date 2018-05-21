@@ -16,3 +16,15 @@ def budget(xs, ax=None):
         ax = plt.gca()
     ax.set_xlabel("Budget")
     raise NotImplementedError
+
+
+def frozen(xs, label="% of layers that are unspecialized", ax=None):
+    if ax is None:
+        ax = plt.gca()
+    ax.set_xlabel(label)
+    ax.set_xlim(0, 100)
+
+
+def frozen_shared(xs, ax=None):
+    frozen(xs, ax=ax, label='% of layers that are unspecialized (shared)')
+    ax.set_xlim(0, 115)

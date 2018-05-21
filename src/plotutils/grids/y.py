@@ -14,6 +14,10 @@ def f1(ys, ax=None):
     ratio(ys, title="Average Event F1", ax=ax)
 
 
+def accuracy(ys, ax=None):
+    ratio(ys, title="Top-1 Accuracy", ax=ax)
+
+
 def ratio(ys, title="??", ax=None):
     if ax is None:
         ax = plt.gca()
@@ -22,14 +26,14 @@ def ratio(ys, title="??", ax=None):
     ax.set_ylabel(title)
 
 
-def fps(ys, ax=None):
+def fps(ys, label="FPS", ax=None):
     if ax is None:
         ax = plt.gca()
     ys = set(y for yss in ys for y in yss)
     ax.yaxis.set_major_locator(plticker.MultipleLocator(base=4.))
     ax.set_ylim(0, max(20, max(ys)))
     ax.grid(None)
-    ax.set_ylabel("FPS")
+    ax.set_ylabel(label)
 
 
 __all__ = {

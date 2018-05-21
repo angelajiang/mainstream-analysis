@@ -9,3 +9,6 @@ from .Series import get_series
 from .contexts import use as set_context
 from .annotations import Annotation
 from .annotations import add_annotations
+import grids
+import legends
+import contexts
