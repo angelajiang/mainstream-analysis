@@ -1,3 +1,4 @@
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
@@ -15,7 +16,7 @@ def add_annotations(annotations,
                     fmt_str='({name})',
                     extra={},
                     ax=None,
-                    fontsize=12):
+                    fontsize=1.):
     if ax is None:
         ax = plt.gca()
     # Transform {'fps': [series1, series2, series3], ...} to [{'fps': series1, ...}, ...]
@@ -33,7 +34,7 @@ def add_annotations(annotations,
             common_args = dict(xy=(x, y),
                                xytext=annotation.xy,
                                xycoords='data',
-                               fontsize=fontsize,
+                               fontsize=fontsize * mpl.rcParams['font.size'],
                                textcoords='offset points')
             # Annotation for arrow
             ax.annotate("",

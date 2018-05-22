@@ -6,18 +6,22 @@ import matplotlib as mpl
 def single():
     """Default: for 1:1 meetings, presenting just one graph"""
     return {
-        'axes.titlesize': 24,
-        'axes.labelsize': 20,
+        'font.size': 14,
+        'axes.titlesize': 22,
+        'axes.labelsize': 23,
         'lines.linewidth': 3,
-        'lines.markersize': 10,
-        'xtick.labelsize': 15,
-        'ytick.labelsize': 15,
-        'legend.fontsize': 13,
+        'lines.markersize': 8,
+        'xtick.labelsize': 20,
+        'ytick.labelsize': 20,
+        'legend.fontsize': 16,
 
         'mathtext.fontset': 'custom',
         'mathtext.rm': 'Bitstream Vera Sans',
         'mathtext.it': 'Bitstream Vera Sans:italic',
         'mathtext.bf': 'Bitstream Vera Sans:bold',
+
+        'legend.columnspacing': .8,
+        'legend.frameon': False,
     }
 
 
@@ -41,12 +45,16 @@ def notebook():
 
 
 def paper():
-    return rescale(single(), factor=.9)
+    return rescale(single(), factor=1.)
 
 
 def rescale(params, factor=1.):
     return {k: v * factor if k.endswith('size') else v
             for k, v in params.items()}
+
+
+def get(prop):
+    return mpl.rcParams[prop]
 
 
 def use(name):

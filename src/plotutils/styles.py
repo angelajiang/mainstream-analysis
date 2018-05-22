@@ -1,18 +1,20 @@
 from .colors import COLORLISTS, COLORS
 from matplotlib import colors as mpl_colors
+import matplotlib as mpl
+
 
 MARKERS = ["o", "v", "D", "*", "p", "8", "h", "x", "x", "d", "|", "2", "3", "4"]
-MARKERSIZES = [4] * len(MARKERS)
+MARKERSIZES = [1] * len(MARKERS)
 # * is small compared to the others.
-MARKERSIZES[3] *= 1.5
+MARKERSIZES[3] = 1.5
 
 CAPSIZES = [10, 6, 3, 8, 4]
 
 LINEGROUPS = {
-    'fg': dict(lw=2, markersize=4, marker='.'),
-    'fg-e': dict(lw=2, markersize=4, markeredgewidth=1),
-    'bg': dict(lw=1, markersize=4, alpha=0.7, linestyle='--'),
-    'bg-e': dict(lw=1, markersize=4, alpha=0.7, linestyle='--', markeredgewidth=1),
+    'fg': dict(lw=2),
+    'fg-e': dict(lw=2, markeredgewidth=1),
+    'bg': dict(lw=1, alpha=0.7, linestyle='--'),
+    'bg-e': dict(lw=1, alpha=0.7, linestyle='--', markeredgewidth=1),
 }
 
 
@@ -83,3 +85,16 @@ for k, v in SERIES.items():
     if 'marker_alt' in v:
         v['marker'] = v.pop('marker_alt')
     SERIES_ALT[k] = v
+
+
+def default(n=None, labels=None):
+    if n is None:
+        n = len(labels)
+    idx = min(k for k in COLORLISTS.keys() if k >= n)
+    colors = COLORLISTS[idx]
+    if labels:
+        return [{'color': color, 'marker': marker, 'markersize': ms * mpl.rcParams['lines.markersize'], 'label': label}
+                for color, marker, ms, label in zip(colors, MARKERS, MARKERSIZES, labels)]
+    else:
+        return [{'color': color, 'marker': marker, 'markersize': ms * mpl.rcParams['lines.markersize']}
+                for color, marker, ms in zip(colors, MARKERS, MARKERSIZES)]

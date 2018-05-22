@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as plticker
 
 
+grid_kwargs = dict(linestyle='dotted', linewidth=.1, axis='y')
+
+
 def recall(ys, ax=None):
     ratio(ys, title="Average Event Recall", ax=ax)
 
@@ -29,17 +32,17 @@ def ratio(ys, title="??", ax=None):
     if ax is None:
         ax = plt.gca()
     ax.set_ylim(0, 1)
-    ax.grid(linestyle='dotted', linewidth=.1, axis='y')
+    ax.grid(**grid_kwargs)
     ax.set_ylabel(title)
 
 
-def fps(ys, label="FPS", ax=None):
+def fps(ys, label="FPS", ax=None, ticker_kwargs={}):
     if ax is None:
         ax = plt.gca()
     ys = set(y for yss in ys for y in yss)
-    ax.yaxis.set_major_locator(plticker.MultipleLocator(base=4.))
+    ax.yaxis.set_major_locator(plticker.MaxNLocator(nbins=5, integer=True, **ticker_kwargs))
     ax.set_ylim(0, max(20, max(ys)))
-    ax.grid(None)
+    ax.grid(**grid_kwargs)
     ax.set_ylabel(label)
 
 

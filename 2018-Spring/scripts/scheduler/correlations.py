@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import dataloaders
-from dataloaders.utils import mean
 import plot
 from plotutils import ex, comb, agg2series
 from plotutils import legends
@@ -60,7 +59,8 @@ def correlations_7hybrid():
                                               xgrid=grids.x.num_apps,
                                               ygrid=grids.y.get(metric),
                                               ygrid2=grids.y.fps)
-                legends.dual_fps(ax1, ax2, left=metric.capitalize())
+                # legends.dual_fps(ax1, ax2, left=metric.capitalize())
+                legends.hide(ax1, ax2)
 
                 save('scheduler', exp_id, '{}-7hybrid-corr_{}-dual-b{:g}'.format(metric, corr, budget))
                 plt.close()

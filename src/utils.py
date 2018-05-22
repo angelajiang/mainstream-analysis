@@ -12,10 +12,11 @@ def save(group='', exp_id='', plot_id='', plot_dir=PLOT_DIR, **kwargs):
 
 
 def save_exact(filename, pdf=True, png=False, **kwargs):
+    rel_filename = filename.replace(os.getcwd() + "/", "")
     # set CreationDate to allow for deterministic PDFs to aid inclusion in git
     if pdf:
         plt.savefig(filename + ".pdf", metadata={'creationDate': None}, **kwargs)
-        print(filename + ".pdf saved", file=sys.stderr)
+        print(rel_filename + ".pdf saved", file=sys.stderr)
     if png:
         plt.savefig(filename + ".png", metadata={'creationDate': None}, dpi=72, **kwargs)
-        print(filename + ".png saved", file=sys.stderr)
+        print(rel_filename + ".png saved", file=sys.stderr)

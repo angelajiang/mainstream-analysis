@@ -4,6 +4,7 @@ from PIL import Image
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+from mpl_toolkits.axes_grid.axislines import SubplotZero
 sys.path.append("scripts/util")
 import plot_util
 
@@ -15,7 +16,6 @@ mpl.rcParams['savefig.dpi'] = 100
 mpl.rcParams['font.size'] = 12
 mpl.rcParams['legend.fontsize'] = 'large'
 mpl.rcParams['figure.titlesize'] = 'medium'
-
 
 sizes = {
     'label': 30,
@@ -34,8 +34,11 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     settings = {'marker_hit': u'$\u2191$', 'marker_miss': 'v', 'y_hit_m': .08, 'y_hit_c': -.008 + .003, 'y_miss_c': .015 - .003, 'line': True}
     # settings = {'marker_hit': u'$\u2191$', 'marker_miss': u'$\u2193$', 'y_hit_m': .08, 'y_hit_c': -.008, 'y_miss_c': .016, 'line': True}
     # settings = {'marker_hit': '.', 'marker_miss': 'x', 'y_hit_m': .08, 'y_hit_c': .03, 'line': False}
+    settings['y_offset'] = .03
 
-    _, ax = plt.subplots(1)
+    fig = plt.figure(1)
+    ax = SubplotZero(fig, 111)
+    fig.add_subplot(ax)
 
     for i, (csv_file, obj) in enumerate(zip(files, objects)):
         xs1 = []
@@ -51,10 +54,10 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
                     continue
                 if is_analyzed == 1:
                     xs1.append((frame_id - start) / fps)
-                    ys1.append(i * settings['y_hit_m'] + settings['y_hit_c'])
+                    ys1.append(i * settings['y_hit_m'] + settings['y_hit_c'] + settings['y_offset'])
                 else:
                     xs2.append((frame_id - start) / fps)
-                    ys2.append(i * settings['y_hit_m'] + settings['y_miss_c'])
+                    ys2.append(i * settings['y_hit_m'] + settings['y_miss_c'] + settings['y_offset'])
         plt.scatter(xs1, ys1,
                     label=obj["label"] + " hit",
                     color=obj["color"],
@@ -66,7 +69,9 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
                     s=70,
                     marker=settings['marker_miss']),
         if settings['line']:
-            plt.axhline(y=i * settings['y_hit_m'] + 0.003, linestyle="--", color=obj["color"])
+            y = i * settings['y_hit_m'] + 0.003 + settings['y_offset']
+            # plt.axhline(y=y, lw=2, linestyle=":", color=obj["color"])
+            plt.arrow(x=0, y=y, dx=13.6, dy=0, head_width=0.01, head_length=0.2, facecolor='black', alpha=.7, ls=":", color=obj["color"])
 
     picture_loc = (104 - start) / float(fps)
     train_front = (114 - start) / float(fps)
@@ -74,9 +79,26 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     plot_file = plot_dir + "/deploy-time-series.pdf"
     # plt.title("Train detector with 9 concurrent apps", fontsize=20)
 
+    ax.yaxis.set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+
+    for direction in ["xzero"]:
+        ax_ = ax.axis[direction]
+        ax_.set_axisline_style("-|>")
+        ax_.set_visible(True)
+        ax_.major_ticks.set_ticksize(10)
+        ax_.label.set_fontsize(20)
+        ax_.major_ticklabels.set(fontsize=20)
+        ax_.major_ticks.set_tick_out(True)
+
+    for direction in ["left", "right", "bottom", "top"]:
+        ax.axis[direction].set_visible(False)
+
     plt.annotate("Smoke stack\nleaves view",
-                 xy=(train_front, -.095),
-                 xytext=(20, 12),
+                 xy=(train_front, -.095 - .1),
+                 xytext=(20, 30),
                  xycoords='data',
                  fontsize=20,
                  textcoords='offset points',
@@ -88,8 +110,8 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     imagebox = OffsetImage(im)
     imagebox.image.axes = ax
 
-    ab = AnnotationBbox(imagebox, (picture_loc, settings['y_hit_m'] + settings['y_hit_c'] - .004),
-                        xybox=(-30, -160),
+    ab = AnnotationBbox(imagebox, (picture_loc, settings['y_hit_m'] + settings['y_hit_c'] + settings['y_offset'] - .004),
+                        xybox=(-30, -160-80),
                         xycoords='data',
                         boxcoords='offset points',
                         pad=0,
@@ -99,19 +121,19 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     ax.add_artist(ab)
     # plt.figimage(im, xo=picture_loc * 72 - 150, yo=83 - 58, zorder=1)
 
-    plt.xlim(0, max(xs1))
+    plt.xlim(0, max(xs1) + .5)
     plt.ylim(-.3, .15)
     plt.xlabel(u"Time elapsed (s)", fontsize=sizes['label'])
     plt.xticks(range(0, int(max(xs1)), 4))
-    plt.tick_params(axis='y', which='major', labelsize=28)
-    plt.tick_params(axis='y', which='minor', labelsize=20)
+    # plt.tick_params(axis='y', which='major', labelsize=28)
+    # plt.tick_params(axis='y', which='minor', labelsize=20)
     plt.tick_params(axis='x', which='major', labelsize=35)
     plt.tick_params(axis='x', which='minor', labelsize=30)
-    plt.tick_params(axis='y', which='both', left='off', top='off', labelleft='off')
+    plt.tick_params(axis='y', which='both', left=False, top=False, labelleft=False)
     # Fix legend order to match line appearance order
     handles, labels = ax.get_legend_handles_labels()
     plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=sizes['legend'], ncol=1, frameon=False)
-    plt.tight_layout()
+    plt.tight_layout(rect=[0, 0, .97, 1])
     plt.savefig(plot_file, metadata={'creationDate': None})
     plt.clf()
 

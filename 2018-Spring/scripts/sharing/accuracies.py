@@ -3,21 +3,42 @@ import plot
 import plotutils
 from plotutils import grids
 from plotutils import legends
+from plotutils import styles
 from utils import save
 
 
+def plotstyle(label, **kwargs):
+    kwargs['label'] = label
+    colourmatch = {
+        'Red': '#FE1310',
+        'Schoolbus': '#FFB019',
+        'Flowers': '#ED2363',
+        'Scramble': '#808080',
+        'Bus': '#2881B9',
+        'Pedestrian': '#8EF9FF',
+        'Cats': '#BF8D4A',
+        'Cars': '#D5E625',
+    }
+    for k, v in colourmatch.items():
+        if label.startswith(k):
+            kwargs['color'] = v
+    return kwargs
+
+
 def mpackages2series(mpackages):
-    # TODO: Markers, colors (e.g. red car should be red)
-    # TODO: Arrange by value [last value, majority highest]
-    # TODO: Normalize x value to be percent
-    return [plotutils.Series(series=p_.accuracies.acc,
-                             plotstyle={'label': p_.label},
-                             plotparams=plotutils.LINEGROUPS['fg'])
-            for p_ in mpackages]
+    pp = dict(styles.LINEGROUPS['fg'])
+    pp['alpha'] = .8
+    return [plotutils.Series(y=p_.accuracies.acc,
+                             x=p_.accuracies.num_frozen_percent,
+                             name=p_.label,
+                             plotstyle=plotstyle(p_.label, marker=marker, ms=ms),
+                             plotparams=pp)
+            for p_, marker, ms in zip(mpackages, styles.MARKERS, styles.MARKERSIZES)]
 
 
 def _plot(packages):
     return plot.variants(mpackages2series(packages),
+                         order='y',
                          xgrid=grids.x.frozen,
                          ygrid=grids.y.accuracy)
 

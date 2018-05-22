@@ -58,18 +58,11 @@ def agg2series(aggregated, names=None, errs=None, **kwargs):
     return get_series(xss, yss, names=names, errs=errs, **kwargs)
 
 
-def default_plotstyles(n):
-    idx = min(k for k in styles.COLORLISTS.keys() if k >= n)
-    colors = styles.COLORLISTS[idx]
-    return [{'color': color, 'marker': marker, 'markersize': ms}
-            for color, marker, ms in zip(colors, styles.MARKERS, styles.MARKERSIZES)]
-
-
 # TODO: Rename plotparams to plotstyle and plotstyles to seriesstyles?
 def get_series(xss, yss, errs=None, names=None, plotstyles='names', plotparams={}):
     """Pass plotstyles=None for throwaway plots"""
     if plotstyles is None:
-        plotstyles = default_plotstyles(len(xss))
+        plotstyles = styles.default(n=len(xss))
     elif plotstyles == 'names':
         plotstyles = names
     elif isinstance(plotstyles, dict):
@@ -116,7 +109,7 @@ class Series(object):
                  **kwargs):
         assert series is None or (x is None and y is None)
         if series is None:
-            self.series = pd.Series(data=y, index=x, name=name, **kwargs)
+            self.series = pd.Series(data=list(y), index=list(x), name=name, **kwargs)
         else:
             self.series = series
             if name is not None:
@@ -137,10 +130,10 @@ class Series(object):
         if self.plotparams is not None:
             kwargs.update(self.plotparams)
         if self.plotstyle:
-            keys = ['marker', 'color', 'label', 'markersize']
-            assert all(k in keys for k in self.plotstyle)
+            keys = ['marker', 'color', 'label', 'markersize', 'lw', 'ls', 'markerfacecolor', 'markeredgecolor', 'markeredgewidth']
             for k, v in self.plotstyle.items():
-                kwargs[k] = v
+                if k in keys:
+                    kwargs[k] = v
         if self.yerrs is not None:
             kwargs['yerr'] = self.yerrs
             ax = kwargs.pop('ax')
@@ -159,5 +152,9 @@ class Series(object):
     def y(self):
         return self.series.values
 
+    @property
+    def name(self):
+        return self.series.name
+    
     def __repr__(self):
         return str(self.series)

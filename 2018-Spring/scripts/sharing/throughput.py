@@ -2,7 +2,7 @@ from dataloaders import Latencies
 import plot
 from plotutils import agg2series
 from plotutils import grids
-from plotutils import legends
+from plotutils import styles
 from utils import save
 
 
@@ -20,9 +20,10 @@ def inception():
     # TODO: labels via plotstyles, markers, ...
     # Maybe get_plotstyles(labels=lambda x: x.num_apps + " apps", colors=default, markers=default) 
     grouped = df_view.groupby(['num_NNs', 'layer_id_percent'])
+    labels = [str(n) + ' apps' for n in num_NNs]
     series = agg2series(grouped['task_avg'].mean(),
                         names=num_NNs,
-                        plotstyles=None)
+                        plotstyles=styles.default(labels=labels))
 
     plot.variants(series,
                   xgrid=grids.x.frozen_shared,

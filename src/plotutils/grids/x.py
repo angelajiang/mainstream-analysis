@@ -1,14 +1,19 @@
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import math
 
 
-def num_apps(xs, ax=None):
+def scaledsize(scale=1.):
+    return mpl.rcParams['axes.labelsize'] * scale
+
+
+def num_apps(xs, ax=None, ticker_kwargs={}):
     if ax is None:
         ax = plt.gca()
     xs = set(x for xss in xs for x in xss)
+    ax.xaxis.set_major_locator(ticker.MaxNLocator(nbins=5, integer=True, **ticker_kwargs))
     ax.set_xlim(max(min(xs), 2), max(xs))
-    ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
     ax.set_xlabel("Number of concurrent apps")
 
 
@@ -22,13 +27,13 @@ def budget(xs, ax=None):
 def frozen(xs, label="% of layers that are unspecialized", ax=None):
     if ax is None:
         ax = plt.gca()
-    ax.set_xlabel(label)
+    ax.set_xlabel(label, fontsize=scaledsize(.9))
     ax.set_xlim(0, 100)
 
 
 def frozen_shared(xs, ax=None):
     frozen(xs, ax=ax, label='% of layers that are unspecialized (shared)')
-    ax.set_xlim(0, 115)
+    ax.set_xlim(0, 149)
 
 
 def _fraction_log_fmt(x, _):

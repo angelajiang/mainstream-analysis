@@ -7,7 +7,6 @@ from plotutils import styles
 from plotutils import grids
 from plotutils import Annotation, add_annotations
 from utils import save
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
@@ -38,11 +37,6 @@ def metric_7hybrid(metrics=['f1']):
     # See Pandas: Group By: split-apply-combine
     # https://pandas.pydata.org/pandas-docs/stable/groupby.html
 
-    # TODO: refactor
-    mpl.rcParams['axes.labelsize'] = 24
-    mpl.rcParams['xtick.labelsize'] = 22
-    mpl.rcParams['ytick.labelsize'] = 22
-
     for budget in set(df['budget'].values):
         df_view = df[df['budget'] == budget]
         # Group <setups> by number of apps, aggregate by mean.
@@ -54,7 +48,7 @@ def metric_7hybrid(metrics=['f1']):
                              plotparams='bg')
 
         for metric in metrics:
-            bars = [grouped[metric].min(), grouped[metric].max()]
+            # bars = [grouped[metric].min(), grouped[metric].max()]
 
             series = agg2series(grouped[metric].mean(),
                                 names=series_names,
@@ -66,7 +60,8 @@ def metric_7hybrid(metrics=['f1']):
                                           xgrid=grids.x.num_apps,
                                           ygrid=grids.y.get(metric),
                                           ygrid2=grids.y.fps)
-            legends.dual_fps(ax1, ax2, left=metric.capitalize())
+            # legends.dual_fps(ax1, ax2, left=metric.capitalize())
+            legends.hide(ax1, ax2)
 
             plt.tight_layout()
 
@@ -88,7 +83,7 @@ def f1_7hybrid_annotated():
 
     series = agg2series(grouped['f1'].mean(),
                         names=series_names,
-                        plotparams=dict(lw=1, markersize=8))
+                        plotparams='fg')
 
     ax = plot.variants(series,
                        xgrid=grids.x.num_apps,
@@ -97,11 +92,11 @@ def f1_7hybrid_annotated():
 
     annotations = [
         [Annotation(pt=1, xy=(10, 30), name='a', arrow_kwargs=dict(shrinkA=3), va='center'),
-         Annotation(pt=10, xy=(-25, 18), name='b', arrow_kwargs=dict(shrinkA=5), ha='center')],
+         Annotation(pt=10, xy=(-50, 18), name='b', arrow_kwargs=dict(shrinkA=5), ha='center')],
         [Annotation(pt=1, xy=(15, 25), name='c', va='center'),
-         Annotation(pt=10, xy=(-27, -20), name='d', ha='center', va='top')],
+         Annotation(pt=10, xy=(-55, -20), name='d', ha='center', va='top')],
         [Annotation(pt=1, xy=(25, -16), name='e', va='center'),
-         Annotation(pt=10, xy=(-30, 30), name='f', ha='right', va='center')],
+         Annotation(pt=10, xy=(-45, 30), name='f', arrow_kwargs=dict(shrinkA=5), ha='center')],
     ]
 
     add_annotations(annotations,
@@ -113,8 +108,8 @@ def f1_7hybrid_annotated():
 
 
 def main():
-    metric_7hybrid(metrics=['f1', 'recall', 'precision'])
     f1_7hybrid_annotated()
+    metric_7hybrid(metrics=['f1', 'recall', 'precision'])
 
 
 if __name__ == '__main__':

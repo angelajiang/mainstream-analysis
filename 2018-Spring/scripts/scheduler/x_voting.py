@@ -2,6 +2,7 @@ import dataloaders
 import plot
 from plotutils import ex, comb, agg2series
 from plotutils import grids
+from plotutils import legends
 from utils import save
 
 
@@ -32,6 +33,7 @@ def x_voting(dataset, opt_metric, plot_metric, selected_x):
                         plotparams='fg')
     series.append(plot.frontier(series, voting_train_f1_hack=dataset == 'train'))
     ax = plot.variants(series,
+                       legend=legends.reversed,
                        xgrid=grids.x.num_apps,
                        ygrid=grids.y.get(plot_metric))
 

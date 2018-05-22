@@ -1,3 +1,4 @@
+import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.interpolate
@@ -13,13 +14,26 @@ def _grid_apply(x_or_y, series, grid, ax=None):
         grid(pts, ax=ax)
 
 
+def _order_y(series):
+    """Reorder series by which has the most no of points on top (rank)"""
+    df = reduce(lambda left, right: pd.merge(left, right, left_index=True, right_index=True),
+                [s_.series.to_frame() for s_ in series])
+    order = list(df.rank(axis=1).mean().sort_values(ascending=False).index)
+    return order
+
+
 def variants(series, ax=None,
              xgrid=None, ygrid=None,
              legend=None,
+             order=None,
              plot_kwargs={}, legend_kwargs={}):
     """Comparing different variants of Mainstream"""
     if ax is None:
         _, ax = plt.subplots()
+    if order == 'y':
+        # Reorder series
+        order = _order_y(series)
+        series = sorted(series, key=lambda s: order.index(s.name))
     for line in series:
         line.plot(ax=ax, **plot_kwargs)
     _grid_apply('x', series, xgrid, ax=ax)
@@ -38,6 +52,10 @@ def variants_dual(seriesA, seriesB,
                   plot_kwargs={}, legend_kwargs={}):
     fig, ax1 = plt.subplots()
     ax2 = ax1.twinx()
+    # # Prune biggest tick to avoid overlap
+    # def ygrid2_(*args, **kwargs):
+    #     kwargs['ticker_kwargs'] = dict(prune='lower')
+    #     ygrid2(*args, **kwargs)
     variants(seriesA, ax=ax1, xgrid=xgrid, ygrid=ygrid, plot_kwargs=plot_kwargs)
     variants(seriesB, ax=ax2, ygrid=ygrid2, plot_kwargs=plot_kwargs)
     ax2.legend(**legend_kwargs)
@@ -72,5 +90,6 @@ def frontier(series, voting_train_f1_hack=False):
         spl = scipy.interpolate.PchipInterpolator(xs, ys)
     ys = spl(xss)
     return Series(x=xss, y=ys,
+                  name='Frontier',
                   plotstyle={'label': 'Pareto Frontier', 'color': 'blue'},
                   plotparams={'lw': 3, 'ls': '--'})

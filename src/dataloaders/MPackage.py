@@ -14,18 +14,21 @@ MPackage.__repr__ = lambda self: "MPackage(label={}, source={}, len={})".format(
 ACCURACIES_DIR = "../pre-2018-Spring/" + "output/mainstream/accuracy"
 
 dataset_labels = {
-    'redcar': 'Red-Car',
+    'redcar': 'RedCar',
 }
 
 architecture_labels = {
-    'mobilenets': 'MobileNets-224',
+    # 'mobilenets': 'MobileNets-224',
+    'mobilenets': 'MobileNets',
     'resnet': 'ResNets50',
     'inception': 'InceptionV3',
 }
 
 
 def load(filename):
-    return pd.read_csv(filename, names=['num_frozen', 'acc', 'acc_inv'], index_col=0)
+    df = pd.read_csv(filename, names=['num_frozen', 'acc', 'acc_inv'])
+    df['num_frozen_percent'] = df['num_frozen'].astype(float) / (df['num_frozen'].max() + 1) * 100.
+    return df
 
 
 def ex(filename_fmt, accuracies_dir=ACCURACIES_DIR, **kwargs):

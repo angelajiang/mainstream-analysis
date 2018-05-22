@@ -45,7 +45,7 @@ def sample_rate_recall(dataset, dataset_prefix, event_lengths):
              "dependent-whole"]
     plotstyles = [
         {'label': "Fully Independent", 'color': 'blue'},
-        {'label': "Profiled", 'color': 'green'},
+        {'label': "Profiled", 'color': 'green', 'markeredgecolor': 'green', 'markeredgewidth': .5, 'marker': 'o', 'markersize': 2, 'lw': .5, 'markerfacecolor': None},
         {'label': "Mainstream Prediction", 'color': styles.MAINSTREAM['color']},
         {'label': "Fully Dependent", 'color': 'turquoise'},
     ]
