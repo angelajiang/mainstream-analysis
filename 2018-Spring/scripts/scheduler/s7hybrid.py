@@ -68,6 +68,46 @@ def metric_7hybrid(metrics=['f1']):
             save('scheduler', exp_id, '{}-7hybrid-dual-b{:g}'.format(metric, budget))
 
 
+def metric_7hybrid_by_budget(metrics=['f1']):
+    exp_id = "050318"
+    series_names = ["mainstream", "maxsharing", "nosharing"]
+
+    df = _get_data(exp_id, series_names)
+
+    # See Pandas: Group By: split-apply-combine
+    # https://pandas.pydata.org/pandas-docs/stable/groupby.html
+
+    for num_apps in set(df['num_apps'].values):
+        df_view = df[df['num_apps'] == num_apps]
+        # Group <setups> by number of apps, aggregate by mean.
+        grouped = df_view.groupby(['sharing', 'budget'])
+
+        series2 = agg2series(grouped['fps'].mean(),
+                             names=series_names,
+                             plotstyles=styles.SERIES_ALT,
+                             plotparams='bg')
+
+        for metric in metrics:
+            # bars = [grouped[metric].min(), grouped[metric].max()]
+
+            series = agg2series(grouped[metric].mean(),
+                                names=series_names,
+                                #errs=dict(e_abs=bars),
+                                #plotparams='fg-e')
+                                plotparams='fg')
+
+            ax1, ax2 = plot.variants_dual(series, series2,
+                                          xgrid=grids.x.num_apps,
+                                          ygrid=grids.y.get(metric),
+                                          ygrid2=grids.y.fps)
+            # legends.dual_fps(ax1, ax2, left=metric.capitalize())
+            legends.hide(ax1, ax2)
+
+            plt.tight_layout()
+
+            save('scheduler', exp_id, '{}-7hybrid-dual-n{:g}'.format(metric, num_apps))
+
+
 def f1_7hybrid_annotated():
     budget = 150
     exp_id = "050318"
@@ -110,6 +150,7 @@ def f1_7hybrid_annotated():
 def main():
     f1_7hybrid_annotated()
     metric_7hybrid(metrics=['f1', 'recall', 'precision'])
+    metric_7hybrid_by_budget(metrics=['f1', 'recall', 'precision'])
 
 
 if __name__ == '__main__':
