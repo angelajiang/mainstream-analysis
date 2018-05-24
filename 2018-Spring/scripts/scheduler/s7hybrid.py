@@ -56,11 +56,15 @@ def metric_7hybrid(metrics=['f1']):
                                 #plotparams='fg-e')
                                 plotparams='fg')
 
+            ax = plot.variants_dual(series,
+                                    xgrid=grids.x.budget,
+                                    ygrid=grids.y.get(metric))
+            save('scheduler', exp_id, '{}-7hybrid-b{:g}'.format(metric, budget))
+
             ax1, ax2 = plot.variants_dual(series, series2,
                                           xgrid=grids.x.num_apps,
                                           ygrid=grids.y.get(metric),
                                           ygrid2=grids.y.fps)
-            # legends.dual_fps(ax1, ax2, left=metric.capitalize())
             legends.hide(ax1, ax2)
 
             plt.tight_layout()
@@ -88,13 +92,16 @@ def metric_7hybrid_by_budget(metrics=['f1']):
                                 names=series_names,
                                 plotparams='fg')
 
+            ax = plot.variants_dual(series,
+                                    xgrid=grids.x.budget,
+                                    ygrid=grids.y.get(metric))
+            save('scheduler', exp_id, '{}-7hybrid-n{:g}'.format(metric, num_apps))
+
             ax1, ax2 = plot.variants_dual(series, series2,
                                           xgrid=grids.x.budget,
                                           ygrid=grids.y.get(metric),
                                           ygrid2=grids.y.fps)
             legends.hide(ax1, ax2)
-
-            plt.tight_layout()
 
             save('scheduler', exp_id, '{}-7hybrid-dual-n{:g}'.format(metric, num_apps))
 
