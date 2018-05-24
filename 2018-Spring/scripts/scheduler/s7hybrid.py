@@ -74,12 +74,8 @@ def metric_7hybrid_by_budget(metrics=['f1']):
 
     df = _get_data(exp_id, series_names)
 
-    # See Pandas: Group By: split-apply-combine
-    # https://pandas.pydata.org/pandas-docs/stable/groupby.html
-
     for num_apps in set(df['num_apps'].values):
         df_view = df[df['num_apps'] == num_apps]
-        # Group <setups> by number of apps, aggregate by mean.
         grouped = df_view.groupby(['sharing', 'budget'])
 
         series2 = agg2series(grouped['fps'].mean(),
@@ -88,19 +84,14 @@ def metric_7hybrid_by_budget(metrics=['f1']):
                              plotparams='bg')
 
         for metric in metrics:
-            # bars = [grouped[metric].min(), grouped[metric].max()]
-
             series = agg2series(grouped[metric].mean(),
                                 names=series_names,
-                                #errs=dict(e_abs=bars),
-                                #plotparams='fg-e')
                                 plotparams='fg')
 
             ax1, ax2 = plot.variants_dual(series, series2,
-                                          xgrid=grids.x.num_apps,
+                                          xgrid=grids.x.budget,
                                           ygrid=grids.y.get(metric),
                                           ygrid2=grids.y.fps)
-            # legends.dual_fps(ax1, ax2, left=metric.capitalize())
             legends.hide(ax1, ax2)
 
             plt.tight_layout()

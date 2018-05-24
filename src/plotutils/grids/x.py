@@ -21,7 +21,6 @@ def budget(xs, ax=None):
     if ax is None:
         ax = plt.gca()
     ax.set_xlabel("Budget")
-    raise NotImplementedError
 
 
 def frozen(xs, label="% of layers that are unspecialized", ax=None):

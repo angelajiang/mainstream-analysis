@@ -31,18 +31,15 @@ def accuracy(ys, ax=None):
 def ratio(ys, title="??", ax=None):
     if ax is None:
         ax = plt.gca()
-    ax.set_ylim(0, 1)
-    ax.grid(**grid_kwargs)
-    ax.set_ylabel(title)
+    ax.set_ylim(0, 1)    ax.set_ylabel(title)
 
 
 def fps(ys, label="FPS", ax=None, ticker_kwargs={}):
     if ax is None:
         ax = plt.gca()
     ys = set(y for yss in ys for y in yss)
-    ax.yaxis.set_major_locator(plticker.MaxNLocator(nbins=5, integer=True, **ticker_kwargs))
+    ax.yaxis.set_major_locator(plticker.MaxNLocator(nbins=4, integer=True, **ticker_kwargs))
     ax.set_ylim(0, max(20, max(ys)))
-    ax.grid(**grid_kwargs)
     ax.set_ylabel(label)
 
 
