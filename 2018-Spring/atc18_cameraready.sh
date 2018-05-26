@@ -5,7 +5,7 @@ PLOT_DIR=../../mainstream-paper/atc2018-camera/figures/plots
 # Fig 4a task-throughput
 cp plots/sharing/task_throughput.pdf $PLOT_DIR/
 # Fig 4b Per-frame accuracy vs. (potential) sharing
-cp plots/sharing/7hybrid-mobilenets-accuracy.pdf $PLOT_DIR/7hybrid/accuracy
+cp plots/sharing/7hybrid-multi-network-accuracy.pdf $PLOT_DIR/7hybrid/accuracy
 
 # Fig 5: Effect of sample-rate on recall
 cp plots/correlations/recall-samplerate-train.pdf $PLOT_DIR/frame-rate-afn-dependences-with-correlation.pdf
