@@ -58,9 +58,27 @@ def inception():
     _plot(packages)
     save(group='sharing', plot_id='{}-{}-accuracy'.format("2hybrid", "inception"))
 
+def multi_architecture_7hybrid():
+    packages = dataloaders.MPackage.filter(architecture='mobilenets',
+                                           dataset=['cars',
+                                                    'bus',
+                                                    'schoolbus',
+                                                    'pedestrian',
+                                                    'redcar',
+                                                    'scramble'])
+    packages += dataloaders.MPackage.filter(architecture='resnet',
+                                            dataset=['bus', 'schoolbus'])
+    packages += dataloaders.MPackage.filter(architecture='inception',
+                                           dataset=['bus', 'schoolbus'])
+
+    assert len(packages) == 10
+    ax = _plot(packages)
+    legends.ncol(ax)
+    save(group='sharing', plot_id='{}-{}-accuracy'.format("7hybrid", "multi-network"))
+
 
 def main():
-    mobilenets_8hybrid()
+    multi_architecture_7hybrid()
 
 
 if __name__ == '__main__':
