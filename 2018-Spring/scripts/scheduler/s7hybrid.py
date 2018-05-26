@@ -56,7 +56,7 @@ def metric_7hybrid(metrics=['f1']):
                                 #plotparams='fg-e')
                                 plotparams='fg')
 
-            ax = plot.variants_dual(series,
+            ax = plot.variants_dual(series, series2,
                                     xgrid=grids.x.budget,
                                     ygrid=grids.y.get(metric))
             save('scheduler', exp_id, '{}-7hybrid-b{:g}'.format(metric, budget))
@@ -92,7 +92,7 @@ def metric_7hybrid_by_budget(metrics=['f1']):
                                 names=series_names,
                                 plotparams='fg')
 
-            ax = plot.variants_dual(series,
+            ax = plot.variants_dual(series, series2,
                                     xgrid=grids.x.budget,
                                     ygrid=grids.y.get(metric))
             save('scheduler', exp_id, '{}-7hybrid-n{:g}'.format(metric, num_apps))

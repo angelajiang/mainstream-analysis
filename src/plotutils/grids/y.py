@@ -31,7 +31,8 @@ def accuracy(ys, ax=None):
 def ratio(ys, title="??", ax=None):
     if ax is None:
         ax = plt.gca()
-    ax.set_ylim(0, 1)    ax.set_ylabel(title)
+    ax.set_ylim(0, 1)
+    ax.set_ylabel(title)
 
 
 def fps(ys, label="FPS", ax=None, ticker_kwargs={}):
