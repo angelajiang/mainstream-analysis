@@ -31,6 +31,12 @@ class Schedule(object):
 
         if setup is not None:
             self._apps = setup.apps
+            if 'correlation' in extras:
+                self._apps = [dict(app) for app in self._apps]
+                for app in self._apps:
+                    app['correlation_coefficient'] = extras['correlation']
+                    # TODO: Ideally, recalculate app id.
+                    app['app_id'] += "-" + str(extras['correlation'])
             # Hack for exhaustive - use app order of configuration file.
             if apps_order == 'configurations':
                 key_order = self._setup.cost_benefits.keys()
@@ -43,10 +49,14 @@ class Schedule(object):
 
             self._costs, self._objectives = [], []
             for app, num_frozen, fps in zip(self._apps, self._frozens, self._fpses):
-                app_settings = self._setup.cost_benefits[app['app_id']]
-                try:
-                    cost, objective = app_settings[(num_frozen, fps)]
-                except KeyError:
+                cost, objective = None, None
+                if 'correlation' not in extras:
+                    app_settings = self._setup.cost_benefits[app['app_id']]
+                    try:
+                        cost, objective = app_settings[(num_frozen, fps)]
+                    except KeyError:
+                        pass
+                if cost is None:
                     cost = self._setup.scheduler.get_cost(num_frozen, fps)
                     objective = self._setup.scheduler.get_metric(app, num_frozen, fps)
                 self._costs.append(cost)
@@ -181,7 +191,7 @@ class Schedule(object):
 
 
 def load(filename, setups={}, variant=None, **kwargs):
-    assert variant in (None, 'v1+metrics', 'v1+cost')
+    assert variant in (None, 'v1+metrics', 'v1+cost', 'v1+correlation')
     schedules = []
     with open(filename) as f:
         for line in f:
@@ -202,6 +212,8 @@ def load(filename, setups={}, variant=None, **kwargs):
                     num_cols = 1 + 2 + num_apps * 2 + 2
                     if variant == 'v1+metrics':
                         num_cols += 3
+                    if variant == 'v1+correlation':
+                        num_cols += 1
                     assert len(line) == num_cols, len(line)
                     extras['metric'] = float(line[idx])
                     idx += 1
@@ -225,6 +237,9 @@ def load(filename, setups={}, variant=None, **kwargs):
                         f1_, recall_, precision_ = map(float, line[idx:idx + 3])
                         extras['f1'], extras['recall'], extras['precision'] = f1_, recall_, precision_
                         idx += 3
+                    elif variant == 'v1+correlation':
+                        extras['correlation'] = float(line[idx])
+                        idx += 1
                     assert idx == len(line), idx
 
                     if setup_id in setups:

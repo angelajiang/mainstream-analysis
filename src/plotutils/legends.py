@@ -6,7 +6,7 @@ def legendsize(scale=1.):
     return mpl.rcParams['legend.fontsize'] * scale
 
 
-def dual_fps(ax1, ax2, left='??', right='FPS'):
+def dual_fps_old(ax1, ax2, left='??', right='FPS'):
     common_params = dict(loc=4, fontsize=legendsize(.7), borderpad=None)
     leg = ax1.legend(bbox_to_anchor=[.84, .1], **common_params)
     leg2 = ax2.legend(bbox_to_anchor=[.99, .1], **common_params)
@@ -18,6 +18,14 @@ def dual_fps(ax1, ax2, left='??', right='FPS'):
     leg.get_frame().set_linewidth(0.)
     leg2.get_frame().set_facecolor('white')
     leg2.get_frame().set_linewidth(0.)
+
+
+def dual_fps(ax1, ax2, left='??', right='FPS', **kwargs):
+    lines = ax1.lines + ax2.lines
+    labels = [(l.get_label() + ' ' + left if i < len(ax1.lines) else right) for i, l in enumerate(lines)]
+
+    ax1.legend(lines, labels, ncol=2, fontsize=legendsize(.7), **kwargs)
+    ax2.legend().set_visible(False)
 
 
 def above_fig(ax):

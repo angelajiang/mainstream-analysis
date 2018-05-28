@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.ticker as plticker
+from utils import flatten
 
 
 grid_kwargs = dict(linestyle='dotted', linewidth=.1, axis='y')
@@ -11,7 +12,7 @@ def recall(ys, ax=None):
 
 def recall_zoomed(ys, ax=None):
     ratio(ys, title="Event Recall", ax=ax)
-    min_y = min(y for yss in ys for y in yss)
+    min_y = min(flatten(ys))
     if min_y >= .5:
         ax.set_ylim(.5, 1)
 
@@ -32,17 +33,14 @@ def ratio(ys, title="??", ax=None):
     if ax is None:
         ax = plt.gca()
     ax.set_ylim(0, 1)
-    ax.grid(**grid_kwargs)
     ax.set_ylabel(title)
 
 
 def fps(ys, label="FPS", ax=None, ticker_kwargs={}):
     if ax is None:
         ax = plt.gca()
-    ys = set(y for yss in ys for y in yss)
-    ax.yaxis.set_major_locator(plticker.MaxNLocator(nbins=5, integer=True, **ticker_kwargs))
-    ax.set_ylim(0, max(20, max(ys)))
-    ax.grid(**grid_kwargs)
+    ax.yaxis.set_major_locator(plticker.MaxNLocator(nbins=4, integer=True, **ticker_kwargs))
+    ax.set_ylim(0, max(20, max(flatten(ys))))
     ax.set_ylabel(label)
 
 

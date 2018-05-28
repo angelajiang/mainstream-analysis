@@ -6,3 +6,4 @@ mainstream/plots
 output/bb/raw/**/plots
 output/bb/raw/**/images
 plots/
+_cache

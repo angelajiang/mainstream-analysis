@@ -2,6 +2,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import math
+from utils import flatten
 
 
 def scaledsize(scale=1.):
@@ -20,8 +21,9 @@ def num_apps(xs, ax=None, ticker_kwargs={}):
 def budget(xs, ax=None):
     if ax is None:
         ax = plt.gca()
+    xs = flatten(xs)
+    ax.set_xlim(min(xs) - 10, max(xs) + 10)
     ax.set_xlabel("Budget")
-    raise NotImplementedError
 
 
 def frozen(xs, label="% of layers that are unspecialized", ax=None):
@@ -45,7 +47,7 @@ def _fraction_log_fmt(x, _):
 
 def sample_rate(xs, ax=None):
     ax.set_xlabel("Frame sample rate")
-    min_x = min(x for xss in xs for x in xss)
+    # min_x = min(flatten(xs))
     # ax.set_xlim(pow(10, math.floor(math.log10(min_x))), 1)
     ax.set_xscale("log")
     ax.xaxis.set_major_formatter(ticker.FuncFormatter(_fraction_log_fmt))

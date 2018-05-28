@@ -41,7 +41,7 @@ def poster():
 
 
 def notebook():
-    return rescale(single(), factor=1.1)
+    return rescale(single(), factor=1.)
 
 
 def paper():
