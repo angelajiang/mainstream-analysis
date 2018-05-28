@@ -56,8 +56,8 @@ def variants_dual(seriesA, seriesB,
     # def ygrid2_(*args, **kwargs):
     #     kwargs['ticker_kwargs'] = dict(prune='lower')
     #     ygrid2(*args, **kwargs)
-    variants(seriesA, ax=ax1, xgrid=xgrid, ygrid=ygrid, plot_kwargs=plot_kwargs)
-    variants(seriesB, ax=ax2, ygrid=ygrid2, plot_kwargs=plot_kwargs)
+    variants(seriesA, ax=ax1, ygrid=ygrid, plot_kwargs=plot_kwargs)
+    variants(seriesB, ax=ax2, xgrid=xgrid, ygrid=ygrid2, plot_kwargs=plot_kwargs)
     ax2.legend(**legend_kwargs)
     return ax1, ax2
 
