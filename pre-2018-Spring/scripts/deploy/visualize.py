@@ -75,7 +75,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
 
     picture_loc = (104 - start) / float(fps)
     train_front = (114 - start) / float(fps)
-    plt.axvline(x=train_front, linestyle="--", color="black", alpha=0.8)
+    plt.axvline(x=train_front, linestyle="--", color="black", alpha=0.8, ymin=.10)
     plot_file = plot_dir + "/deploy-time-series.pdf"
     # plt.title("Train detector with 9 concurrent apps", fontsize=20)
 
@@ -111,7 +111,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     imagebox.image.axes = ax
 
     ab = AnnotationBbox(imagebox, (picture_loc, settings['y_hit_m'] + settings['y_hit_c'] + settings['y_offset'] - .004),
-                        xybox=(-30, -160-80),
+                        xybox=(-30, -160-55),
                         xycoords='data',
                         boxcoords='offset points',
                         pad=0,
@@ -132,9 +132,9 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     plt.tick_params(axis='y', which='both', left=False, top=False, labelleft=False)
     # Fix legend order to match line appearance order
     handles, labels = ax.get_legend_handles_labels()
-    plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=sizes['legend'], ncol=1, frameon=False)
+    plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=sizes['legend'], ncol=1, frameon=False, bbox_to_anchor=[1.05, .08])
     plt.tight_layout(rect=[0, 0, .97, 1])
-    plt.savefig(plot_file, metadata={'creationDate': None})
+    plt.savefig(plot_file, metadata={'creationDate': None}, bbox_inches=mpl.transforms.Bbox.from_extents([0, .6, 7.9, 6]))
     plt.clf()
 
 
