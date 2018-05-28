@@ -57,16 +57,15 @@ def metric_7hybrid(metrics=['f1']):
                                 #plotparams='fg-e')
                                 plotparams='fg')
 
-            ax = plot.variants_dual(series, series2,
-                                    xgrid=grids.x.budget,
-                                    ygrid=grids.y.get(metric))
+            ax = plot.variants(series,
+                               xgrid=grids.x.budget,
+                               ygrid=grids.y.get(metric))
             save('scheduler', exp_id, '{}-7hybrid-b{:g}'.format(metric, budget))
 
             ax1, ax2 = plot.variants_dual(series, series2,
                                           xgrid=grids.x.num_apps,
                                           ygrid=grids.y.get(metric),
                                           ygrid2=grids.y.fps)
-            legends.hide(ax1, ax2)
 
             plt.tight_layout()
 
@@ -93,16 +92,16 @@ def metric_7hybrid_by_budget(metrics=['f1']):
                                 names=series_names,
                                 plotparams='fg')
 
-            ax = plot.variants_dual(series, series2,
-                                    xgrid=grids.x.budget,
-                                    ygrid=grids.y.get(metric))
+            ax = plot.variants(series,
+                               xgrid=grids.x.budget,
+                               ygrid=grids.y.get(metric))
             save('scheduler', exp_id, '{}-7hybrid-n{:g}'.format(metric, num_apps))
 
             ax1, ax2 = plot.variants_dual(series, series2,
                                           xgrid=grids.x.budget,
                                           ygrid=grids.y.get(metric),
                                           ygrid2=grids.y.fps)
-            legends.hide(ax1, ax2)
+            legends.dual_fps(ax1, ax2, left=metric.capitalize(), loc='upper left')
 
             save('scheduler', exp_id, '{}-7hybrid-dual-n{:g}'.format(metric, num_apps))
 
@@ -147,8 +146,8 @@ def f1_7hybrid_annotated():
 
 
 def main():
-    f1_7hybrid_annotated()
-    metric_7hybrid(metrics=['f1', 'recall', 'precision'])
+    # f1_7hybrid_annotated()
+    # metric_7hybrid(metrics=['f1', 'recall', 'precision'])
     metric_7hybrid_by_budget(metrics=['f1', 'recall', 'precision'])
 
 
