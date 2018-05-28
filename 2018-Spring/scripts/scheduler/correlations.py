@@ -5,9 +5,10 @@ from plotutils import ex, comb, agg2series
 from plotutils import legends
 from plotutils import styles
 from plotutils import grids
-from utils import save
+from utils import save, memoize
 
 
+@memoize()
 def _get_data(exp_id, series_names, corr_types):
     # Overriding setup_file_str because dir was renamed to have -corr
     setups = dataloaders.load_setups(exp_id,

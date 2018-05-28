@@ -6,10 +6,11 @@ from plotutils import legends
 from plotutils import styles
 from plotutils import grids
 from plotutils import Annotation, add_annotations
-from utils import save
+from utils import save, memoize
 import matplotlib.pyplot as plt
 
 
+@memoize()
 def _get_data(exp_id, series_names):
     setups = dataloaders.load_setups(exp_id,
                                      setup_file_str="/setups.{exp_id}-*{version}.pickle",
