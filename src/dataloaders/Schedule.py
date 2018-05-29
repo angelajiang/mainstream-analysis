@@ -206,6 +206,7 @@ def load(filename, setups={}, variant=None, **kwargs):
                 try:
                     idx = 0
                     setup_id = line[idx]
+                    extras['setup_id'] = setup_id
                     idx += 1
                     num_apps = int(line[idx])
                     idx += 1
