@@ -75,7 +75,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
 
     picture_loc = (104 - start) / float(fps)
     train_front = (114 - start) / float(fps)
-    plt.axvline(x=train_front, linestyle="--", color="black", alpha=0.8, ymin=.10)
+    plt.axvline(x=train_front, linestyle="--", color="black", alpha=0.8, ymin=.10 + .2)
     plot_file = plot_dir + "/deploy-time-series.pdf"
     # plt.title("Train detector with 9 concurrent apps", fontsize=20)
 
@@ -96,9 +96,25 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     for direction in ["left", "right", "bottom", "top"]:
         ax.axis[direction].set_visible(False)
 
+    xybox = [-30, -160-55]
+    extent = [0, .6, 7.9, 6]
+    legend_bbox = [1.05, .08]
+    smokestack_xy = [train_front, -.095 - .1]
+    smokestack_text = [20, 30]
+
+    # To put it at the side
+    xybox[0] += -110
+    xybox[1] += 170
+    extent[0] += -1.3
+    extent[1] += 1.1
+    legend_bbox[1] += .22
+    smokestack_xy[1] += .07
+    smokestack_text[0] -= 200
+    smokestack_text[1] -= 30
+
     plt.annotate("Smoke stack\nleaves view",
-                 xy=(train_front, -.095 - .1),
-                 xytext=(20, 30),
+                 xy=smokestack_xy,
+                 xytext=smokestack_text,
                  xycoords='data',
                  fontsize=20,
                  textcoords='offset points',
@@ -111,7 +127,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     imagebox.image.axes = ax
 
     ab = AnnotationBbox(imagebox, (picture_loc, settings['y_hit_m'] + settings['y_hit_c'] + settings['y_offset'] - .004),
-                        xybox=(-30, -160-55),
+                        xybox=xybox,
                         xycoords='data',
                         boxcoords='offset points',
                         pad=0,
@@ -132,9 +148,9 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     plt.tick_params(axis='y', which='both', left=False, top=False, labelleft=False)
     # Fix legend order to match line appearance order
     handles, labels = ax.get_legend_handles_labels()
-    plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=sizes['legend'], ncol=1, frameon=False, bbox_to_anchor=[1.05, .08])
+    plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=sizes['legend'], ncol=2, columnspacing=0, handletextpad=0, frameon=False, bbox_to_anchor=legend_bbox)
     plt.tight_layout(rect=[0, 0, .97, 1])
-    plt.savefig(plot_file, metadata={'creationDate': None}, bbox_inches=mpl.transforms.Bbox.from_extents([0, .6, 7.9, 6]))
+    plt.savefig(plot_file, metadata={'creationDate': None}, bbox_inches=mpl.transforms.Bbox.from_extents(extent))
     plt.clf()
 
 
