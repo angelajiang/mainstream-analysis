@@ -58,7 +58,7 @@ def metric_7hybrid(metrics=['f1']):
                                 plotparams='fg')
 
             ax = plot.variants(series,
-                               xgrid=grids.x.budget,
+                               xgrid=grids.x.num_apps,
                                ygrid=grids.y.get(metric))
             save('scheduler', exp_id, '{}-7hybrid-b{:g}'.format(metric, budget))
 
