@@ -38,7 +38,7 @@ cp plots/scheduler/050318/f1-7hybrid-dual-n3.pdf $PLOT_DIR/7hybrid/budget
 # cp plots/scheduler/legend_f1.pdf $PLOT_DIR
 
 # Fig 9: x-voting
-cp plots/scheduler/x_voting/train-f1-f1-frontier.pdf $PLOT_DIR/scheduler/voting-train-500-f1-f1-frontier.pdf
+cp plots/scheduler/x_voting/train-f1-f1-1357-frontier.pdf $PLOT_DIR/scheduler/voting-train-500-f1-f1-frontier.pdf
 
 # Fig 10: deploy-time-series
 cp ../pre-2018-Spring/plots/deploy/deploy-time-series.pdf $PLOT_DIR
