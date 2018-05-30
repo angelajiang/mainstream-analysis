@@ -150,7 +150,7 @@ def visualize_deployment(files, objects, plot_dir, thumbnail):
     handles, labels = ax.get_legend_handles_labels()
     plt.legend(handles[::-1], labels[::-1], loc=4, fontsize=sizes['legend'], ncol=2, columnspacing=0, handletextpad=0, frameon=False, bbox_to_anchor=legend_bbox)
     plt.tight_layout(rect=[0, 0, .97, 1])
-    plt.savefig(plot_file, metadata={'creationDate': None}, bbox_inches=mpl.transforms.Bbox.from_extents(extent))
+    plt.savefig(plot_file, metadata={'CreationDate': None}, bbox_inches=mpl.transforms.Bbox.from_extents(extent))
     plt.clf()
 
 

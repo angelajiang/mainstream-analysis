@@ -19,10 +19,10 @@ def save_exact(filename, pdf=True, png=False, **kwargs):
     rel_filename = filename.replace(os.getcwd() + "/", "")
     # set CreationDate to allow for deterministic PDFs to aid inclusion in git
     if pdf:
-        plt.savefig(filename + ".pdf", metadata={'creationDate': None}, **kwargs)
+        plt.savefig(filename + ".pdf", metadata={'CreationDate': None}, **kwargs)
         print(rel_filename + ".pdf saved", file=sys.stderr)
     if png:
-        plt.savefig(filename + ".png", metadata={'creationDate': None}, dpi=72, **kwargs)
+        plt.savefig(filename + ".png", metadata={'CreationDate': None}, dpi=72, **kwargs)
         print(rel_filename + ".png saved", file=sys.stderr)
 
 
