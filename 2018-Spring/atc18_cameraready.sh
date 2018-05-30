@@ -25,7 +25,7 @@ cp plots/scheduler/050318/recall-7hybrid-b150.pdf $PLOT_DIR/7hybrid/sweep
 cp plots/scheduler/050318/precision-7hybrid-b150.pdf $PLOT_DIR/7hybrid/sweep
 cp plots/scheduler/legend.pdf $PLOT_DIR
 
-
+# New Fig 8
 cp plots/scheduler/050318/f1-7hybrid-dual-n3.pdf $PLOT_DIR/7hybrid/budget
 
 # # Fig 8: corr

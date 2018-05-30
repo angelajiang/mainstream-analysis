@@ -8,19 +8,19 @@ contexts.use('paper')
 
 def main():
     # Fig 4a
-    #throughput.main()
+    throughput.main()
     # Fig 4b
     accuracies.main()
     # Fig 5
-    #dependence.main()
-    # Fig 6, 7
-    #s7hybrid.main()
-    # Fig 8
-    #Jcorrelations.main()
+    dependence.main()
+    # Fig 6, 7, 8
+    s7hybrid.main()
+    # # Fig 8
+    # correlations.main()
     # Fig 9
-    #x_voting.main()
+    x_voting.main()
     # Fig 10
-    #subprocess.check_call('python scripts/deploy/visualize.py', cwd='../pre-2018-Spring', shell=True)
+    subprocess.check_call('python scripts/deploy/visualize.py', cwd='../pre-2018-Spring', shell=True)
 
 
 if __name__ == '__main__':
