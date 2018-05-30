@@ -200,6 +200,7 @@ def load(filename, setups={}, variant=None, **kwargs):
             line = line.strip().split(',')
             # parse line
             extras = {}
+            setup = None
             if filename.endswith(".v0"):
                 raise NotImplementedError
             elif filename.endswith(".v1"):
@@ -215,7 +216,7 @@ def load(filename, setups={}, variant=None, **kwargs):
                         num_cols += 3
                     if variant == 'v1+correlation':
                         num_cols += 1
-                    assert len(line) == num_cols, len(line)
+                    assert len(line) == num_cols, "{} != expected {}".format(len(line), num_cols)
                     extras['metric'] = float(line[idx])
                     idx += 1
                     frozens = map(int, line[idx:idx + num_apps])

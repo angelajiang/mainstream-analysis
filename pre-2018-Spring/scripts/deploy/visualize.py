@@ -16,6 +16,14 @@ mpl.rcParams['savefig.dpi'] = 100
 mpl.rcParams['font.size'] = 12
 mpl.rcParams['legend.fontsize'] = 'large'
 mpl.rcParams['figure.titlesize'] = 'medium'
+mpl.rcParams['pdf.fonttype'] = 42
+mpl.rcParams['ps.fonttype'] = 42
+mpl.rcParams.update({
+    'mathtext.fontset': 'custom',
+    'mathtext.rm': 'Bitstream Vera Sans',
+    'mathtext.it': 'Bitstream Vera Sans:italic',
+    'mathtext.bf': 'Bitstream Vera Sans:bold',    
+})
 
 sizes = {
     'label': 30,

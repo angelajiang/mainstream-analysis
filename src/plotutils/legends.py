@@ -28,6 +28,19 @@ def dual_fps(ax1, ax2, left='??', right='FPS', **kwargs):
     ax2.legend().set_visible(False)
 
 
+def separate_dual(ax1, ax2, left='???', right='FPS'):
+    reorder = [0, 3, 1, 4, 2, 5]
+    lines = ax1.lines + ax2.lines
+    labels = [l.get_label() + (' ' + left if i < len(ax1.lines) else ' ' + right) for i, l in enumerate(lines)]
+    lines = [lines[i] for i in reorder]
+    labels = [labels[i] for i in reorder]
+    fig = plt.figure(figsize=(3,2))
+    legend = plt.legend(lines, labels, ncol=3, loc='center')
+    plt.axis('off')
+    fig.canvas.draw()
+    return dict(bbox_inches=legend.get_window_extent().transformed(fig.dpi_scale_trans.inverted()), pad_inches=0)
+
+
 def above_fig(ax):
     above_fig_kwargs = dict(bbox_to_anchor=(0.5, 1.2),
                             frameon=False,

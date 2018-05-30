@@ -43,10 +43,10 @@ def memoize(ext='.pkl', folder='_cache', stale_after=datetime.timedelta(days=1))
                     print("Loading from cache " + filename)
                     return pickle.load(f)
             else:
+                result = func(*args, **kwargs)
                 if not os.path.isdir(directory):
                     os.mkdir(directory)
                 with open(filename, 'wb') as f:
-                    result = func(*args, **kwargs)
                     pickle.dump(result, f, pickle.HIGHEST_PROTOCOL)
                     return result
 

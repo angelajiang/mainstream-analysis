@@ -15,6 +15,14 @@ def single():
         'ytick.labelsize': 20,
         'legend.fontsize': 16,
 
+        # Default
+        # 'figure.figsize': [6.4, 4.8],
+
+        # Avoid Type 3 fonts and use TrueType instead
+        # See http://phyletica.org/matplotlib-fonts/
+        'pdf.fonttype' : 42,
+        'ps.fonttype': 42,
+
         'mathtext.fontset': 'custom',
         'mathtext.rm': 'Bitstream Vera Sans',
         'mathtext.it': 'Bitstream Vera Sans:italic',
@@ -23,6 +31,12 @@ def single():
         'legend.columnspacing': .8,
         'legend.frameon': False,
     }
+
+
+def wide():
+    dct = single()
+    dct['figure.figsize'] = [6.4 + 1, 4.8]
+    return dct
 
 
 def double():
@@ -49,7 +63,7 @@ def paper():
 
 
 def rescale(params, factor=1.):
-    return {k: v * factor if k.endswith('size') else v
+    return {k: v * factor if k.endswith('size') and k != 'figure.figsize' else v
             for k, v in params.items()}
 
 
@@ -63,4 +77,4 @@ def use(name):
     mpl.rcParams.update(name())
 
 
-use('single')
+use('wide')

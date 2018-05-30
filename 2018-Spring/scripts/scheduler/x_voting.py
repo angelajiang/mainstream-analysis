@@ -37,11 +37,12 @@ def x_voting(dataset, opt_metric, plot_metric, selected_x):
                        xgrid=grids.x.num_apps,
                        ygrid=grids.y.get(plot_metric))
 
-    save('scheduler', 'x_voting', '{}-{}-{}-frontier'.format(dataset, opt_metric, plot_metric))
+    save('scheduler', 'x_voting', '{}-{}-{}-{}-frontier'.format(dataset, opt_metric, plot_metric, ''.join(map(str, selected_x))))
 
 
 def main():
     x_voting("pedestrian", "f1", "f1", [1, 3, 5, 7])
+    x_voting("train", "f1", "f1", [1, 2, 4, 6, 8])
     x_voting("train", "f1", "f1", [1, 3, 5, 7])
 
 

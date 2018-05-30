@@ -14,7 +14,7 @@ def num_apps(xs, ax=None, ticker_kwargs={}):
         ax = plt.gca()
     xs = set(x for xss in xs for x in xss)
     ax.xaxis.set_major_locator(ticker.MaxNLocator(nbins=5, integer=True, **ticker_kwargs))
-    ax.set_xlim(max(min(xs), 2), max(xs))
+    ax.set_xlim(0, max(xs))
     ax.set_xlabel("Number of concurrent apps")
 
 
@@ -35,7 +35,7 @@ def frozen(xs, label="% of layers that are unspecialized", ax=None):
 
 def frozen_shared(xs, ax=None):
     frozen(xs, ax=ax, label='% of layers that are unspecialized (shared)')
-    ax.set_xlim(0, 149)
+    ax.set_xlim(0, 128)
 
 
 def _fraction_log_fmt(x, _):

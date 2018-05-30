@@ -15,12 +15,15 @@ def _get_data(exp_id, series_names):
     setups = dataloaders.load_setups(exp_id,
                                      setup_file_str="/setups.{exp_id}-*{version}.pickle",
                                      legacy='InconsistentIds')
-
+    setups.update(dataloaders.load_setups(exp_id, setup_dir="data/cpp/atc/{exp_id}"))
     rows = []
     for series_name in series_names:
-        schedules = dataloaders.load_schedules("050318", "greedy." + series_name + ".sim.*.v1",
-                                               variant='v1+metrics',
+        schedules = dataloaders.load_schedules("050318", "greedy." + series_name + ".sim.*-1.v1",
                                                setups=setups)
+        for i in range(2, 40):
+            schedules += dataloaders.load_schedules("050318", "greedy." + series_name + ".sim.*-{}.v1".format(i),
+                                                    variant='v1+metrics',
+                                                    setups=setups)
         # Extract some attributes from the schedules.
         # Add on some based on the file name.
         rows += ex(schedules,
@@ -60,16 +63,23 @@ def metric_7hybrid(metrics=['f1']):
             ax = plot.variants(series,
                                xgrid=grids.x.num_apps,
                                ygrid=grids.y.get(metric))
+            legends.hide(ax)
             save('scheduler', exp_id, '{}-7hybrid-b{:g}'.format(metric, budget))
 
             ax1, ax2 = plot.variants_dual(series, series2,
                                           xgrid=grids.x.num_apps,
                                           ygrid=grids.y.get(metric),
                                           ygrid2=grids.y.fps)
+            legends.hide(ax1, ax2)
 
             plt.tight_layout()
 
             save('scheduler', exp_id, '{}-7hybrid-dual-b{:g}'.format(metric, budget))
+
+    save_kwargs = legends.separate_dual(ax1, ax2, left='{F1, Recall, Precision}')
+    save('scheduler', '', 'legend', **save_kwargs)
+    save_kwargs = legends.separate_dual(ax1, ax2, left='F1')
+    save('scheduler', '', 'legend_f1', **save_kwargs)
 
 
 def stats_7hybrid(metrics=['f1']):
@@ -150,12 +160,12 @@ def f1_7hybrid_annotated():
                        legend=legends.above_fig)
 
     annotations = [
-        [Annotation(pt=1, xy=(10, 30), name='a', arrow_kwargs=dict(shrinkA=3), va='center'),
-         Annotation(pt=10, xy=(-50, 18), name='b', arrow_kwargs=dict(shrinkA=5), ha='center')],
-        [Annotation(pt=1, xy=(15, 25), name='c', va='center'),
-         Annotation(pt=10, xy=(-55, -20), name='d', ha='center', va='top')],
-        [Annotation(pt=1, xy=(25, -16), name='e', va='center'),
-         Annotation(pt=10, xy=(-45, 30), name='f', arrow_kwargs=dict(shrinkA=5), ha='center')],
+        [Annotation(pt=2, xy=(10, 30), name='a', arrow_kwargs=dict(shrinkA=3), va='center'),
+         Annotation(pt=11, xy=(-55, 18), name='b', arrow_kwargs=dict(shrinkA=5), ha='center')],
+        [Annotation(pt=2, xy=(15, 25), name='c', va='center'),
+         Annotation(pt=11, xy=(-60, -20), name='d', ha='center', va='top')],
+        [Annotation(pt=2, xy=(25, -16), name='e', va='center'),
+         Annotation(pt=11, xy=(-50, 30), name='f', arrow_kwargs=dict(shrinkA=5), ha='center')],
     ]
 
     add_annotations(annotations,
