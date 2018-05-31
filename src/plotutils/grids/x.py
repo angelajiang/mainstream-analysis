@@ -36,6 +36,7 @@ def frozen(xs, label="% of layers that are unspecialized", ax=None):
 def frozen_shared(xs, ax=None):
     frozen(xs, ax=ax, label='% of layers that are unspecialized (shared)')
     ax.set_xlim(0, 128)
+    ax.set_xticks(range(0, 100 + 1, 20))
 
 
 def _fraction_log_fmt(x, _):

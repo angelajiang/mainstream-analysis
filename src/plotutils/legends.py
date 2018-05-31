@@ -31,10 +31,11 @@ def dual_fps(ax1, ax2, left='??', right='FPS', **kwargs):
 def separate_dual(ax1, ax2, left='???', right='FPS'):
     reorder = [0, 3, 1, 4, 2, 5]
     lines = ax1.lines + ax2.lines
+    assert len(lines) == 6, lines
     labels = [l.get_label() + (' ' + left if i < len(ax1.lines) else ' ' + right) for i, l in enumerate(lines)]
     lines = [lines[i] for i in reorder]
     labels = [labels[i] for i in reorder]
-    fig = plt.figure(figsize=(3,2))
+    fig = plt.figure(figsize=(3, 2))
     legend = plt.legend(lines, labels, ncol=3, loc='center')
     plt.axis('off')
     fig.canvas.draw()
