@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+import os
 import sys
 from PIL import Image
 import matplotlib as mpl
@@ -170,6 +171,8 @@ if __name__ == "__main__":
     f2 = "output/streamer/deploy/train/train2-10apps-maxsharing"
     thumbnail = "output/train-example.jpg"
     plot_dir = "plots/deploy"
+    if not os.path.exists(plot_dir):
+        os.makedirs(plot_dir)
     files = [f0, f1]
     objs = [plot_util.NO_SHARING, plot_util.MAINSTREAM]
     visualize_deployment(files, objs, plot_dir, thumbnail)
