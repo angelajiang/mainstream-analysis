@@ -6,3 +6,9 @@ mainstream/plots
 output/bb/raw/**/plots
 output/bb/raw/**/images
 plots/
+_cache
+*.html
+*/notebooks/*.html
+*/notebooks/*.pdf
+*/notebooks/*.png
+*/notebooks/*.jpg
